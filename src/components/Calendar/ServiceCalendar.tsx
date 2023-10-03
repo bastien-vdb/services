@@ -1,26 +1,51 @@
 import React from 'react';
-import { useTime } from '@/src/hooks/useTime';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';
+import { useBooking } from '@/src/hooks/useBooking';
+import { createSetOfSLots } from '@/src/contexts/booking.context/createSetOfSlots';
 
 const ServiceCalendar = React.memo(() => {
-    const { setDaySelected } = useTime();
+
+    //@ts-ignore
+    const { bookingState, bookingDispatch } = useBooking();
 
     const today = new Date();
     const nbOfDaysInMonth = moment(today).daysInMonth();
     const lastDay = new Date(today.getFullYear(), today.getMonth(), nbOfDaysInMonth);
 
-    const [date, setDate] = React.useState<Date | undefined>(new Date(new Date().setHours(0, 0, 0, 0)));
+    const handleSelectDate = (date: Date | undefined) => {
 
-    if (date) setDaySelected(date);
+        // let slots: {
+        //     from: Date;
+        //     to: Date;
+        // }[] = [];
+        // if (date) slots = createSetOfSLots(date);
+
+        bookingDispatch({
+            type: 'SET_DAY',
+            payload: date
+        });
+
+        fetch(`/api/bookings?date=${date}`)
+            .then(async (bookings) => await bookings.json())
+            .then(bookings => {
+                console.log('coté client: booking: ', bookings);
+                bookingDispatch({
+                    type: 'SET_BOOKINGS',
+                    payload: bookings
+                })
+            });
+
+
+    }
 
     return (
         <Calendar
             fromDate={new Date()}
             toDate={lastDay}
             mode="single"
-            selected={date}
-            onSelect={setDate}
+            selected={bookingState.daySelected}
+            onSelect={(date) => handleSelectDate(date)}
             className="rounded-md border p-10"
         />
     )

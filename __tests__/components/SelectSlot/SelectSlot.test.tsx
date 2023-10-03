@@ -1,7 +1,7 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import SelectSlot from '@/src/components/SelectSlot/SelectSlot';
-import { TimeProvider } from '@/src/contexts/time.context';
+import SelectSlot from '@/src/components/SelectBooking/SelectBooking';
+import { TimeProvider } from '@/src/contexts/time.context/time.context';
 import { vi } from 'vitest';
 
 vi.mock('@/src/reducers/useTime', (): { useTime: () => Date; } => {

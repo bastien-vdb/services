@@ -7,7 +7,7 @@ const fetcher = async (url: string, method: "GET" | "POST" | "DELETE" = "GET", d
       },
       body: data ? JSON.stringify(data) : null,
     });
-    if (!resultjson.ok) throw new Error('not possible to fetch')
+    if (!resultjson.ok) throw new Error("not possible to fetch");
     return await resultjson.json();
   } catch (error) {
     console.error(error);

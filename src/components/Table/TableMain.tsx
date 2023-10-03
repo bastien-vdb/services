@@ -7,7 +7,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/src/components/ui/table"
-import { ButtonProps } from "@/src/components/ui/button"
+import React from "react";
 
 type TableMainProps = {
     caption: string,
@@ -15,7 +15,8 @@ type TableMainProps = {
     rows: { className: string, text: string | React.ReactNode }[][],
 }
 
-export default function TableMain({ caption, headers, rows }: TableMainProps) {
+function TableMain({ caption, headers, rows }: TableMainProps) {
+
     return (
         <Table>
             <TableCaption>{caption}</TableCaption>
@@ -40,3 +41,5 @@ export default function TableMain({ caption, headers, rows }: TableMainProps) {
         </Table>
     )
 }
+
+export default TableMain;

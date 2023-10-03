@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Time } from "@/src/contexts/time.context";
+import { Time } from "@/src/contexts/time.context/time.context";
 
 export const useTime = () => {
   const context = useContext(Time);

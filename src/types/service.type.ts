@@ -1,5 +1,7 @@
 export type servicesType = {
-  id: number;
+  id: string;
   name: string;
   price: number;
+  stripeId: string;
+  stripePriceId: string;
 };

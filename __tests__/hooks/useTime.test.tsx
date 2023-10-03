@@ -1,4 +1,4 @@
-import { TimeProvider } from '@/src/contexts/time.context';
+import { TimeProvider } from '@/src/contexts/time.context/time.context';
 import { useTime } from '@/src/hooks/useTime';
 import { act, render, renderHook } from '@testing-library/react';
 import { setHours } from 'date-fns';

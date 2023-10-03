@@ -43,7 +43,7 @@ function SelectService() {
             },
             {
                 className: "text-right",
-                text: (<Button key={key} onClick={() => handleSelectService(service.name)} color="indigo">
+                text: (<Button key={key} onClick={() => handleSelectService(service.id)} color="indigo">
                     Réserver
                 </Button>)
             }

@@ -6,6 +6,6 @@ describe('useConnect hook', () => {
             return useConnect();
         })
         expect(result.current).toBe(true);
-        
+
     })
 })
