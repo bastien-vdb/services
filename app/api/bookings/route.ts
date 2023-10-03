@@ -6,11 +6,17 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const params = new URLSearchParams(url.search);
   const dateParam = params.get("date");
+  const availableParam = params.get("available");
 
   if (!dateParam) {
-    console.log("no date");
     try {
-      const result = await prisma["booking"].findMany();
+      const available = availableParam === "true" ? true : false;
+
+      const result = await prisma["booking"].findMany({
+        where: {
+          isAvailable: available,
+        },
+      });
       return NextResponse.json(result);
     } catch (error) {
       console.log(error);

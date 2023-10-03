@@ -26,6 +26,8 @@ const ServiceCalendar = React.memo(() => {
             payload: date
         });
 
+        console.log('error step 1');
+
         fetch(`/api/bookings?date=${date}`)
             .then(async (bookings) => await bookings.json())
             .then(bookings => {
@@ -35,6 +37,7 @@ const ServiceCalendar = React.memo(() => {
                     payload: bookings
                 })
             });
+            console.log('error step 2');
 
 
     }

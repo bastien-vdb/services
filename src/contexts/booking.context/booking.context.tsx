@@ -21,7 +21,7 @@ export const BookingProvider = ({ children }: { children: React.ReactNode }) => 
     const [bookingState, bookingDispatch] = useReducer(bookingReducer, bookingStateInit);
 
     useEffect(() => {
-        fetch(`/api/bookings`)
+        fetch(`/api/bookings?available=${false}`)
             .then(async (bookings) => await bookings.json())
             .then(bookings => {
                 bookingDispatch({
