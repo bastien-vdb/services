@@ -1,13 +1,16 @@
-import { periodActionType } from "@/src/reducers/periodReducer";
+import { periodActionType, periodType } from "@/src/reducers/periodReducer";
 import { SetStateAction } from "react";
 
-export const deletePeriod = async ({ id, periodDispatch }: { id: string; periodDispatch: React.Dispatch<SetStateAction<periodActionType>> }) => {
+export const deletePeriod = async ({ period, periodDispatch }: { period: periodType; periodDispatch: React.Dispatch<SetStateAction<periodActionType>> }) => {
+  
   try {
+    if (!period.id) throw new Error("Period id is not defined");
+
     //Otpimistic update
     periodDispatch({
       type: "DELETE_PERIOD",
       payload: {
-        id,
+        id: period.id,
       },
     });
 
@@ -17,7 +20,7 @@ export const deletePeriod = async ({ id, periodDispatch }: { id: string; periodD
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id,
+        period,
       }),
     })
       .then(async (res) => await res.json())

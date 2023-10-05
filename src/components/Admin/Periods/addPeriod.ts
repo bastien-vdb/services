@@ -1,7 +1,9 @@
 import { periodActionType } from "@/src/reducers/periodReducer";
+import moment from "moment";
 import { SetStateAction } from "react";
 
 export const addPeriod = async ({ from, to, periodDispatch, setLoading }: { from: Date; to: Date; periodDispatch: React.Dispatch<periodActionType>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
+  console.log("from", from);
   try {
     setLoading(true);
 

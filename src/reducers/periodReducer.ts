@@ -32,7 +32,6 @@ export const periodReducer = (state: periodStateType, action: periodActionType) 
         periods: action.payload,
       };
     case "ADD_PERIOD":
-      console.log("ADD_PERIOD", action.payload.start, action.payload.end);
       return { ...state, periods: [...state.periods, action.payload] };
     case "DELETE_PERIOD":
       return { ...state, periods: state.periods.filter((period) => period.id !== action.payload.id) };

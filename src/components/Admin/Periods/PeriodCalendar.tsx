@@ -7,7 +7,6 @@ import { addPeriod } from '@/src/components/Admin/Periods/addPeriod';
 import { usePeriod } from '@/src/hooks/usePeriod';
 import TableMain from '@/src/components/Table/TableMain';
 import { periodType } from '@/src/reducers/periodReducer';
-import { string } from 'zod';
 import { deletePeriod } from './deletePeriod';
 
 const PeriodceCalendar = React.memo(() => {
@@ -23,7 +22,7 @@ const PeriodceCalendar = React.memo(() => {
 
     const defaultSelected: DateRange = {
         from: new Date(),
-        to: moment(new Date()).add(2, 'day').toDate()
+        to: moment(new Date()).add(1, 'day').toDate()
     }
 
     const [range, setRange] = React.useState<DateRange | undefined>(defaultSelected);
@@ -38,14 +37,14 @@ const PeriodceCalendar = React.memo(() => {
         [
             { className: "font-medium w-40", text: moment(period.start).format('DD/MM/YYYY').toString() },
             { className: "text-right", text: moment(period.end).format('DD/MM/YYYY').toString() },
-            { className: "text-right", text: <Button onClick={() => handleDeleteService(period.id)} disabled={loading} variant="destructive">Supprimer</Button> }
+            { className: "text-right", text: <Button onClick={() => handleDeleteService(period)} disabled={loading} variant="destructive">Supprimer</Button> }
         ]
     ));
 
-    const handleDeleteService = (id: string | undefined) => {
-        if (!id) return;
+    const handleDeleteService = (period: periodType) => {
+        if (!period.id) return;
         deletePeriod({
-            id,
+            period,
             periodDispatch,
         });
     }
@@ -56,9 +55,12 @@ const PeriodceCalendar = React.memo(() => {
             return;
         }
 
+        const from = moment(range?.from).startOf("day").toDate();
+        const to = moment(range?.to).endOf("day").toDate();
+
         addPeriod({
-            from: range?.from,
-            to: range?.to,
+            from,
+            to,
             periodDispatch,
             setLoading,
         });

@@ -1,14 +1,30 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/db/prisma";
+import moment from "moment";
 
 export async function DELETE(request: Request) {
   const body = await request.json();
-  const { id } = body;
+  const { period } = body;
 
   try {
+    const response = await prisma.booking.deleteMany({
+      where: {
+        startTime: {
+          gte: period.start,
+        },
+        endTime: {
+          lte: moment(period.end).add(1, "seconds").toDate(),
+        },
+      },
+    });
+
+    console.log("response", response);
+
+    if (!response) throw new Error("Period cannot be deleted");
+
     await prisma.periods.delete({
       where: {
-        id,
+        id: period.id,
       },
     });
 

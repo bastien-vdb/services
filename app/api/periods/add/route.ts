@@ -7,9 +7,6 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { start, end, serviceId } = body;
 
-  console.log("start !-", start);
-  console.log("end !-", end);
-
   try {
     const periods = await prisma.periods.create({
       data: {
@@ -19,10 +16,10 @@ export async function POST(request: Request) {
       },
     });
     if (periods) {
-      const startOfDay = moment(start).clone().startOf("day").toDate();
-      const endOfDay = moment(end).clone().endOf("day").toDate();
+      // const startOfDay = moment(start).startOf("day").toDate();
+      // const endOfDay = moment(end).endOf("day").toDate();
 
-      const listOfSlot = createSetOfSLots(startOfDay, endOfDay);
+      const listOfSlot = createSetOfSLots(start, end);
 
       const bookingsData = listOfSlot.map((slot) => ({
         date: new Date(),
