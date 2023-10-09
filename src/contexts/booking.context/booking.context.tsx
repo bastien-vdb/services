@@ -11,7 +11,6 @@ export type bookingContextType = {
 
 const bookingStateInit: bookingStateType = {
     daySelected: formatDay(new Date()),
-    listOfSlot: [],
     bookings: [],
 }
 

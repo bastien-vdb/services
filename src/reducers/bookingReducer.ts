@@ -14,7 +14,6 @@ export type slotType = { from: Date; to: Date };
 
 export type bookingStateType = {
   daySelected: Date | null;
-  listOfSlot: slotType[];
   bookings: bookingType[];
 };
 

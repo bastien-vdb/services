@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const dateParam = params.get("date");
   const availableParam = params.get("available");
 
-  if (!dateParam) {
+  if (dateParam === "undefined" || dateParam === null) {
     try {
       const available = availableParam === "true" ? true : false;
 
@@ -19,7 +19,6 @@ export async function GET(request: Request) {
       });
       return NextResponse.json(result);
     } catch (error) {
-      console.log(error);
       throw new Error("Data cannot be reach from the db");
     }
   }
@@ -28,9 +27,6 @@ export async function GET(request: Request) {
     const date = moment(dateParam);
     const startOfDay = date.clone().startOf("day").toDate();
     const endOfDay = date.clone().endOf("day").toDate();
-
-    console.log("startOfDay", startOfDay);
-    console.log("endOfDay", endOfDay);
 
     const result = await prisma["booking"].findMany({
       where: {
@@ -42,7 +38,6 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log("result !!!333", result);
     return NextResponse.json(result);
   } catch (error) {
     console.log(error);

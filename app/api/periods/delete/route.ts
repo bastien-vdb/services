@@ -18,8 +18,6 @@ export async function DELETE(request: Request) {
       },
     });
 
-    console.log("response", response);
-
     if (!response) throw new Error("Period cannot be deleted");
 
     await prisma.periods.delete({

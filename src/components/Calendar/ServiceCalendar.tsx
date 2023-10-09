@@ -14,19 +14,10 @@ const ServiceCalendar = React.memo(() => {
     const lastDay = new Date(today.getFullYear(), today.getMonth(), nbOfDaysInMonth);
 
     const handleSelectDate = (date: Date | undefined) => {
-
-        // let slots: {
-        //     from: Date;
-        //     to: Date;
-        // }[] = [];
-        // if (date) slots = createSetOfSLots(date);
-
         bookingDispatch({
             type: 'SET_DAY',
             payload: date
         });
-
-        console.log('error step 1');
 
         fetch(`/api/bookings?date=${date}`)
             .then(async (bookings) => await bookings.json())
@@ -37,9 +28,6 @@ const ServiceCalendar = React.memo(() => {
                     payload: bookings
                 })
             });
-            console.log('error step 2');
-
-
     }
 
     return (
