@@ -2,11 +2,12 @@
 import { useService } from '@/src/hooks/useService';
 import TableMain from '@/src/components/Table/TableMain';
 import { Button } from '@/src/components/ui/button';
+import { servicesType } from '@/src/types/service.type';
 
-function SelectService() {
+function SelectService({services}: {services?: servicesType[]}) {
 
     const { serviceState, serviceDispatch } = useService();
-    const services = serviceState.serviceList;
+    // const services = serviceState.serviceList;
 
     const handleSelectService = (serviceName: string) => {
         serviceDispatch(
@@ -31,7 +32,7 @@ function SelectService() {
         }
     ];
 
-    const formatDataToServiceTableBody = services.map((service, key) => (
+    const formatDataToServiceTableBody = services?.map((service, key) => (
         [
             {
                 className: "font-medium w-40",
@@ -51,7 +52,7 @@ function SelectService() {
         ]
     ));
 
-    return <TableMain caption="Sélection de la prestation" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
+    return <TableMain caption="Sélection de la prestation" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody!} />
 }
 
 export default SelectService;

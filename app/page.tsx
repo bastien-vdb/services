@@ -10,7 +10,6 @@ import { useBooking } from "@/src/hooks/useBooking";
 
 function Home() {
 
-  //@ts-ignore
   const { bookingState, bookingDispatch } = useBooking();
   const { serviceState, serviceDispatch } = useService();
 
