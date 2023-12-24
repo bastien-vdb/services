@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/db/prisma";
 import { createSetOfSLots } from "@/src/contexts/booking.context/createSetOfSlots";
-import moment from "moment";
 
 export async function POST(request: Request) {
   const body = await request.json();

@@ -21,7 +21,9 @@ export const ServiceProvider = ({ children }: { children: React.ReactNode }) => 
 
     useEffect(() => {
         fetch('/api/services')
-            .then(services => services.json())
+            .then(services => {
+                console.log('services from context', services)
+                return services.json()})
             .then(services => {
                 serviceDispatch({
                     type: 'SET_SERVICES',

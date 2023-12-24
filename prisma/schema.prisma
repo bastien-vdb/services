@@ -14,6 +14,8 @@ model Service {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String    @unique
   price         Int
+  createdById   String?   @db.ObjectId
+  createdBy     User?     @relation(fields: [createdById], references: [id])
   stripeId      String?   @map("stripe_id")
   Booking       Booking[]
   stripePriceId String?   @map("stripe_price_id")
@@ -22,7 +24,7 @@ model Service {
 model User {
   address Address?
   booked  Booking[]
-
+  servicesCreated Service[]
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?   @unique

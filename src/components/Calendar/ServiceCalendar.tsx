@@ -22,7 +22,6 @@ const ServiceCalendar = React.memo(() => {
         fetch(`/api/bookings?date=${date}`)
             .then(async (bookings) => await bookings.json())
             .then(bookings => {
-                console.log('coté client: booking: ', bookings);
                 bookingDispatch({
                     type: 'SET_BOOKINGS',
                     payload: bookings

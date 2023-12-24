@@ -7,6 +7,7 @@ import AdminAvatar from '@/src/components/Admin/Avatars/AdminAvatar';
 import ModeToggle from '@/src/components/Buttons/ModeToggle';
 import { PeriodProvider } from '@/src/contexts/period.context';
 import { BookingProvider } from '@/src/contexts/booking.context/booking.context';
+import AuthSessionProvider from '@/src/components/Auth/AuthSessionProvider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -33,11 +34,14 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
-                <div className='flex gap-4 m-4 items-center justify-end'>
-                  <AdminAvatar />
-                  <ModeToggle />
-                </div>
-                {children}
+                <AuthSessionProvider>
+                  <div className='flex gap-4 m-4 items-center justify-end'>
+                    <AdminAvatar />
+                    <ModeToggle />
+                  </div>
+
+                  {children}
+                </AuthSessionProvider>
               </ThemeProvider>
             </body>
           </BookingProvider>
