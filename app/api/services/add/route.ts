@@ -36,7 +36,11 @@ export async function POST(request: Request) {
       },
     });
     if (services) {
-      const result = await (prisma["service"] as any).findMany();
+      const result = await (prisma["service"] as any).findMany({
+        where: {
+          createdById: session.user.id,
+        },
+      });
       return NextResponse.json(result);
     }
   } catch (error: unknown) {

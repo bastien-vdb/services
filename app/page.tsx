@@ -7,7 +7,6 @@ import { useService } from '@/src/hooks/useService';
 import { WithConnection } from "@/src/HOCs/WithConnection";
 import { Button } from "@/src/components/ui/button";
 import { useBooking } from "@/src/hooks/useBooking";
-import { signOut } from "next-auth/react"
 
 function Home() {
 
@@ -21,7 +20,18 @@ function Home() {
     })
   }, []);
 
-  if (serviceState.serviceSelected) return (
+  if (!serviceState.serviceSelected)
+
+    return (
+      <main className="flex flex-col">
+        <div className="w-[800px] m-auto">
+          <SelectService />
+        </div>
+
+      </main >
+    )
+
+  return (
     <main className="flex flex-col">
 
       <div className="flex">
@@ -37,16 +47,6 @@ function Home() {
       </div>
     </main >
   );
-
-  return (
-    <main className="flex flex-col">
-      <div className="w-[800px] m-auto">
-        <SelectService />
-        <Button size="sm" variant="secondary" onClick={() => signOut()}>Sign out</Button>
-      </div>
-
-    </main >
-  )
 };
 
 export default WithConnection(Home);

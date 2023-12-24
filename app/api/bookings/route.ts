@@ -1,12 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/db/prisma";
 import moment from "moment";
+import { authOptions } from "../auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const params = new URLSearchParams(url.search);
   const dateParam = params.get("date");
   const availableParam = params.get("available");
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   if (dateParam === "undefined" || dateParam === null) {
     try {
@@ -15,6 +23,7 @@ export async function GET(request: Request) {
       const result = await prisma["booking"].findMany({
         where: {
           isAvailable: available,
+          userId: session.user.id,
         },
       });
       return NextResponse.json(result);
@@ -35,6 +44,7 @@ export async function GET(request: Request) {
           lt: endOfDay,
         },
         isAvailable: true,
+        userId: session.user.id,
       },
     });
 

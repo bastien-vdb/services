@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { useService } from "@/src/hooks/useService";
 import TableMain from "@/src/components/Table/TableMain";

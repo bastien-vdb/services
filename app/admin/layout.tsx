@@ -8,13 +8,12 @@ import ModeToggle from '@/src/components/Buttons/ModeToggle';
 import { PeriodProvider } from '@/src/contexts/period.context';
 import { BookingProvider } from '@/src/contexts/booking.context/booking.context';
 import AuthSessionProvider from '@/src/components/Auth/AuthSessionProvider';
-import Header from '@/src/components/Header/Header';
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Service manager',
-  description: 'Service manager app with React',
+  title: 'Service manager admin',
+  description: 'Service manager admin',
 }
 
 export default function RootLayout({
@@ -24,27 +23,8 @@ export default function RootLayout({
 }) {
 
   return (
-    <html lang="en">
-      <ServiceProvider>
-        <PeriodProvider>
-          <BookingProvider>
-            <body className={inter.className}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <AuthSessionProvider>
-                  <Header />
-
-                  {children}
-                </AuthSessionProvider>
-              </ThemeProvider>
-            </body>
-          </BookingProvider>
-        </PeriodProvider>
-      </ServiceProvider>
-    </html>
+    <>
+      {children}
+    </>
   )
 }

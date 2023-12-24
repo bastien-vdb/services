@@ -14,7 +14,10 @@ const bookingStateInit: bookingStateType = {
     bookings: [],
 }
 
-export const BookingContext = createContext<bookingContextType | null>(null);
+export const BookingContext = createContext<bookingContextType>({
+    bookingState: bookingStateInit,
+    bookingDispatch: () => { },
+});
 
 export const BookingProvider = ({ children }: { children: React.ReactNode }) => {
     const [bookingState, bookingDispatch] = useReducer(bookingReducer, bookingStateInit);

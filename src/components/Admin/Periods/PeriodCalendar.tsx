@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';

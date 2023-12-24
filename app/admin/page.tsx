@@ -1,15 +1,18 @@
-'use client'
 import { WithConnection } from "@/src/HOCs/WithConnection";
 import Services from "@/src/components/Admin/Services/Services";
 import { Separator } from "@/src/components/ui/separator"
 import Periods from "@/src/components/Admin/Periods/Periods"; // Import the Booking component
 import Bookings from "@/src/components/Admin/Bookings/Bookings";
-import { signIn, useSession } from "next-auth/react";
-import { Button } from "@/src/components/ui/button";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 
 function Admin() {
 
+  const session = getServerSession(authOptions);
+  if (!session) return (<>
+    <div>You need to be connected to access Booking app</div>
+  </>)
   return (
     <main className="flex flex-col p-6 gap-6">
       <Services />
@@ -22,4 +25,4 @@ function Admin() {
   )
 };
 
-export default WithConnection(Admin);
+export default Admin;

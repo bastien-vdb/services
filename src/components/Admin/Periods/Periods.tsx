@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { Badge } from "@/src/components/ui/badge"
 import PeriodceCalendar from '@/src/components/Admin/Periods/PeriodCalendar';

@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from 'react';
 import { Badge } from "@/src/components/ui/badge"
 import TableMain from '@/src/components/Table/TableMain';
@@ -11,7 +12,6 @@ function Periods() {
 
     const [loading, setLoading] = useState(false);
 
-    //@ts-ignore
     const { bookingState, bookingDispatch } = useBooking();
 
     const formatDataToServiceTableHeader = [

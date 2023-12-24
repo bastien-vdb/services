@@ -1,7 +1,7 @@
 import { bookingActionType } from "@/src/reducers/bookingReducer";
 import { SetStateAction } from "react";
 
-export const deleteBooking = async ({ id, bookingDispatch, setLoading }: { id: string; bookingDispatch: React.Dispatch<SetStateAction<bookingActionType>>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
+export const deleteBooking = async ({ id, bookingDispatch, setLoading }: { id: string; bookingDispatch: React.Dispatch<bookingActionType>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
   try {
     setLoading(true);
 

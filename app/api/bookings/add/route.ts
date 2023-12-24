@@ -1,10 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/db/prisma";
 import Stripe from "stripe";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/route";
 
 export async function PUT(request: Request) {
   const body = await request.json();
   const { id } = body;
+
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return new Response("Unauthorized", { status: 401 });
+  }
 
   if (!process.env.STRIPE_SECRET_KEY) return new Response("Stripe secret key is not defined", { status: 400 });
   try {
@@ -19,7 +27,11 @@ export async function PUT(request: Request) {
       },
     });
     if (updatedBooking) {
-      const result = await (prisma["booking"] as any).findMany();
+      const result = await prisma["booking"].findMany({
+        where: {
+          userId: session.user.id,
+        },
+      });
       return NextResponse.json(result);
     }
   } catch (error: unknown) {

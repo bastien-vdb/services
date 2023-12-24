@@ -25,6 +25,7 @@ model User {
   address Address?
   booked  Booking[]
   servicesCreated Service[]
+  periodsCreated Periods[]
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
   email         String?   @unique
@@ -63,6 +64,8 @@ model Periods {
   date  DateTime
   start DateTime
   end   DateTime
+  createdById String? @db.ObjectId
+  createdBy   User?   @relation(fields: [createdById], references: [id])
 }
 
 model Account {
