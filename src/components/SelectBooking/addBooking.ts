@@ -2,19 +2,9 @@ import { bookingActionType } from "@/src/reducers/bookingReducer";
 import { SetStateAction } from "react";
 
 export const addBooking = async ({ daySelected, booking, bookingDispatch, setLoading }: { daySelected: Date; booking: any; bookingDispatch: React.Dispatch<bookingActionType>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
+  
   try {
     setLoading(true);
-    //Otpimistic update
-    // bookingDispatch({
-    //   type: "ADD_BOOKING",
-    //   payload: {
-    //     date: new Date(),
-    //     startTime: booking.startTime,
-    //     endTime: booking.endTime,
-    //     isAvailable: false,
-    //     serviceId: booking.serviceId,
-    //   },
-    // });
 
     const response = await fetch("/api/bookings/add", {
       method: "PUT",

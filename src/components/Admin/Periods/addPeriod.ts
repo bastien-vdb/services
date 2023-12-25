@@ -27,7 +27,7 @@ export const addPeriod = async ({ from, to, periodDispatch, setLoading }: { from
         end: to,
       }),
     })
-      .then(async (res) => await res.json())
+      .then((res) => res.json())
       .then((newListOfPeriods) => {
         periodDispatch({
           type: "SET_PERIODS",

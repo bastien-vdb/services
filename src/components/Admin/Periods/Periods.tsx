@@ -26,7 +26,6 @@ function Periods() {
         <>
             <Badge className="w-20 m-auto">Periods</Badge><br />
             <PeriodceCalendar />
-            <Button onClick={handleDeleteEmmergency} className="w-20 m-auto">Force Deleting</Button>
         </>
     );
 }

@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
   try {
-    const result = await (prisma["periods"] as any).findMany({
+    const result = await prisma.periods.findMany({
       where: {
         createdById: session.user.id,
       },
