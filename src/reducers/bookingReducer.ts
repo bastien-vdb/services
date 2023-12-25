@@ -1,3 +1,5 @@
+import { Booking } from "@prisma/client";
+
 export type bookingType = {
   id?: string;
   date: Date;
@@ -14,7 +16,7 @@ export type slotType = { from: Date; to: Date };
 
 export type bookingStateType = {
   daySelected: Date | null;
-  bookings: bookingType[];
+  bookings: Booking[];
 };
 
 export type bookingActionType =
@@ -24,7 +26,7 @@ export type bookingActionType =
     }
   | {
       type: "ADD_BOOKING";
-      payload: bookingType;
+      payload: Booking;
     }
   | {
       type: "DELETE_BOOKING";
@@ -32,7 +34,7 @@ export type bookingActionType =
     }
   | {
       type: "SET_BOOKINGS";
-      payload: bookingType[];
+      payload: Booking[];
     };
 
 export const bookingReducer = (state: bookingStateType, action: bookingActionType) => {

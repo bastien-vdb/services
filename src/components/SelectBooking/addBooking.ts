@@ -1,7 +1,8 @@
 import { bookingActionType } from "@/src/reducers/bookingReducer";
+import { Booking } from "@prisma/client";
 import { SetStateAction } from "react";
 
-export const addBooking = async ({ daySelected, booking, bookingDispatch, setLoading }: { daySelected: Date; booking: any; bookingDispatch: React.Dispatch<bookingActionType>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
+export const addBooking = async ({ daySelected, booking, bookingDispatch, setLoading }: { daySelected: Date; booking: Booking; bookingDispatch: React.Dispatch<bookingActionType>; setLoading: React.Dispatch<SetStateAction<boolean>> }) => {
   
   try {
     setLoading(true);

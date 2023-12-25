@@ -1,16 +1,18 @@
 import type { servicesType } from "@/src/types/service.type";
+import { Service } from "@prisma/client";
 
 /*** state */
 
 export type serviceStateType = {
   serviceList: servicesType[];
   serviceSelected: string;
+  serviceFullSelected?: Service;
 };
 
 export type serviceActionType =
   | {
       type: "SELECT_SERVICE" | "RESET" | "DELETE_SERVICE";
-      payload?: { serviceSelected: string };
+      payload?: { serviceSelected: string; serviceFullSelected?: Service };
     }
   | {
       type: "ADD_SERVICE";
@@ -34,6 +36,7 @@ export const serviceReducer = (state: serviceStateType, action: serviceActionTyp
       return {
         ...state,
         serviceSelected: action.payload.serviceSelected,
+        serviceFullSelected: action.payload.serviceFullSelected,
       };
     case "RESET":
       return {

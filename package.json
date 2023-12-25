@@ -45,6 +45,7 @@
     "node": "^21.2.0",
     "postcss": "8.4.29",
     "prisma": "^5.7.0",
+    "raw-body": "^2.5.2",
     "react": "18.2.0",
     "react-calendar": "^4.6.0",
     "react-day-picker": "^8.8.2",

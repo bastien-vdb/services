@@ -8,12 +8,16 @@ function SelectService({ services }: { services?: Service[] }) {
 
     const { serviceDispatch } = useService();
 
-    const handleSelectService = (serviceName: string) => {
+    const handleSelectService = (service: Service) => {
         serviceDispatch(
             {
                 type: 'SELECT_SERVICE',
-                payload: { serviceSelected: serviceName }
-            })
+                payload: {
+                    serviceSelected: service.id,
+                    serviceFullSelected: service
+                }
+            }
+        )
     }
 
     const formatDataToServiceTableHeader = [
@@ -43,7 +47,7 @@ function SelectService({ services }: { services?: Service[] }) {
             },
             {
                 className: "text-right",
-                text: (<Button key={key} onClick={() => handleSelectService(service.id)} color="indigo">
+                text: (<Button key={key} onClick={() => handleSelectService(service)} color="indigo">
                     Réserver
                 </Button>)
             }

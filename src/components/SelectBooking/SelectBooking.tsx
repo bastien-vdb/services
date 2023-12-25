@@ -3,39 +3,45 @@ import { Button } from '@/src/components/ui/button';
 import { useBooking } from '@/src/hooks/useBooking';
 import { addBooking } from '@/src/components/SelectBooking/addBooking';
 import { useState } from 'react';
-import { bookingContextType } from '@/src/contexts/booking.context/booking.context';
 import { useService } from '@/src/hooks/useService';
 import { Booking } from 'prisma/prisma-client'
+import { useSession } from 'next-auth/react';
 
 const SelectBooking = () => {
 
     const [loading, setLoading] = useState(false);
 
-    const { bookingState, bookingDispatch } = useBooking() as bookingContextType;
+    const { bookingState, bookingDispatch } = useBooking();
 
     const { serviceState, serviceDispatch } = useService();
+
+    const { data: session } = useSession();
+
+    console.log('session: ', session);
 
     const handleCreateBook = async (booking: Booking) => {
 
         console.log('serviceState: ', serviceState);
 
-        // try {
-        //     const paymentPage = await fetch(`${process.env.HOST}/api/checkout/create-checkout-session`,
-        //         {
-        //             method: "PUT",
-        //             headers: {
-        //                 "Content-Type": "application/json",
-        //             },
-        //             body: JSON.stringify(
-        //                 { stripePriceId: serviceState.serviceSelected.stripePriceId, slot, userId, serviceId }
-        //             ),
-        //         });
+        try {
+            const paymentPage = await fetch(`http://localhost:3000/api/checkout/create-checkout-session`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(
+                        { stripePriceId: serviceState.serviceFullSelected?.stripePriceId, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceState.serviceFullSelected?.id }
+                    ),
+                });
 
-        //     window.location.assign(paymentPage);
-        // } catch (error) {
-        //     console.error("error: ", error);
-        //     throw new Error("Une erreur est survenue lors de la prise de rendez-vous");
-        // }
+            const paymentPageJson = await paymentPage.json();
+
+            window.location.assign(paymentPageJson);
+        } catch (error) {
+            console.error("error: ", error);
+            throw new Error("Une erreur est survenue lors de la prise de rendez-vous");
+        }
 
         if (!bookingState.daySelected) throw new Error('No day selected');
         addBooking({ daySelected: bookingState.daySelected, booking, bookingDispatch, setLoading });
@@ -46,7 +52,7 @@ const SelectBooking = () => {
             <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
                 {
                     bookingState.bookings.map((booking, key) => (
-                        <li key={key}><Button onClick={() => handleCreateBook(booking as Booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
+                        <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
                     ))
                 }
                 <span className='m-2'>Day: {bookingState.daySelected!.toString()}</span>

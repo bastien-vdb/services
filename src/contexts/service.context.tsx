@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useEffect, useReducer, useState } from "react";
+import { createContext, useEffect, useReducer } from "react";
 import { serviceReducer } from "@/src/reducers/serviceReducer";
 import type { serviceStateType, serviceActionType } from "@/src/reducers/serviceReducer";
 
@@ -15,6 +15,7 @@ export const ServiceProvider = ({ children }: { children: React.ReactNode }) => 
     const serviceStateInit = {
         serviceList: [],
         serviceSelected: "",
+        serviceFullList: null,
     }
 
     const [serviceState, serviceDispatch] = useReducer(serviceReducer, serviceStateInit);
@@ -23,7 +24,8 @@ export const ServiceProvider = ({ children }: { children: React.ReactNode }) => 
         fetch('/api/services')
             .then(services => {
                 console.log('services from context', services)
-                return services.json()})
+                return services.json()
+            })
             .then(services => {
                 serviceDispatch({
                     type: 'SET_SERVICES',
