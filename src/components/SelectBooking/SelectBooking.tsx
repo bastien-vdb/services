@@ -12,7 +12,8 @@ const SelectBooking = () => {
     const { bookingState, bookingDispatch } = useBooking() as bookingContextType;
 
     const handleCreateBook = (booking: any) => {
-        addBooking({ daySelected: bookingState.daySelected!, booking, bookingDispatch, setLoading });
+        if (!bookingState.daySelected) throw new Error('No day selected');
+        addBooking({ daySelected: bookingState.daySelected, booking, bookingDispatch, setLoading });
     }
 
     return (

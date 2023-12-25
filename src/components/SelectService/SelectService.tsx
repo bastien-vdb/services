@@ -2,12 +2,11 @@
 import { useService } from '@/src/hooks/useService';
 import TableMain from '@/src/components/Table/TableMain';
 import { Button } from '@/src/components/ui/button';
-import { servicesType } from '@/src/types/service.type';
+import { Service } from '@prisma/client';
 
-function SelectService({services}: {services?: servicesType[]}) {
+function SelectService({ services }: { services?: Service[] }) {
 
-    const { serviceState, serviceDispatch } = useService();
-    // const services = serviceState.serviceList;
+    const { serviceDispatch } = useService();
 
     const handleSelectService = (serviceName: string) => {
         serviceDispatch(

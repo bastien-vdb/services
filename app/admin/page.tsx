@@ -5,13 +5,15 @@ import Periods from "@/src/components/Admin/Periods/Periods"; // Import the Book
 import Bookings from "@/src/components/Admin/Bookings/Bookings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import SignIn from "@/src/components/Buttons/SignIn";
 
 
-function Admin() {
+async function Admin() {
 
-  const session = getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
   if (!session) return (<>
     <div>You need to be connected to access Booking app</div>
+    <div><SignIn /></div>
   </>)
   return (
     <main className="flex flex-col p-6 gap-6">

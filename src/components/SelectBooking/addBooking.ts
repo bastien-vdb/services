@@ -27,14 +27,12 @@ export const addBooking = async ({ daySelected, booking, bookingDispatch, setLoa
     });
 
     if (!response.ok) {
-      console.log("error 1");
       const data = await response.json();
       throw new Error(data.message);
     }
 
     const response_bookings = await fetch(`/api/bookings?date=${daySelected}`);
     if (!response_bookings.ok) {
-      console.log("error 2");
       const data = await response_bookings.json();
       throw new Error(data.message);
     }
@@ -43,8 +41,6 @@ export const addBooking = async ({ daySelected, booking, bookingDispatch, setLoa
       type: "SET_BOOKINGS",
       payload: newListOfBookings,
     });
-
-    console.log("newListOfBookings", newListOfBookings);
   } catch (error: any) {
     alert(error.message);
     throw new Error(error);

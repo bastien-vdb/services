@@ -1,25 +1,19 @@
 import React from 'react';
 import { prisma } from "@/src/db/prisma";
-import SelectService from '@/src/components/SelectService/SelectService';
+import Steps from '@/src/components/Main/Steps';
+import { Service } from '@prisma/client';
 
 
-async function page({ params }: { params: { userId: string } }) {
+async function Business({ params }: { params: { userId: string } }) {
 
     const { userId } = params;
 
-    let services: {
-        id: string;
-        name: string;
-        price: number;
-        createdById: string | null;
-        stripeId: string | null;
-        stripePriceId: string | null;
-    }[] = [];
+    let services: Service[] = [];
 
     try {
         const res = await prisma.service.findMany({
             where: {
-                createdById: '6586b8aceef121479063c8f6',
+                createdById: userId,
             },
         })
         services.push(...res);
@@ -28,14 +22,7 @@ async function page({ params }: { params: { userId: string } }) {
         throw new Error("Data cannot be reach from the db");
     }
 
-    return (
-        <div>
-            Business page for {userId}
-
-            {services && services.map(prestation => <div>{prestation.name}</div>)}
-            <SelectService services={services} />
-        </div>
-    );
+    return <Steps services={services} userId={userId} />
 }
 
-export default page;
+export default Business;

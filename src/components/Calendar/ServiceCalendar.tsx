@@ -1,9 +1,9 @@
-import React from 'react';
+import { memo } from 'react';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';
 import { useBooking } from '@/src/hooks/useBooking';
 
-const ServiceCalendar = React.memo(() => {
+const ServiceCalendar = memo(({ userId }: { userId: string }) => {
 
     const { bookingState, bookingDispatch } = useBooking();
 
@@ -17,7 +17,7 @@ const ServiceCalendar = React.memo(() => {
             payload: date
         });
 
-        fetch(`/api/bookings?date=${date}`)
+        fetch(`/api/bookings?date=${date}&userId=${userId}`)
             .then(async (bookings) => await bookings.json())
             .then(bookings => {
                 bookingDispatch({

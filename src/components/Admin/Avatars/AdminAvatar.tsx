@@ -20,6 +20,8 @@ async function AdminAvatar() {
 
     const session = await getServerSession(authOptions);
 
+    if (!session) return;
+
     return (
         <>
             <DropdownMenu>
