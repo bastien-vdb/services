@@ -7,14 +7,15 @@ import { Button } from '@/src/components/ui/button';
 import { addPeriod } from '@/src/components/Admin/Periods/addPeriod';
 import { usePeriod } from '@/src/hooks/usePeriod';
 import TableMain from '@/src/components/Table/TableMain';
-import { periodType } from '@/src/reducers/periodReducer';
 import { deletePeriod } from './deletePeriod';
+import { Badge } from "@/src/components/ui/badge";
+import { Periods } from '@prisma/client';
 
-const PeriodceCalendar = React.memo(() => {
+const PeriodceCalendar = ({periods}:{periods:Periods[]}) => {
 
     const [loading, setLoading] = useState(false);
 
-    // @ts-ignore
+
     const { periodState, periodDispatch } = usePeriod();
 
     const today = new Date();
@@ -26,7 +27,7 @@ const PeriodceCalendar = React.memo(() => {
         to: moment(new Date()).add(1, 'day').toDate()
     }
 
-    const [range, setRange] = React.useState<DateRange | undefined>(defaultSelected);
+    const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
 
     const formatDataToServiceTableHeader = [
         { className: "w-20", text: 'From' },
@@ -34,7 +35,7 @@ const PeriodceCalendar = React.memo(() => {
         { className: "", text: '' }
     ];
 
-    const formatDataToServiceTableBody = periodState.periods.map((period: periodType) => (
+    const formatDataToServiceTableBody = periods.map((period: Periods) => (
         [
             { className: "font-medium w-40", text: moment(period.start).format('DD/MM/YYYY').toString() },
             { className: "text-right", text: moment(period.end).format('DD/MM/YYYY').toString() },
@@ -42,7 +43,7 @@ const PeriodceCalendar = React.memo(() => {
         ]
     ));
 
-    const handleDeleteService = (period: periodType) => {
+    const handleDeleteService = (period: Periods) => {
         if (!period.id) return;
         deletePeriod({
             period,
@@ -75,17 +76,21 @@ const PeriodceCalendar = React.memo(() => {
     )
 
     return (
-        <Calendar
-            fromDate={new Date()}
-            toDate={lastDay}
-            mode="range"
-            selected={range}
-            onSelect={setRange}
-            footer={footer}
-            className="rounded-md border p-10"
-        />
+        <>
+            <Badge className="w-20 m-auto">Periods</Badge><br />
+
+            <Calendar
+                fromDate={new Date()}
+                toDate={lastDay}
+                mode="range"
+                selected={range}
+                onSelect={setRange}
+                footer={footer}
+                className="rounded-md border p-10"
+            />
+        </>
     )
 
-})
+};
 
 export default PeriodceCalendar;

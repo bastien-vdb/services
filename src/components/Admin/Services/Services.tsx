@@ -1,21 +1,21 @@
 'use client'
-import React, { useState } from 'react';
-import { useService } from "@/src/hooks/useService";
+import { useEffect, useState } from 'react';
 import TableMain from "@/src/components/Table/TableMain";
 import { Input } from "@/src/components/ui/input"
 import { Badge } from "@/src/components/ui/badge"
 import { Button } from "@/src/components/ui/button";
-import { servicesType } from '@/src/types/service.type';
-import { addService } from '@/src/components/Admin/Services/addService';
-import { deleteService } from '@/src/components/Admin/Services/deleteService';
+import { Service } from '@prisma/client';
+import useServiceStore from './useServicesStore';
+import { useSession } from 'next-auth/react';
+import useCreateServerData from './useCreateServiceData';
+import useDeleteServiceData from './useDeleteServiceData';
 
+function Services({services}: {services: Service[]}) {
 
-function Services() {
-
-    const { serviceState, serviceDispatch } = useService();
-    const { serviceList } = serviceState;
     const [loading, setLoading] = useState(false);
+    const {services:servicesFromStore, reLoadServices, addService, removeService} = useServiceStore();
 
+    const session = useSession();
     const [serviceName, setServiceName] = useState("");
     const [servicePrice, setServicePrice] = useState(0);
 
@@ -25,7 +25,7 @@ function Services() {
         { className: "", text: '' }
     ];
 
-    const formatDataToServiceTableBody = serviceList.map((service) => (
+    const formatDataToServiceTableBody = (servicesFromStore.length>0 ? servicesFromStore : services).map((service) => (
         [
             { className: "font-medium w-40", text: service.name },
             { className: "text-right", text: service.price },
@@ -33,32 +33,44 @@ function Services() {
         ]
     ));
 
-
+    useEffect(() => {
+        reLoadServices(session?.data?.user.id!);
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.name === 'servicename') setServiceName(e.target.value);
         if (e.target.name === 'serviceprice') setServicePrice(Number(e.target.value));
     }
 
-    const handleAddService = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleAddService = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
+
+        //Optimistic update with fake data
         addService({
-            e,
-            serviceName,
-            servicePrice,
-            serviceDispatch,
-            setLoading
+            id: '19',
+            name: serviceName,
+            price: servicePrice,
+            createdById: 'bas',
+            stripeId: '653',
+            stripePriceId: 'yhen76'
         });
-        setServiceName("");
-        setServicePrice(0);
+
+        await useCreateServerData({
+            name: serviceName,
+            price: servicePrice,
+        });
+        reLoadServices(session?.data?.user.id!);
+        setLoading(false);
     };
 
-    const handleDeleteService = (service: servicesType) => {
-        deleteService(
-            service,
-            serviceDispatch
-        );
+    const handleDeleteService = async(service: Service) => {  
+        setLoading(true);
+        removeService(service);//Optimistic update
+        await useDeleteServiceData({service});
+        reLoadServices(session?.data?.user.id!);
+        setLoading(false);
+        
     }
 
     return (

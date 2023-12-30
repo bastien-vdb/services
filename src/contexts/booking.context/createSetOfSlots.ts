@@ -4,7 +4,7 @@ import { SlotListCalendarConfig } from "@/src/lib/Config/calendar.config";
 export const createSetOfSLots = (start: Date, end:Date) => {
   const INTERVAL_IN_MINUTES = SlotListCalendarConfig.interval;
 
-  const startDate = moment.utc(start);  // Utilisez moment.utc pour travailler en UTC
+  const startDate = moment.utc(start);
   const endDate = moment.utc(end);
 
   let ListOfSlot = [] as { from: Date; to: Date }[];

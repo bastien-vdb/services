@@ -1,10 +1,12 @@
+'use server'
 import { prisma } from '@/src/db/prisma';
 
-async function useServerData(prismaKey: string) {
+async function useServerData(prismaKey: unknown, where: { [key: string]: unknown } = {}) {
 
     try {
-        const result = await (prisma[prismaKey as any] as any).findMany();
-        return result;
+        return await (prisma[prismaKey as any] as any).findMany({
+            where,
+        });
     }
     catch (error) {
         console.log(error);

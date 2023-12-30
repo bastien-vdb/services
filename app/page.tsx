@@ -1,8 +1,8 @@
-import { prisma } from "@/src/db/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import Steps from "@/src/components/Main/Steps";
 import SignIn from "@/src/components/Buttons/SignIn";
+import useServerData from "@/src/components/useServerData";
 import { Service } from "@prisma/client";
 
 async function Home() {
@@ -13,22 +13,7 @@ async function Home() {
   if (userId === undefined) return (<><span>You need to be connected to access Booking app</span>
     <div><SignIn /></div></>)
 
-
-  const getServicesList = async (userId: string) => {
-    try {
-      const res = await prisma.service.findMany({
-        where: {
-          createdById: userId,
-        },
-      })
-      return res;
-
-    } catch (error) {
-      throw new Error("Data cannot be reach from the db");
-    }
-  }
-
-  const services = await getServicesList(userId);
+  const services: Service[] = await useServerData('service', { createdById: userId })
 
   return <Steps services={services} userId={userId} />
 

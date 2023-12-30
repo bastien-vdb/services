@@ -1,7 +1,7 @@
 import { serviceActionType } from "@/src/reducers/serviceReducer";
-import { servicesType } from "@/src/types/service.type";
+import { Service } from "@prisma/client";
 
-export const deleteService = (service: servicesType, serviceDispatch: React.Dispatch<serviceActionType>) => {
+export const deleteService = (service: Service, serviceDispatch: React.Dispatch<serviceActionType>) => {
   //Optimistic update
   serviceDispatch({
     type: "DELETE_SERVICE",
