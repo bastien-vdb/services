@@ -1,10 +1,11 @@
 import { Service } from '@prisma/client';
-import {create} from 'zustand';
+import { create } from 'zustand';
 import useServerData from '../../../../src/hooks/useServerData';
 
 type ServiceStoreType = {
   services: Service[];
   serviceSelected: Service | null;
+  initialiseServices: (services: Service[]) => void;
   changeServiceSelected: (service: Service | null) => void;
   reLoadServices: (userId: string) => void;
   addService: (service: Service) => void;
@@ -14,11 +15,12 @@ type ServiceStoreType = {
 const useServiceStore = create<ServiceStoreType>(set => ({
   services: [],
   serviceSelected: null,
-  changeServiceSelected: (service)=>set({serviceSelected:service}),
-  reLoadServices: async (userId: string) => {
+  initialiseServices: (services) => set({ services }),
+  changeServiceSelected: (service) => set({ serviceSelected: service }),
+  reLoadServices: async (userId) => {
     const getServices = async () => {
-        const services = await useServerData('service', { createdById: userId })
-        set(({ services }));
+      const services = await useServerData('service', { createdById: userId })
+      set(({ services }));
     };
     getServices();
   },

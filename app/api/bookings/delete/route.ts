@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/src/db/prisma";
 import Stripe from "stripe";
-import { th } from "date-fns/locale";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 
@@ -28,7 +27,7 @@ export async function PUT(request: Request) {
       },
     });
     if (updatedBooking) {
-      const result = await (prisma["booking"] as any).findMany({
+      const result = await prisma.booking.findMany({
         where: {
           userId: session.user.id,
         },

@@ -1,6 +1,6 @@
 
 import { render, screen, fireEvent } from '@testing-library/react';
-import SelectSlot from '@/src/components/SelectBooking/SelectBooking';
+import SelectSlot from '@/app/Components/SelectBooking/SelectBooking';
 import { TimeProvider } from '@/src/contexts/time.context/time.context';
 import { vi } from 'vitest';
 

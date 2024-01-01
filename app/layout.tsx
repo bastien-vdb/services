@@ -2,8 +2,6 @@ import './globals.css';
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/src/contexts/theme-provider';
-import { PeriodProvider } from '@/src/contexts/period.context';
-import { BookingProvider } from '@/src/contexts/booking.context/booking.context';
 import AuthSessionProvider from '@/src/components/Auth/AuthSessionProvider';
 import Header from '@/src/components/Header/Header';
 
@@ -22,7 +20,6 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-          <BookingProvider>
             <body className={inter.className}>
               <ThemeProvider
                 attribute="class"
@@ -37,7 +34,6 @@ export default function RootLayout({
                 </AuthSessionProvider>
               </ThemeProvider>
             </body>
-          </BookingProvider>
     </html>
   )
 }

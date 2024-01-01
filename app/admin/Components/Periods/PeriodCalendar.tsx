@@ -19,7 +19,6 @@ import useCreatePeriodData from './useCreatePeriodData';
 import useDeletePeriodData from './useDeletePeriodData';
 import usePeriodsStore from './usePeriodsStore';
 import { Label } from "@/src/components/ui/label"
-import { c } from 'vitest/dist/reporters-5f784f42.js';
 
 const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
 
@@ -28,19 +27,20 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
     const [selectStartHour, setSelectStartHour] = useState<string>();
     const [selectEndHour, setSelectEndHour] = useState<string>();
 
-    const { addPeriod, removePeriod, reLoadPeriods, periods: periodsFromStore } = usePeriodsStore();
+    const { addPeriod, removePeriod, reLoadPeriods, periods: periodsFromStore, initialisePeriods } = usePeriodsStore();
     const session = useSession();
-
     const today = new Date(now());
-
     const defaultSelected: DateRange = {
         from: new Date(),
         to: moment(new Date()).add(1, 'day').toDate()
     }
-
     const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
 
-    const handleDeleteService = async (period: Periods) => {
+    useEffect(() => {
+        initialisePeriods(periods);
+    }, []);
+
+    const handleDeletePeriod = async (period: Periods) => {
         setLoading(true);
         removePeriod(period);
         await useDeletePeriodData({
@@ -56,19 +56,10 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
             return;
         }
 
-        console.log('range', range)
-
         setLoading(true);
 
-        // const start = moment(range?.from).startOf("day").toDate();
-        // const end = moment(range?.to).endOf("day").toDate();
-
-        console.log('selectStartHour', selectStartHour);
-        console.log('selectEndHour', selectEndHour);
         const start = moment(range?.from).hour(moment(selectStartHour).hour()).minute(moment(selectStartHour).minute()).toDate();
         const end = moment(range?.to).hour(moment(selectEndHour).hour()).minute(moment(selectEndHour).minute()).toDate();
-
-        console.log('s,e=>', start, end)
 
         //Optimistic update with fake data
         addPeriod({
@@ -95,14 +86,13 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
         { className: "", text: '' }
     ];
 
-    const formatDataToServiceTableBody = (periodsFromStore.length > 0 ? periodsFromStore : periods).map((period: Periods) => (
+    const formatDataToServiceTableBody = periodsFromStore.map((period: Periods) => (
         [
             { className: "font-medium w-40", text: moment(period.start).format('DD/MM/YYYY').toString() },
             { className: "text-right", text: moment(period.end).format('DD/MM/YYYY').toString() },
-            { className: "text-right", text: <Button onClick={() => handleDeleteService(period)} disabled={loading} variant="destructive">Supprimer</Button> }
+            { className: "text-right", text: <Button onClick={() => handleDeletePeriod(period)} disabled={loading} variant="destructive">Supprimer</Button> }
         ]
     ));
-
 
     const getTimeHoursSlot = useCallback((duree: number | string) => {
         const slotDuration = Number(duree) / 60;

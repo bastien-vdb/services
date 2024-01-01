@@ -1,6 +1,6 @@
 import Services from "@/app/admin/Components/Services/Services";
 import { Separator } from "@/src/components/ui/separator"
-import Bookings from "@/src/components/Admin/Bookings/Bookings";
+import Bookings from "@/app/admin/Components/Bookings/Bookings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import SignIn from "@/src/components/Buttons/SignIn";

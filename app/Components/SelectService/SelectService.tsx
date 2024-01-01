@@ -1,5 +1,4 @@
 'use client'
-import { useService } from '@/src/hooks/useService';
 import TableMain from '@/src/components/Table/TableMain';
 import { Button } from '@/src/components/ui/button';
 import { Service } from '@prisma/client';
@@ -7,7 +6,7 @@ import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 
 function SelectService({ services }: { services?: Service[] }) {
 
-    const {changeServiceSelected} = useServiceStore();
+    const { changeServiceSelected } = useServiceStore();
 
     const handleSelectService = (service: Service) => {
         changeServiceSelected(service);

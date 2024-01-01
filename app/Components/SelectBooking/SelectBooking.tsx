@@ -1,18 +1,21 @@
 import moment from 'moment';
 import { Button } from '@/src/components/ui/button';
-import { useBooking } from '@/src/hooks/useBooking';
-import { addBooking } from '@/src/components/SelectBooking/addBooking';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Booking } from 'prisma/prisma-client'
 import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
+import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
 
-const SelectBooking = () => {
+const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
     const [loading, setLoading] = useState(false);
-    const { bookingState, bookingDispatch } = useBooking();
+    const { bookings: bookingsFromStore, initialiseBookings, daySelected } = useMainBookingStore();
     const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
+
+    useEffect(() => {
+        initialiseBookings(bookings);
+    }, []);
 
     const handleCreateBook = async (booking: Booking) => {
 
@@ -36,19 +39,19 @@ const SelectBooking = () => {
             throw new Error("Une erreur est survenue lors de la prise de rendez-vous");
         }
 
-        if (!bookingState.daySelected) throw new Error('No day selected');
-        addBooking({ daySelected: bookingState.daySelected, booking, bookingDispatch, setLoading });
+        if (!daySelected) throw new Error('No day selected');
+        // addBooking({ daySelected: daySelected, booking, setLoading });
     }
 
     return (
         <div>
             <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
                 {
-                    bookingState.bookings.map((booking, key) => (
+                    bookingsFromStore.map((booking, key) => (
                         <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
                     ))
                 }
-                <span className='m-2'>Day: {bookingState.daySelected!.toString()}</span>
+                <span className='m-2'>Day: {daySelected.toString()}</span>
             </ul>
         </div>
     );

@@ -1,6 +1,6 @@
 import React from 'react';
 import { prisma } from "@/src/db/prisma";
-import Steps from '@/src/components/Main/Steps';
+import Steps from '@/app/Components/Steps';
 import { Service } from '@prisma/client';
 
 

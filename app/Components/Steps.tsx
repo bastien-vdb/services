@@ -1,17 +1,14 @@
 'use client'
-import { useBooking } from "@/src/hooks/useBooking";
-import ServiceCalendar from "@/src/components/Calendar/ServiceCalendar";
-import SelectBooking from "../SelectBooking/SelectBooking";
-import SelectService from "../SelectService/SelectService";
-import { Button } from "../ui/button";
+import ServiceCalendar from "@/app/Components/Calendar/ServiceCalendar";
+import SelectBooking from "./SelectBooking/SelectBooking";
+import SelectService from "./SelectService/SelectService";
+import { Button } from "../../src/components/ui/button";
 import { useCallback } from "react";
-import { Service } from "@prisma/client";
+import { Booking, Service } from "@prisma/client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 
-const Steps = ({ services, userId }: { services: Service[], userId: string }) => {
-    const { bookingState, bookingDispatch } = useBooking();
-
-    const {serviceSelected, changeServiceSelected} = useServiceStore();
+const Steps = ({ services, userId, bookings }: { services: Service[], userId: string, bookings: Booking[] }) => {
+    const { serviceSelected, changeServiceSelected } = useServiceStore();
     const handleReset = useCallback(() => {
         changeServiceSelected(null)
     }, []);
@@ -23,7 +20,6 @@ const Steps = ({ services, userId }: { services: Service[], userId: string }) =>
                 <div className="w-[800px] m-auto">
                     <SelectService services={services} />
                 </div>
-
             </main >
         )
 
@@ -34,8 +30,8 @@ const Steps = ({ services, userId }: { services: Service[], userId: string }) =>
                 <div className="m-2 sm:m-auto flex gap-10 flex-wrap">
 
                     <ServiceCalendar userId={userId} />
-                
-                    {bookingState.daySelected && <SelectBooking />}
+
+                    <SelectBooking bookings={bookings} />
 
                     <Button variant="secondary" onClick={handleReset}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">

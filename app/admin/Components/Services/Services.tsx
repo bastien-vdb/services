@@ -10,10 +10,10 @@ import { useSession } from 'next-auth/react';
 import useCreateServerData from './useCreateServiceData';
 import useDeleteServiceData from './useDeleteServiceData';
 
-function Services({services}: {services: Service[]}) {
+function Services({ services }: { services: Service[] }) {
 
     const [loading, setLoading] = useState(false);
-    const {services:servicesFromStore, reLoadServices, addService, removeService} = useServiceStore();
+    const { services: servicesFromStore, reLoadServices, addService, removeService, initialiseServices } = useServiceStore();
 
     const session = useSession();
     const [serviceName, setServiceName] = useState("");
@@ -25,7 +25,7 @@ function Services({services}: {services: Service[]}) {
         { className: "", text: '' }
     ];
 
-    const formatDataToServiceTableBody = (servicesFromStore.length>0 ? servicesFromStore : services).map((service) => (
+    const formatDataToServiceTableBody = servicesFromStore.map((service) => (
         [
             { className: "font-medium w-40", text: service.name },
             { className: "text-right", text: service.price },
@@ -34,7 +34,7 @@ function Services({services}: {services: Service[]}) {
     ));
 
     useEffect(() => {
-        reLoadServices(session?.data?.user.id!);
+        initialiseServices(services);
     }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,13 +64,13 @@ function Services({services}: {services: Service[]}) {
         setLoading(false);
     };
 
-    const handleDeleteService = async(service: Service) => {  
+    const handleDeleteService = async (service: Service) => {
         setLoading(true);
         removeService(service);//Optimistic update
-        await useDeleteServiceData({service});
+        await useDeleteServiceData({ service });
         reLoadServices(session?.data?.user.id!);
         setLoading(false);
-        
+
     }
 
     return (

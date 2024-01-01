@@ -1,9 +1,10 @@
 import { Periods } from '@prisma/client';
-import {create} from 'zustand';
+import { create } from 'zustand';
 import useServerData from '../../../../src/hooks/useServerData';
 
 type PeriodStoreType = {
   periods: Periods[];
+  initialisePeriods: (periods: Periods[]) => void;
   reLoadPeriods: (userId: string) => void;
   addPeriod: (period: Periods) => void;
   removePeriod: (period: Periods) => void;
@@ -11,10 +12,11 @@ type PeriodStoreType = {
 
 const usePeriodsStore = create<PeriodStoreType>(set => ({
   periods: [],
-  reLoadPeriods: async (createdById: string) => {
+  initialisePeriods: (periods) => set({ periods }),
+  reLoadPeriods: async (createdById) => {
     const getPeriods = async () => {
-        const periods = await useServerData('periods', { createdById })
-        set(({ periods }));
+      const periods = await useServerData('periods', { createdById })
+      set(({ periods }));
     };
     getPeriods();
   },

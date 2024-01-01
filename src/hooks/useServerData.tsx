@@ -3,6 +3,8 @@ import { prisma } from '@/src/db/prisma';
 
 async function useServerData(prismaKey: unknown, where: { [key: string]: unknown } = {}) {
 
+    console.log('PrismaKey useServerData:', prismaKey);
+    console.log('WHERE useServerData:', where);
     try {
         return await (prisma[prismaKey as any] as any).findMany({
             where,

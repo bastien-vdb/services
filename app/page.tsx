@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import Steps from "@/src/components/Main/Steps";
+import Steps from "@/app/Components/Steps";
 import SignIn from "@/src/components/Buttons/SignIn";
 import useServerData from "@/src/hooks/useServerData";
-import { Service } from "@prisma/client";
+import { Booking, Service } from "@prisma/client";
+import moment from "moment";
 
 async function Home() {
 
@@ -13,9 +14,18 @@ async function Home() {
   if (userId === undefined) return (<><span>You need to be connected to access Booking app</span>
     <div><SignIn /></div></>)
 
-  const services: Service[] = await useServerData('service', { createdById: userId })
+  const services: Service[] = await useServerData('service', { createdById: userId });
+  const bookings: Booking[] = await useServerData('booking', {
+    startTime: {
+      gte: moment().startOf('day').toDate(),
+      lt: moment().endOf('day').toDate(),
+    },
+    isAvailable: true,
+    userId: userId ? userId : session?.user.id,
+  });
+  console.log('bookings from server comp:', bookings)
 
-  return <Steps services={services} userId={userId} />
+  return <Steps bookings={bookings} services={services} userId={userId} />
 
 };
 

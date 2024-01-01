@@ -1,6 +1,6 @@
 import { ServiceProvider } from '@/src/contexts/service.context';
 import { render, screen, fireEvent } from '@testing-library/react';
-import SelectService from '@/src/components/SelectService/SelectService';
+import SelectService from '@/app/Components/SelectService/SelectService';
 import { vi } from 'vitest';
 import { useService } from '@/src/hooks/useService';
 

@@ -1,30 +1,22 @@
 import { memo } from 'react';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';
-import { useBooking } from '@/src/hooks/useBooking';
+import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
+import useMainBookingsStore from '@/app/Components/Calendar/useMainBookingsStore';
 
 const ServiceCalendar = memo(({ userId }: { userId: string }) => {
 
-    const { bookingState, bookingDispatch } = useBooking();
+    const { bookings, daySelected, selectDay } = useMainBookingStore();
 
     const today = new Date();
     const nbOfDaysInMonth = moment(today).daysInMonth();
     const lastDay = new Date(today.getFullYear(), today.getMonth(), nbOfDaysInMonth);
 
-    const handleSelectDate = (date: Date) => {
-        bookingDispatch({
-            type: 'SET_DAY',
-            payload: date
-        });
+    const { reloadBookings } = useMainBookingsStore();
 
-        fetch(`/api/bookings?date=${date}&userId=${userId}`)
-            .then(async (bookings) => await bookings.json())
-            .then(bookings => {
-                bookingDispatch({
-                    type: 'SET_BOOKINGS',
-                    payload: bookings
-                })
-            });
+    const handleSelectDate = (date: Date) => {
+        selectDay(date);
+        reloadBookings(userId, date);
     }
 
     return (
@@ -32,7 +24,7 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
             fromDate={new Date()}
             // toDate={lastDay}
             mode="single"
-            selected={bookingState.daySelected ?? new Date()}
+            selected={daySelected ?? new Date()}
             onSelect={(date) => handleSelectDate(date!)}
             className="rounded-md border p-10"
         />
