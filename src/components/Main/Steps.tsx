@@ -1,24 +1,22 @@
 'use client'
 import { useBooking } from "@/src/hooks/useBooking";
-import ServiceCalendar from "../Calendar/ServiceCalendar";
+import ServiceCalendar from "@/src/components/Calendar/ServiceCalendar";
 import SelectBooking from "../SelectBooking/SelectBooking";
 import SelectService from "../SelectService/SelectService";
 import { Button } from "../ui/button";
-import { useService } from "@/src/hooks/useService";
 import { useCallback } from "react";
 import { Service } from "@prisma/client";
+import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 
 const Steps = ({ services, userId }: { services: Service[], userId: string }) => {
     const { bookingState, bookingDispatch } = useBooking();
-    const { serviceState, serviceDispatch } = useService();
 
+    const {serviceSelected, changeServiceSelected} = useServiceStore();
     const handleReset = useCallback(() => {
-        serviceDispatch({
-            type: 'RESET',
-        })
+        changeServiceSelected(null)
     }, []);
 
-    if (!serviceState.serviceSelected)
+    if (!serviceSelected)
 
         return (
             <main className="flex flex-col">
@@ -30,13 +28,13 @@ const Steps = ({ services, userId }: { services: Service[], userId: string }) =>
         )
 
     return (
-        <main className="flex flex-col">
+        <main className="flex flex-col m-auto sm:mt-40">
 
             <div className="flex">
-                <div className="m-auto flex gap-10 flex-wrap">
+                <div className="m-2 sm:m-auto flex gap-10 flex-wrap">
 
                     <ServiceCalendar userId={userId} />
-
+                
                     {bookingState.daySelected && <SelectBooking />}
 
                     <Button variant="secondary" onClick={handleReset}>

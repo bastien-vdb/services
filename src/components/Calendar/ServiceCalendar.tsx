@@ -30,7 +30,7 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
     return (
         <Calendar
             fromDate={new Date()}
-            toDate={lastDay}
+            // toDate={lastDay}
             mode="single"
             selected={bookingState.daySelected ?? new Date()}
             onSelect={(date) => handleSelectDate(date!)}

@@ -1,22 +1,18 @@
 import moment from "moment";
-import { SlotListCalendarConfig } from "@/src/lib/Config/calendar.config";
 
-export const createSetOfSLots = (start: Date, end:Date) => {
-  const INTERVAL_IN_MINUTES = SlotListCalendarConfig.interval;
-
+export const createSetOfSLots = (start: Date, end: Date, duree: number) => {
   const startDate = moment.utc(start);
   const endDate = moment.utc(end);
 
   let ListOfSlot = [] as { from: Date; to: Date }[];
 
   while (startDate.isBefore(endDate)) {
-      ListOfSlot.push({
-          from: startDate.toDate(),
-          to: startDate.clone().add(INTERVAL_IN_MINUTES, "minutes").toDate(),
-      });
-      startDate.add(INTERVAL_IN_MINUTES, "minutes");
+    ListOfSlot.push({
+      from: startDate.toDate(),
+      to: startDate.clone().add(duree, "minutes").toDate(),
+    });
+    startDate.add(duree, "minutes");
   }
 
   return ListOfSlot;
 };
-

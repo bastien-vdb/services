@@ -3,25 +3,18 @@ import { Button } from '@/src/components/ui/button';
 import { useBooking } from '@/src/hooks/useBooking';
 import { addBooking } from '@/src/components/SelectBooking/addBooking';
 import { useState } from 'react';
-import { useService } from '@/src/hooks/useService';
 import { Booking } from 'prisma/prisma-client'
 import { useSession } from 'next-auth/react';
+import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 
 const SelectBooking = () => {
 
     const [loading, setLoading] = useState(false);
-
     const { bookingState, bookingDispatch } = useBooking();
-
-    const { serviceState, serviceDispatch } = useService();
-
+    const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
 
-    console.log('session: ', session);
-
     const handleCreateBook = async (booking: Booking) => {
-
-        console.log('serviceState: ', serviceState);
 
         try {
             const paymentPage = await fetch(`http://localhost:3000/api/checkout/create-checkout-session`,
@@ -31,7 +24,7 @@ const SelectBooking = () => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(
-                        { stripePriceId: serviceState.serviceFullSelected?.stripePriceId, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceState.serviceFullSelected?.id }
+                        { stripePriceId: serviceSelected?.stripePriceId, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id }
                     ),
                 });
 

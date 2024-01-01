@@ -1,4 +1,4 @@
-import Services from "@/src/components/Admin/Services/Services";
+import Services from "@/app/admin/Components/Services/Services";
 import { ServiceProvider } from "@/src/contexts/service.context";
 import { render, screen } from "@testing-library/react";
 

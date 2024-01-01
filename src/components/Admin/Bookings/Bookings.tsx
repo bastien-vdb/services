@@ -7,8 +7,9 @@ import type { bookingType } from '@/src/reducers/bookingReducer';
 import moment from 'moment';
 import { Button } from '@/src/components/ui/button';
 import { deleteBooking } from '@/src/components/Admin/Bookings/deleteBooking';
+import { Booking } from '@prisma/client';
 
-function Periods() {
+function Periods({bookings}: {bookings: Booking[]}) {
 
     const [loading, setLoading] = useState(false);
 
@@ -20,9 +21,7 @@ function Periods() {
         { className: "", text: '' }
     ];
 
-    console.log('bookingState.bookings: ', bookingState.bookings);
-
-    const formatDataToServiceTableBody = bookingState.bookings.map((booking: bookingType) => (
+    const formatDataToServiceTableBody = bookings.map((booking: bookingType) => (
         [
             { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
             { className: "text-right", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },

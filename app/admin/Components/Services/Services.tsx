@@ -48,12 +48,12 @@ function Services({services}: {services: Service[]}) {
 
         //Optimistic update with fake data
         addService({
-            id: '19',
+            id: '',
             name: serviceName,
             price: servicePrice,
-            createdById: 'bas',
-            stripeId: '653',
-            stripePriceId: 'yhen76'
+            createdById: '',
+            stripeId: '',
+            stripePriceId: ''
         });
 
         await useCreateServerData({

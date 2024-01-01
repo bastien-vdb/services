@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import Steps from "@/src/components/Main/Steps";
 import SignIn from "@/src/components/Buttons/SignIn";
-import useServerData from "@/src/components/useServerData";
+import useServerData from "@/src/hooks/useServerData";
 import { Service } from "@prisma/client";
 
 async function Home() {
