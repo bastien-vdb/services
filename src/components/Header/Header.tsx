@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import ModeToggle from '../Buttons/ModeToggle';
-import AdminAvatar from '../Admin/Avatars/AdminAvatar';
+import AdminAvatar from '../Avatars/AdminAvatar';
 
 function Header() {
     return (

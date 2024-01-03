@@ -18,7 +18,8 @@ import { DateRange } from 'react-day-picker';
 import useCreatePeriodData from './useCreatePeriodData';
 import useDeletePeriodData from './useDeletePeriodData';
 import usePeriodsStore from './usePeriodsStore';
-import { Label } from "@/src/components/ui/label"
+import { Label } from "@/src/components/ui/label";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
 const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
 
@@ -26,6 +27,7 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
     const [selectDuree, setSelectDuree] = useState<string>();
     const [selectStartHour, setSelectStartHour] = useState<string>();
     const [selectEndHour, setSelectEndHour] = useState<string>();
+    const [joursOuvrables, setJoursOuvrables] = useState<number[]>([]);
 
     const { addPeriod, removePeriod, reLoadPeriods, periods: periodsFromStore, initialisePeriods } = usePeriodsStore();
     const session = useSession();
@@ -35,6 +37,8 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
         to: moment(new Date()).add(1, 'day').toDate()
     }
     const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
+
+    const LISTE_JOURS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
     useEffect(() => {
         initialisePeriods(periods);
@@ -74,6 +78,7 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
             start,
             end,
             duree: Number(selectDuree),
+            joursOuvrables,
         });
 
         reLoadPeriods(session?.data?.user.id!);
@@ -109,6 +114,24 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
     let footer = (
         <>
             <div className='my-6 flex flex-col gap-4'>
+
+                <div className="flex flex-col items-left gap-2 my-8">
+                    <Label className='my-2' htmlFor="jours">Jours de travail :</Label>
+                    {LISTE_JOURS.map((jour, key) => (
+                        <div id="jours" className='flex gap-2' key={key}>
+                            <Checkbox id={jour} onCheckedChange={() => setJoursOuvrables(s => {
+                                if (s.includes(key + 1)) return s.filter(d => (d !== key + 1));
+                                return [...s, key + 1];
+                            })} />
+                            <label
+                                htmlFor={jour}
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            >
+                                {jour}
+                            </label>
+                        </div>
+                    ))}
+                </div>
 
                 <Select onValueChange={setSelectDuree}>
                     <Label>Durée créneau :</Label>

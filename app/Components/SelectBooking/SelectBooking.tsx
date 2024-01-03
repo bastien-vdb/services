@@ -5,6 +5,7 @@ import { Booking } from 'prisma/prisma-client'
 import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
+import { Ghost } from 'lucide-react';
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
@@ -40,18 +41,19 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
         }
 
         if (!daySelected) throw new Error('No day selected');
-        // addBooking({ daySelected: daySelected, booking, setLoading });
     }
 
     return (
         <div>
             <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
                 {
-                    bookingsFromStore.map((booking, key) => (
+                    bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
                         <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
                     ))
+                        :
+                        <Button variant="ghost">Pas de créneau disponible</Button>
                 }
-                <span className='m-2'>Day: {daySelected.toString()}</span>
+                {/* <span className='m-2'>Day: {daySelected && daySelected.toString()}</span> */}
             </ul>
         </div>
     );

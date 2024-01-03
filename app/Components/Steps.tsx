@@ -2,7 +2,7 @@
 import ServiceCalendar from "@/app/Components/Calendar/ServiceCalendar";
 import SelectBooking from "./SelectBooking/SelectBooking";
 import SelectService from "./SelectService/SelectService";
-import { Button } from "../../src/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { useCallback } from "react";
 import { Booking, Service } from "@prisma/client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
@@ -12,6 +12,8 @@ const Steps = ({ services, userId, bookings }: { services: Service[], userId: st
     const handleReset = useCallback(() => {
         changeServiceSelected(null)
     }, []);
+
+    console.log(new Date().getDay());
 
     if (!serviceSelected)
 

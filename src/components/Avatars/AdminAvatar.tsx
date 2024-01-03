@@ -14,7 +14,7 @@ import {
 } from "@/src/components/ui/dropdown-menu"
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import SignOut from "../../Buttons/SignOut";
+import SignOut from "../Buttons/SignOut";
 
 async function AdminAvatar() {
 
