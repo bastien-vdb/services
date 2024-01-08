@@ -8,6 +8,8 @@ import { Booking } from '@prisma/client';
 import useBookingStore from '@/app/admin/Components/Bookings/useBookingsStore';
 import { useSession } from 'next-auth/react';
 import useCancelBookingData from '@/app/admin/Components/Bookings/useCancelBookingData';
+import { Switch } from "@/src/components/ui/switch"
+
 
 function Bookings({ bookings }: { bookings: Booking[] }) {
 
@@ -32,15 +34,17 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
 
     const formatDataToServiceTableHeader = [
         { className: "", text: 'From' },
-        { className: "text-right", text: 'To' },
-        { className: "", text: '' }
+        { className: "text", text: 'To' },
+        { className: "", text: 'Actif' },
+        { className: "", text: 'Supprimer' }
     ];
 
     const formatDataToServiceTableBody = bookingsFromStore.filter(booking => booking.isAvailable).map((booking: Booking) => (
         [
             { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
-            { className: "text-right", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
-            { className: "text-right", text: <Button onClick={() => handleCancelBooking(booking)} disabled={loading} variant="destructive">Supprimer</Button> }
+            { className: "", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
+            { className: "", text: <Switch checked={booking.isAvailable} onCheckedChange={()=>{}} /> },
+            { className: "", text: <Button className='rounded-full' onClick={() => handleCancelBooking(booking)} disabled={loading} variant="destructive">X</Button> }
         ]
     ));
 

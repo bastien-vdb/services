@@ -30,7 +30,6 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   if (webhookEvent.type === "checkout.session.completed") {
     const session = webhookEvent.data.object as any;
     // const { slot, serviceId, stripePriceId, userId } = session.metadata;
-    console.log("session: ", session);
     console.log("Le paiement est maintenant effectué !!!!!!!!!!!!!!!!!!");
     NextResponse.redirect(`https://www.youtube.com/`);
     return res.status(200).json(session);

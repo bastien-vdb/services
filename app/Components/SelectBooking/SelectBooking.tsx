@@ -53,7 +53,6 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
                         :
                         <Button variant="ghost">Pas de créneau disponible</Button>
                 }
-                {/* <span className='m-2'>Day: {daySelected && daySelected.toString()}</span> */}
             </ul>
         </div>
     );
