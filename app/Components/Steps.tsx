@@ -13,8 +13,6 @@ const Steps = ({ services, userId, bookings }: { services: Service[], userId: st
         changeServiceSelected(null)
     }, []);
 
-    console.log(new Date().getDay());
-
     if (!serviceSelected)
 
         return (
