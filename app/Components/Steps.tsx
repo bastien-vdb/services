@@ -11,6 +11,7 @@ const Steps = ({ services, userId, bookings }: { services: Service[], userId: st
     const { serviceSelected, changeServiceSelected } = useServiceStore();
     const handleReset = useCallback(() => {
         changeServiceSelected(null)
+        
     }, []);
 
     if (!serviceSelected)
