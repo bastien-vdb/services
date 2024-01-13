@@ -3,11 +3,11 @@ import { Stripe } from "stripe";
 import getRawBody from "raw-body";
 import { NextResponse } from "next/server";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
