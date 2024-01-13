@@ -8,7 +8,7 @@ import { getServerSession } from "next-auth/next";
 async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { start: Date; end: Date; duree: number; joursOuvrables: number[] }) {
   const session = await getServerSession(authOptions);
 
-  if (!session) throw new Error("You are not allowed to access this resource");
+  if (!session) throw new Error("You are not allowed to access this resource.");
 
   try {
     const periodeExistante = await prisma.periods.findMany({
