@@ -1,10 +1,10 @@
-import NextAuth, { NextAuthOptions } from "next-auth";
+import { NextAuthOptions } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/src/db/prisma";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma) as Adapter,
   providers: [
@@ -22,4 +22,4 @@ export const authOptions = {
       return session;
     },
   },
-} satisfies NextAuthOptions;
+};
