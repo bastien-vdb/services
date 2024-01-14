@@ -61,7 +61,7 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
         .filter((a) => a !== undefined);
 
       await prisma.booking.createMany({
-        data: bookingsData,
+        data: bookingsData as any,
       });
     }
   } catch (error) {
