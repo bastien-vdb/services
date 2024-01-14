@@ -1,14 +1,14 @@
 'use server'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { prisma } from '@/src/db/prisma';
 import { getServerSession } from 'next-auth/next';
 import Stripe from 'stripe';
 
-async function useCreateServerData({name, price: productPrice}: {name: string, price: number}) {
+async function useCreateServerData({ name, price: productPrice }: { name: string, price: number }) {
 
   const session = await getServerSession(authOptions);
 
-    if (!session) throw new Error("Session is not defined");
+  if (!session) throw new Error("Session is not defined");
 
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
   try {
