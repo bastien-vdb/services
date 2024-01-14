@@ -1,7 +1,12 @@
 import next, { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import getRawBody from "raw-body";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest, res: NextResponse) {
+
+  return;
+}
 
 // export const config = {
 //   api: {
@@ -9,7 +14,7 @@ import { NextResponse } from "next/server";
 //   },
 // };
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+// export async function GET(req: NextApiRequest, res: NextApiResponse) {
   //   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   //   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -36,5 +41,4 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   //   }
   //   NextResponse.redirect(`https://www.orange.fr/`);
   //   return res.status(400).json("Session cannot be created");
-  return; // temporaire
-}
+// }
