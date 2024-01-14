@@ -1,5 +1,5 @@
 "use server";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { prisma } from "@/src/db/prisma";
 import { now } from "moment";
