@@ -2,7 +2,7 @@ import Services from "@/app/admin/Components/Services/Services";
 import { Separator } from "@/src/components/ui/separator"
 import Bookings from "@/app/admin/Components/Bookings/Bookings";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import SignIn from "@/src/components/Buttons/SignIn";
 import useServerData from "@/src/hooks/useServerData";
 import { Booking, Periods } from "@prisma/client";
