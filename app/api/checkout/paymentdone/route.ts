@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
 
-  return;
+      return res.json();
 }
 
 // export const config = {
