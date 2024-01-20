@@ -11,7 +11,7 @@ export const createSetOfSLots = (start: Date, end: Date, duree: number) => {
   const minToday = minFromMidnightFormatter(startDate);
   const maxToday = minFromMidnightFormatter(endDate);
 
-  const ListOfSlot = [];
+  const ListOfSlot: {from:Date, to:Date}[] = [];
 
   while (startDate.isBefore(endDate)) {
     const min = minFromMidnightFormatter(startDate);
