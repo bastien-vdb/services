@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
 
-      return res.json();
+  return new Response("Payment done", { status: 200 });
 }
 
 // export const config = {
