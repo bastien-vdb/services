@@ -7,7 +7,8 @@ export async function POST(req: Request, res: Response) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2022-11-15",
+    //@ts-ignore
+    apiVersion: null,
   });
 
   const rawBody = await req.text()
