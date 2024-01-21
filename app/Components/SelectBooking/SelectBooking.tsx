@@ -21,7 +21,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     const handleCreateBook = async (booking: Booking) => {
 
         try {
-            const paymentPage = await fetch(`http://localhost:3000/api/checkout/create-checkout-session`,
+            const paymentPage = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/checkout/create-checkout-session`,
                 {
                     method: "POST",
                     headers: {
