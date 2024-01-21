@@ -26,8 +26,8 @@ export async function POST(req: Request, res: Response) {
     // const { slot, serviceId, stripePriceId, userId } = session.metadata;
     console.log("Le paiement est maintenant effectué !!!!!!!!!!!!!!!!!!");
     NextResponse.redirect(`https://www.youtube.com/`);
-    return res.status(200).json(session);
+    return new NextResponse(session);
   }
   NextResponse.redirect(`https://www.orange.fr/`);
-  return res.status(400).json("Session cannot be created");
+  return new NextResponse("La session ne peut être créée");
 }
