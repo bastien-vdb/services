@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 //   },
 // };
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextApiRequest, res: NextApiResponse) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
