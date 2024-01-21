@@ -29,8 +29,8 @@ export async function POST(req: Request, res: NextApiResponse) {
       },
     ],
     mode: "payment",
-    success_url: `http://localhost:3000/checkout/success`,
-    cancel_url: `http://localhost:3000/checkout/cancel`,
+    success_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
+    cancel_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/cancel`,
   });
 
   console.log("session stripe: ", session);
