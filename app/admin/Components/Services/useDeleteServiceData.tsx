@@ -10,7 +10,7 @@ async function useDeleteServerData({ service }: { service: Service }) {
   const session = await getServerSession(authOptions);
   if (!process.env.STRIPE_SECRET_KEY) return new Response("Stripe secret key is not defined", { status: 400 });
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2022-11-15" });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
     if (!service.stripeId) throw new Error("Stripe id is not defined");
     await stripe.products.update(service.stripeId, { active: false });
 
