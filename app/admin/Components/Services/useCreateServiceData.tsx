@@ -12,7 +12,7 @@ async function useCreateServerData({ name, price: productPrice }: { name: string
 
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2022-11-15" });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
 
     const service = await stripe.products.create({
       name,

@@ -11,7 +11,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   const { stripePriceId, startTime: slot, userId, serviceId } = body;
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2022-11-15" });
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
 
   console.log("inside stripe 1: ");
 
