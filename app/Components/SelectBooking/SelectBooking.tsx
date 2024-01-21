@@ -5,7 +5,6 @@ import { Booking } from 'prisma/prisma-client'
 import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
-import { Ghost } from 'lucide-react';
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
