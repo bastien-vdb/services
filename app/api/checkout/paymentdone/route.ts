@@ -3,25 +3,14 @@ import { Stripe } from "stripe";
 import getRawBody from "raw-body";
 import { NextRequest, NextResponse } from "next/server";
 
-// export async function GET(req: NextRequest, res: NextResponse) {
-
-//   return new Response("Payment done", { status: 200 });
-// }
-
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
-
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: Request, res: Response) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2022-11-15",
   });
 
-  const rawBody = await getRawBody(req);
+  const rawBody = await req.text()
 
   console.log("paymentDone page lancee !!!!!!!!!!!!!!");
 
