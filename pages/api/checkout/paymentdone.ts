@@ -10,7 +10,6 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('on a bien accès à cette route API paymentDone depuis l\'exterieur');
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -19,9 +18,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const rawBody = await getRawBody(req);
 
+
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
+  console.log('on a passé les sécurités sur paymentDone');
+
   const signature = req.headers["stripe-signature"];
+
+  console.log('la signature==>', signature);
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
   const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
