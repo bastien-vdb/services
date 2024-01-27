@@ -4,6 +4,7 @@ import getRawBody from "raw-body";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: Request, res: Response) {
+  console.log('la methode est: ', req);
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {

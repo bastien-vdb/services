@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 export async function POST(req: Request, res: NextApiResponse) {
-  console.log('la methode est: ', req);
   if (req.method !== "POST") res.status(405).json({ message: "Method not allowed" });
 
   if (!process.env.STRIPE_SECRET_KEY) return res.status(400).json("Stripe secret key is not defined");
