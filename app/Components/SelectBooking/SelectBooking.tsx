@@ -27,7 +27,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(
-                        { stripePriceId: serviceSelected?.stripePriceId, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id }
+                        { stripePriceId: serviceSelected?.stripePriceId, bookingId:booking.id, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id }
                     ),
                 });
 

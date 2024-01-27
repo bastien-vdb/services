@@ -2,14 +2,22 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+interface RequestBody {
+  stripePriceId: string;
+  startTime: Date;
+  userId: string;
+  serviceId: string;
+  bookingId:string;
+}
+
 export async function POST(req: Request, res: NextApiResponse) {
   if (req.method !== "POST") res.status(405).json({ message: "Method not allowed" });
 
   if (!process.env.STRIPE_SECRET_KEY) return res.status(400).json("Stripe secret key is not defined");
 
-  const body = await req.json();
+  const body: RequestBody = await req.json();
 
-  const { stripePriceId, startTime: slot, userId, serviceId } = body;
+  const { stripePriceId, startTime: startTime, userId, serviceId, bookingId } = body;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
 
@@ -17,7 +25,8 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   const session = await stripe.checkout.sessions.create({
     metadata: {
-      slot,
+      bookingStartTime: String(startTime),
+      bookingId,
       serviceId,
       stripePriceId,
       userId,

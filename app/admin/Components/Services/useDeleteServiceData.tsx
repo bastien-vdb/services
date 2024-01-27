@@ -27,7 +27,7 @@ async function useDeleteServerData({ service }: { service: Service }) {
     });
     return result;
   } catch (error: unknown) {
-    console.log("error", error);
+    console.error("error", error);
     throw new Error("Service cannot be deleted");
   }
 }
