@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
+import getRawBody from "raw-body";
 
 export const config = {
   api: {
@@ -15,8 +16,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     apiVersion: "2023-10-16",
   });
 
+  console.log('STRIPE_SECRET_KEY', process.env.STRIPE_SECRET_KEY)
+
   // Récupère le corps de la requête sous forme de chaîne de caractères
-  const rawBody = JSON.stringify(req.body);
+//   const rawBody = JSON.stringify(req.body);
+const rawBody = await getRawBody(req);
+
+console.log('rawBody', rawBody);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
