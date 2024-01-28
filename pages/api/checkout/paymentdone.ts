@@ -3,11 +3,11 @@ import { Stripe } from "stripe";
 import getRawBody from "raw-body";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
