@@ -10,29 +10,17 @@ export const config = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log('step 1 pass');
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
-  console.log('step 2 pass');
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2023-10-16",
   });
 
-  console.log('step 3 pass');
-
-  const rawBody = await getRawBody(req);
-
-  console.log('step 4 pass');
-
-
+  const rawBody = await req.body;
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
-  console.log('step5');
-
   const signature = req.headers["stripe-signature"];
-
-  console.log('la signature==>', signature);
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
   const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
