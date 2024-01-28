@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const rawBody = JSON.stringify(req.body);
 // const rawBody = await getRawBody(req);
 
-console.log('rawBody', rawBody);
+console.log('req', req);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
