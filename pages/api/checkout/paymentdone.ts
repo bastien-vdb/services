@@ -1,13 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
-import getRawBody from "raw-body";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
+export const config = {
+  api: {
+    bodyParser: false, // Désactive le bodyParser de Next.js
+  },
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
@@ -16,32 +15,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     apiVersion: "2023-10-16",
   });
 
-  const rawBody = await req.body;
+  // Récupère le corps de la requête sous forme de chaîne de caractères
+  const rawBody = JSON.stringify(req.body);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
   const signature = req.headers["stripe-signature"];
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
+
+  // Construit l'événement à partir du corps de la requête et de la signature
   const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
 
   try {
     switch (webhookEvent.type) {
       case "checkout.session.completed":
         const session = webhookEvent.data.object as any;
-        // Payment was successful, you can retrieve relevant details from the session object
+        const {
+          bookingStartTime,
+          serviceId,
+          stripePriceId,
+          bookingId,
+          userId,
+        } = session.metadata;
 
-        // const { slot, serviceId, stripePriceId, userId } = session.metadata;
-
-       const {
-            bookingStartTime,
-            serviceId,
-            stripePriceId,
-            bookingId,
-            userId,
-          } = session.metadata;
-
-        await useSetBookingUser({bookingId, userId});
+        await useSetBookingUser({ bookingId, userId });
         break;
       default:
         console.log("Unhandled event type:", webhookEvent.type);
