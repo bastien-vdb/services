@@ -54,14 +54,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     switch (webhookEvent.type) {    
       case "checkout.session.completed":
-        const session = webhookEvent.data.object as any;
+        const session = webhookEvent.data.object.metadata as any;
         const {
           bookingStartTime,
           serviceId,
           stripePriceId,
           bookingId,
           userId,
-        } = session.metadata;
+        } = session;
 
         console.log('bookingId', bookingId);
 
