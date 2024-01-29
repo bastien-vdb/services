@@ -39,9 +39,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const signature = req.headers["stripe-signature"];
 
-  console.log('après stockage signature')
+
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
+
+  console.log('après stockage signature', signature)
 
   // Construit l'événement à partir du corps de la requête et de la signature
 //   const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
