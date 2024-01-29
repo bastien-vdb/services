@@ -46,13 +46,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log('après stockage signature', signature)
 
   // Construit l'événement à partir du corps de la requête et de la signature
-  const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
+  const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET) as any;
   console.log('jusqu ici tout va bien + session:', webhookEvent.type);
 
-  console.log('session', webhookEvent);
+  console.log('session', webhookEvent.data.object.metadata);
         console.log('fin webhook')
   try {
-    switch (webhookEvent.type) {
+    switch (webhookEvent.type) {    
       case "checkout.session.completed":
         const session = webhookEvent.data.object as any;
         const {
