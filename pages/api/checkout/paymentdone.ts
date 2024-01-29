@@ -19,10 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log('STRIPE_SECRET_KEY', process.env.STRIPE_SECRET_KEY)
 
   // Récupère le corps de la requête sous forme de chaîne de caractères
-  const rawBody = JSON.stringify(req.body);
-// const rawBody = await getRawBody(req);
+//   const rawBody = JSON.stringify(req.body);
+const rawBody = await getRawBody(req.body);
 
-console.log('req', req);
+console.log('req', rawBody);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
