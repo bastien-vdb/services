@@ -49,9 +49,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
   console.log('jusqu ici tout va bien + session:', webhookEvent.type);
 
-  console.log('fin session');
-
-
+  console.log('session', webhookEvent);
+        console.log('fin webhook')
   try {
     switch (webhookEvent.type) {
       case "checkout.session.completed":
