@@ -11,6 +11,8 @@ async function useSetBookingUser({ bookingId, userId }: { bookingId: string, use
 
   try {
 
+    console.log('inside useSetBookingUser');
+
     await prisma.booking.update({
       where: {
         id: bookingId,
