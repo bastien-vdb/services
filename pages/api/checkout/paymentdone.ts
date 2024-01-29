@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log('bookingId:', bookingId, 'userId:', userId);
 
-        // await useSetBookingUser({ bookingId, userId });
+        await useSetBookingUser({ bookingId, userId });
         break;
       default:
         console.log("Unhandled event type:", webhookEvent.type);
