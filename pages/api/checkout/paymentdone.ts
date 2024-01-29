@@ -2,12 +2,21 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 import getRawBody from "raw-body";
+import type { Readable } from 'node:stream';
 
 export const config = {
   api: {
-    bodyParser: false, // Désactive le bodyParser de Next.js
+    bodyParser: false,
   },
 };
+
+async function buffer(readable: Readable) {
+  const chunks:any = [];
+  for await (const chunk of readable) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks);
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
@@ -16,11 +25,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     apiVersion: "2023-10-16",
   });
 
-  console.log('STRIPE_SECRET_KEY', process.env.STRIPE_SECRET_KEY)
+  const buf = await buffer(req);
+  const rawBody = buf.toString('utf8');
 
   // Récupère le corps de la requête sous forme de chaîne de caractères
 //   const rawBody = JSON.stringify(req.body);
-const rawBody = await getRawBody(req.body);
+// const rawBody = await getRawBody(req.body);
 
 console.log('req', rawBody);
 
