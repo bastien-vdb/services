@@ -27,7 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const buf = await buffer(req);
 
-
   // Récupère le corps de la requête sous forme de chaîne de caractères
 //   const rawBody = JSON.stringify(req.body);
 // const rawBody = await getRawBody(req.body);
@@ -35,22 +34,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
-  console.log('avant stockage signature')
-
   const signature = req.headers["stripe-signature"];
-
-
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
 
-  console.log('après stockage signature', signature)
-
   // Construit l'événement à partir du corps de la requête et de la signature
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
-  console.log('jusqu ici tout va bien + session:', webhookEvent.type);
 
-  console.log('session', webhookEvent.data.object);
-        console.log('fin webhook')
   try {
     switch (webhookEvent.type) {    
       case "checkout.session.completed":
@@ -63,9 +53,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           userId,
         } = session;
 
-        console.log('bookingId', bookingId);
+        console.log('bookingId:', bookingId, 'userId:', userId);
 
-        await useSetBookingUser({ bookingId, userId });
+        // await useSetBookingUser({ bookingId, userId });
         break;
       default:
         console.log("Unhandled event type:", webhookEvent.type);
