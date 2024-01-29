@@ -26,17 +26,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   const buf = await buffer(req);
-  const rawBody = buf.toString('utf8');
+
 
   // Récupère le corps de la requête sous forme de chaîne de caractères
 //   const rawBody = JSON.stringify(req.body);
 // const rawBody = await getRawBody(req.body);
 
-console.log('req', rawBody);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
+  console.log('avant stockage signature')
+
   const signature = req.headers["stripe-signature"];
+
+  console.log('après stockage signature')
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
 
