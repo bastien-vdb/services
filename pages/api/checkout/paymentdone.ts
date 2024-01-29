@@ -46,10 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log('après stockage signature', signature)
 
   // Construit l'événement à partir du corps de la requête et de la signature
-  const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET) as any;
+  const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
   console.log('jusqu ici tout va bien + session:', webhookEvent.type);
 
-  console.log('session', webhookEvent.data.object.metadata);
+  console.log('session', webhookEvent.data.object);
         console.log('fin webhook')
   try {
     switch (webhookEvent.type) {    
@@ -62,6 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           bookingId,
           userId,
         } = session.metadata;
+
+        console.log('bookingId', bookingId);
 
         await useSetBookingUser({ bookingId, userId });
         break;

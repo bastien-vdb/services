@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-interface RequestBody {
+export interface RequestBody {
   stripePriceId: string;
   startTime: Date;
   userId: string;
