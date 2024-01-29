@@ -47,7 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Construit l'événement à partir du corps de la requête et de la signature
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
-  console.log('jusqu ici tout va bien');
+  console.log('jusqu ici tout va bien + session:', webhookEvent.type);
+
+  console.log('fin session');
 
 
   try {
