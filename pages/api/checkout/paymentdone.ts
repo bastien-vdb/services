@@ -49,29 +49,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
   console.log('jusqu ici tout va bien');
 
-      res.status(200).send("Webhook received");
 
+  try {
+    switch (webhookEvent.type) {
+      case "checkout.session.completed":
+        const session = webhookEvent.data.object as any;
+        const {
+          bookingStartTime,
+          serviceId,
+          stripePriceId,
+          bookingId,
+          userId,
+        } = session.metadata;
 
-//   try {
-//     switch (webhookEvent.type) {
-//       case "checkout.session.completed":
-//         const session = webhookEvent.data.object as any;
-//         const {
-//           bookingStartTime,
-//           serviceId,
-//           stripePriceId,
-//           bookingId,
-//           userId,
-//         } = session.metadata;
-
-//         await useSetBookingUser({ bookingId, userId });
-//         break;
-//       default:
-//         console.log("Unhandled event type:", webhookEvent.type);
-//     }
-//     res.status(200).send("Webhook received");
-//   } catch (error) {
-//     console.error("Error handling webhook:", error);
-//     res.status(400).send("Webhook error");
-//   }
+        await useSetBookingUser({ bookingId, userId });
+        break;
+      default:
+        console.log("Unhandled event type:", webhookEvent.type);
+    }
+    res.status(200).send("Webhook received");
+  } catch (error) {
+    console.error("Error handling webhook:", error);
+    res.status(400).send("Webhook error");
+  }
 }
