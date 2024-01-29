@@ -44,28 +44,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (signature === undefined) throw new Error("Stripe signature is not defined");
 
   // Construit l'événement à partir du corps de la requête et de la signature
-  const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
+//   const webhookEvent = stripe.webhooks.constructEvent(rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET);
 
-  try {
-    switch (webhookEvent.type) {
-      case "checkout.session.completed":
-        const session = webhookEvent.data.object as any;
-        const {
-          bookingStartTime,
-          serviceId,
-          stripePriceId,
-          bookingId,
-          userId,
-        } = session.metadata;
+      res.status(200).send("Webhook received");
 
-        await useSetBookingUser({ bookingId, userId });
-        break;
-      default:
-        console.log("Unhandled event type:", webhookEvent.type);
-    }
-    res.status(200).send("Webhook received");
-  } catch (error) {
-    console.error("Error handling webhook:", error);
-    res.status(400).send("Webhook error");
-  }
+
+//   try {
+//     switch (webhookEvent.type) {
+//       case "checkout.session.completed":
+//         const session = webhookEvent.data.object as any;
+//         const {
+//           bookingStartTime,
+//           serviceId,
+//           stripePriceId,
+//           bookingId,
+//           userId,
+//         } = session.metadata;
+
+//         await useSetBookingUser({ bookingId, userId });
+//         break;
+//       default:
+//         console.log("Unhandled event type:", webhookEvent.type);
+//     }
+//     res.status(200).send("Webhook received");
+//   } catch (error) {
+//     console.error("Error handling webhook:", error);
+//     res.status(400).send("Webhook error");
+//   }
 }
