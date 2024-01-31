@@ -5,13 +5,7 @@ import { getServerSession } from 'next-auth';
 
 async function useSetBookingUser({ bookingId, userId }: { bookingId: string, userId:string }) {
 
-  const session = await getServerSession(authOptions);
-
-  if (!session) throw new Error("Utilisateur non connecté");
-
   try {
-
-    console.log('inside useSetBookingUser');
 
     await prisma.booking.update({
       where: {

@@ -57,15 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log('bookingId:', bookingId, 'userId:', userId);
 
-        // await useSetBookingUser({ bookingId, userId });
-
-        const result = await prisma.booking.findMany({
-            where: {
-              userId: userId,
-            },
-          });
-
-          console.log('r', result)
+        await useSetBookingUser({ bookingId, userId });
 
         break;
       default:
