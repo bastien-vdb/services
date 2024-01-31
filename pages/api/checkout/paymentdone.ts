@@ -3,6 +3,8 @@ import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 import getRawBody from "raw-body";
 import type { Readable } from 'node:stream';
+import { prisma } from '@/src/db/prisma';
+
 
 export const config = {
   api: {
@@ -57,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // await useSetBookingUser({ bookingId, userId });
 
-        const result = await prisma!.booking.findMany({
+        const result = await prisma.booking.findMany({
             where: {
               userId: userId,
             },
