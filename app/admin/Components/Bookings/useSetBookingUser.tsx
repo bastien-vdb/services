@@ -3,10 +3,9 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { prisma } from '@/src/db/prisma';
 import { getServerSession } from 'next-auth';
 
-async function useSetBookingUser({ bookingId, userId }: { bookingId: string, userId:string }) {
+async function useSetBookingUser({ bookingId }: { bookingId: string }) {
 
   try {
-
     await prisma.booking.update({
       where: {
         id: bookingId,
