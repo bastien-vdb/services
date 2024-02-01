@@ -22,6 +22,7 @@ async function Home() {
     },
     isAvailable: true,
     userId,
+    payed:false,
   });
 
   return <Steps bookings={bookings} services={services} userId={userId} />
