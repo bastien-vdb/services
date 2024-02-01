@@ -3,9 +3,6 @@ import TableMain from '@/src/components/Table/TableMain';
 import { Button } from '@/src/components/ui/button';
 import { Service } from '@prisma/client';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
-import Image from "next/image"
-import { AspectRatio } from "@/src/components/ui/aspect-ratio"
-
 
 function SelectService({ services }: { services?: Service[] }) {
 
@@ -46,13 +43,12 @@ function SelectService({ services }: { services?: Service[] }) {
                     Réserver
                 </Button>)
             }
-
         ]
     ));
 
-    return <>
+    return <div className='m-2 md:mx-20 lg:mx-44 xl:mx-96'>
         <TableMain caption="Sélection de la prestation" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody!} />
-    </>
+    </div>
 }
 
 export default SelectService;

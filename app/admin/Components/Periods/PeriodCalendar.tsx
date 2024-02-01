@@ -190,7 +190,7 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
     return (
         <>
             <Badge className="w-20 m-auto">Periods</Badge><br />
-            <div className='flex justify-between'>
+            <div className='flex justify-center items-center lg:gap-40 flex-wrap'>
                 <Calendar
                     fromDate={new Date()}
                     // toDate={lastDay}
