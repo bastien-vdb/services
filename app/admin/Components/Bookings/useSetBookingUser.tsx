@@ -12,6 +12,7 @@ async function useSetBookingUser({ bookingId }: { bookingId: string }) {
       },
       data: {
         payed: true,
+        isAvailable:false
       },
     });
   } catch (error) {

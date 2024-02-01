@@ -28,6 +28,7 @@ const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
           lt: moment(dateSelected).endOf("day").toDate(),
         },
         isAvailable: true,
+        payed:false,
         userId,
       });
       set({ bookings });

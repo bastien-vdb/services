@@ -1,12 +1,11 @@
 import { memo } from 'react';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';
-import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
 import useMainBookingsStore from '@/app/Components/Calendar/useMainBookingsStore';
 
 const ServiceCalendar = memo(({ userId }: { userId: string }) => {
 
-    const { bookings, daySelected, selectDay } = useMainBookingStore();
+    const { bookings, daySelected, selectDay } = useMainBookingsStore();
 
     const today = new Date();
     const nbOfDaysInMonth = moment(today).daysInMonth();
