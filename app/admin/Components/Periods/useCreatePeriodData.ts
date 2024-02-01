@@ -53,7 +53,6 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
             date: new Date(),
             startTime: slot.from,
             endTime: slot.to,
-            isAvailable: true,
             serviceId: "64b38177863f172be9fa3923",
             userId: session.user.id,
           };

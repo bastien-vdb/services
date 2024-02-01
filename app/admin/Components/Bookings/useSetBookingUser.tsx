@@ -12,7 +12,7 @@ async function useSetBookingUser({ bookingId, userId }: { bookingId: string, use
         id: bookingId,
       },
       data: {
-        userId,
+        payed: true,
       },
     });
   } catch (error) {

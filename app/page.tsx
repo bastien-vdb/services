@@ -10,7 +10,6 @@ async function Home() {
 
   const session = await getServerSession(authOptions);
   const userId = session?.user.id;
-  console.log('ca fonctionne ! userId = ', userId)
 
   if (userId === undefined) return (<><span>You need to be connected to access Booking app</span>
     <div><SignIn /></div></>)
@@ -22,9 +21,8 @@ async function Home() {
       lt: moment().endOf('day').toDate(),
     },
     isAvailable: true,
-    userId: userId ? userId : session?.user.id,
+    userId,
   });
-  console.log('bookings from server comp:', bookings)
 
   return <Steps bookings={bookings} services={services} userId={userId} />
 

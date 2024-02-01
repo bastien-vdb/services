@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { Button } from '@/src/components/ui/button';
 import { useEffect, useState } from 'react';
-import { Booking } from 'prisma/prisma-client'
+import { Booking } from "@prisma/client";
 import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';

@@ -1,10 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
-import getRawBody from "raw-body";
 import type { Readable } from 'node:stream';
-import { prisma } from '@/src/db/prisma';
-
 
 export const config = {
   api: {
@@ -40,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (signature === undefined) throw new Error("Stripe signature is not defined");
 
-  // Construit l'événement à partir du corps de la requête et de la signature
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
 
   try {
@@ -55,13 +51,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           userId,
         } = session;
 
-        console.log('bookingId:', bookingId, 'userId:', userId);
-
-        await useSetBookingUser({ bookingId, userId });
+        await useSetBookingUser({ bookingId });
 
         break;
       default:
-        console.log("Unhandled event type:", webhookEvent.type);
     }
     res.status(200).send("Webhook received");
   } catch (error) {
