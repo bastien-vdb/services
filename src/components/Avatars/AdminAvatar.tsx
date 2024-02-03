@@ -45,7 +45,7 @@ async function AdminAvatar() {
                         </DropdownMenuItem>
                     </Link>
                     <DropdownMenuItem className="cursor-pointer">
-                        <SignOut />
+                        <SignOut variant="destructive" />
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

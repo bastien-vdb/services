@@ -4,7 +4,7 @@ async function Login() {
 
 return (
   <div className="flex justify-center flex-col items-center mt-20 lg:mt-40 text-2xl">
-    <span className="mb-10">You need to be connected to access Booking app !</span>
+    <span className="mb-10 mx-4 text-sm sm:text-xl text-center">You need to be connected to access Booking app !</span>
     <SignIn />
   </div>
     )};

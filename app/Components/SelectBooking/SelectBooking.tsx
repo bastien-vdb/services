@@ -31,6 +31,8 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
                     ),
                 });
 
+                console.log('on passe ici ?', paymentPage)
+
             const paymentPageJson = await paymentPage.json();
 
             window.location.assign(paymentPageJson);

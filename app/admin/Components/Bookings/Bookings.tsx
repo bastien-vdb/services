@@ -13,7 +13,6 @@ import { Switch } from "@/src/components/ui/switch"
 
 function Bookings({ bookings }: { bookings: Booking[] }) {
 
-    const [loading, setLoading] = useState(false);
     const { bookings: bookingsFromStore, reloadBookings, removeBooking, initialiseBookings } = useBookingStore();
 
     const session = useSession()
@@ -24,41 +23,33 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
 
     const handleActiveBooking = (booking: Booking) => {
         if (!booking.id) return;
-        setLoading(true);
-        // removeBooking(booking); //Optimistic update
         useActiveBooking({ booking });
         reloadBookings(session.data?.user.id!);
-        setLoading(false);
     }
 
     const handleCancelBooking = (booking: Booking) => {
         if (!booking.id) return;
-        setLoading(true);
-        // removeBooking(booking); //Optimistic update
         useCancelBookingData({ booking });
         reloadBookings(session.data?.user.id!);
-        setLoading(false);
     }
 
     const formatDataToServiceTableHeader = [
         { className: "", text: 'From' },
         { className: "text", text: 'To' },
         { className: "", text: 'Actif' },
-        { className: "", text: 'Supprimer' }
     ];
 
-    const formatDataToServiceTableBody = bookingsFromStore.filter(booking => booking.isAvailable).map((booking: Booking) => (
+    const formatDataToServiceTableBody = bookingsFromStore.map((booking: Booking) => (
         [
             { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
             { className: "", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
             { className: "", text: <Switch checked={booking.isAvailable} onCheckedChange={() => booking.isAvailable ? handleCancelBooking(booking) : handleActiveBooking(booking)} /> },
-            { className: "", text: <Button className='rounded-full' onClick={() => handleCancelBooking(booking)} disabled={loading} variant="destructive">X</Button> }
         ]
     ));
 
     return (
         <>
-            <Badge className="w-20 m-auto">Bookings</Badge><br />
+            <Badge className="m-auto">Bookings disponibles</Badge><br />
             <TableMain caption="Sélection du rendez-vous" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
         </>
     );

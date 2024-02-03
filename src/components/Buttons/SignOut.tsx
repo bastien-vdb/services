@@ -3,9 +3,13 @@ import { signOut } from 'next-auth/react';
 import React from 'react';
 import { Button } from '../ui/button';
 
-function SignOut() {
+type SignOutProps = {
+    variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | null | undefined;
+}
+
+function SignOut({variant = "secondary"}:SignOutProps) {
     return (
-        <Button size="sm" variant="secondary" onClick={() => signOut()}>Se déconnecter</Button>
+        <Button size="sm" variant={variant} onClick={() => signOut()}>Se déconnecter</Button>
     );
 }
 

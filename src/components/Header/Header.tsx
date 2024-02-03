@@ -11,7 +11,6 @@ function Header() {
             </Link>
             <ModeToggle />
             <AdminAvatar />
-
         </div>
     );
 }

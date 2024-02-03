@@ -7,6 +7,7 @@ import useServerData from "@/src/hooks/useServerData";
 import { Booking, Periods } from "@prisma/client";
 import PeriodceCalendar from "@/app/admin/Components/Periods/PeriodCalendar";
 import Login from "@/app/Components/Login/Login";
+import BookingsPayed from "./Components/Bookings/BookingsPayed";
 
 
 async function Admin() {
@@ -27,6 +28,7 @@ async function Admin() {
       <Separator className="my-4" />
       <Bookings bookings={bookings} />
       <Separator className="my-4" />
+      <BookingsPayed bookings={bookings} />
     </main >
   )
 };
