@@ -6,10 +6,10 @@ import moment from 'moment';
 import { Button } from '@/src/components/ui/button';
 import { Booking } from '@prisma/client';
 import useBookingStore from '@/app/admin/Components/Bookings/useBookingsStore';
+import useActiveBooking from '@/app/admin/Components/Bookings/useActiveBooking';
 import { useSession } from 'next-auth/react';
-import useCancelBookingData from '@/app/admin/Components/Bookings/useCancelBookingData';
+import useCancelBookingData from '@/app/admin/Components/Bookings/useCancelBooking';
 import { Switch } from "@/src/components/ui/switch"
-
 
 function Bookings({ bookings }: { bookings: Booking[] }) {
 
@@ -22,14 +22,22 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
         initialiseBookings(bookings);
     }, [])
 
+    const handleActiveBooking = (booking: Booking) => {
+        if (!booking.id) return;
+        setLoading(true);
+        // removeBooking(booking); //Optimistic update
+        useActiveBooking({ booking });
+        reloadBookings(session.data?.user.id!);
+        setLoading(false);
+    }
+
     const handleCancelBooking = (booking: Booking) => {
         if (!booking.id) return;
         setLoading(true);
-        removeBooking(booking); //Optimistic update
+        // removeBooking(booking); //Optimistic update
         useCancelBookingData({ booking });
         reloadBookings(session.data?.user.id!);
         setLoading(false);
-
     }
 
     const formatDataToServiceTableHeader = [
@@ -43,7 +51,7 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
         [
             { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
             { className: "", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
-            { className: "", text: <Switch checked={booking.isAvailable} onCheckedChange={()=>{}} /> },
+            { className: "", text: <Switch checked={booking.isAvailable} onCheckedChange={() => booking.isAvailable ? handleCancelBooking(booking) : handleActiveBooking(booking)} /> },
             { className: "", text: <Button className='rounded-full' onClick={() => handleCancelBooking(booking)} disabled={loading} variant="destructive">X</Button> }
         ]
     ));

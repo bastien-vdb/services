@@ -4,7 +4,7 @@ import { prisma } from '@/src/db/prisma';
 import { Booking } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 
-async function useCancelBookingData({ booking }: { booking: Booking }) {
+async function useActiveBooking({ booking }: { booking: Booking }) {
 
   const session = await getServerSession(authOptions);
 
@@ -17,12 +17,12 @@ async function useCancelBookingData({ booking }: { booking: Booking }) {
         id: booking.id,
       },
       data: {
-        isAvailable: false,
+        isAvailable: true,
       },
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Annulation impossible");
+    throw new Error("Activation impossible");
   }
 
   try {
@@ -37,4 +37,4 @@ async function useCancelBookingData({ booking }: { booking: Booking }) {
   }
 }
 
-export default useCancelBookingData;
+export default useActiveBooking;
