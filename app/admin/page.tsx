@@ -3,10 +3,10 @@ import { Separator } from "@/src/components/ui/separator"
 import Bookings from "@/app/admin/Components/Bookings/Bookings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
-import SignIn from "@/src/components/Buttons/SignIn";
 import useServerData from "@/src/hooks/useServerData";
 import { Booking, Periods } from "@prisma/client";
 import PeriodceCalendar from "@/app/admin/Components/Periods/PeriodCalendar";
+import Login from "@/app/Components/Login/Login";
 
 
 async function Admin() {
@@ -18,10 +18,7 @@ async function Admin() {
   const periods: Periods[] = await useServerData('periods', { createdById: userId });
   const bookings: Booking[] = await useServerData('booking', { userId });
 
-  if (!session) return (<>
-    <div>You need to be connected to access Booking app</div>
-    <div><SignIn /></div>
-  </>)
+  if (!session) return <Login/>;
   return (
     <main className="flex flex-col p-6 gap-6 xl:mx-96">
       <Services services={services} />

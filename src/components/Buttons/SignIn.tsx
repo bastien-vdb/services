@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 
 function SignIn() {
     return (
-        <Button size="sm" variant="default" onClick={() => signIn()}>Se connecter</Button>
+        <Button size="lg" variant="default" onClick={() => signIn()}>Se connecter</Button>
     );
 }
 
