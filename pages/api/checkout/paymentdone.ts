@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 import type { Readable } from 'node:stream';
+import useSendEmail from "@/src/emails/useSendEmail";
 
 export const config = {
   api: {
@@ -52,7 +53,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } = session;
 
         await useSetBookingUser({ bookingId });
-        console.log('I will push new code')
+        console.log('I will push new code');
+        await useSendEmail();
 
         break;
       default:

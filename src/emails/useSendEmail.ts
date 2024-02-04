@@ -10,7 +10,7 @@ const useSendEmail = async () => {
       from: "Acme <onboarding@resend.dev>",
       to: ["bastien.deboisrolin@gmail.com"],
       subject: "Hello world",
-      react: EmailTemplate({ firstName: "John" }),
+      react: EmailTemplate({ firstName: "Johny deps" }),
     } as any) as any;
     if (error) return error;
     return data;
