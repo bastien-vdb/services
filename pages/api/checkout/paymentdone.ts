@@ -52,6 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         } = session;
 
         await useSetBookingUser({ bookingId });
+        console.log('I will push new code')
 
         break;
       default:
