@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
-import type { Readable } from 'node:stream';
+import type { Readable } from "node:stream";
 import useSendEmail from "@/src/emails/useSendEmail";
+import EmailBooked from "@/src/emails/EmailBooked";
 
 export const config = {
   api: {
@@ -11,9 +12,9 @@ export const config = {
 };
 
 async function buffer(readable: Readable) {
-  const chunks:any = [];
+  const chunks: any = [];
   for await (const chunk of readable) {
-    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
   }
   return Buffer.concat(chunks);
 }
@@ -27,11 +28,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const buf = await buffer(req);
 
-  // Récupère le corps de la requête sous forme de chaîne de caractères
-//   const rawBody = JSON.stringify(req.body);
-// const rawBody = await getRawBody(req.body);
-
-
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
   const signature = req.headers["stripe-signature"];
@@ -41,20 +37,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
 
   try {
-    switch (webhookEvent.type) {    
+    switch (webhookEvent.type) {
       case "checkout.session.completed":
         const session = webhookEvent.data.object.metadata as any;
-        const {
-          bookingStartTime,
-          serviceId,
-          stripePriceId,
-          bookingId,
-          userId,
-        } = session;
+        const customerDetails = webhookEvent.data.object.customer_details;
+        const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
 
-        await useSetBookingUser({ bookingId });
-        console.log('I will push new code');
-        await useSendEmail();
+        const isBooked = await useSetBookingUser({ bookingId });
+        if (isBooked && customerDetails?.email) {
+          await useSendEmail({
+            from: "QuickReserve <no-answer@quickreserve.app>",
+            to: [String(customerDetails.email)],
+            subject: `${customerDetails.name} Votre créneau a bien été réservé`,
+            react: EmailBooked({magicLink:process.env.NEXTAUTH_URL}),
+          });
+        }
 
         break;
       default:

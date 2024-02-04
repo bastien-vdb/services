@@ -15,6 +15,7 @@ async function useSetBookingUser({ bookingId }: { bookingId: string }) {
         isAvailable:false
       },
     });
+    return true;
   } catch (error) {
     console.error(error);
     throw new Error("Réservation impossible");
