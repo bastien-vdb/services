@@ -43,12 +43,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const customerDetails = webhookEvent.data.object.customer_details;
         const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
 
-        const emailSender = `popsmoke@jfkgwadaaaaaaaaa.fr`;
-
         const isBooked = await useSetBookingUser({ bookingId });
         if (isBooked && customerDetails?.email) {
           await useSendEmail({
-            from: emailSender,
+            from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
             react: EmailBooked({magicLink:process.env.NEXTAUTH_URL}),
