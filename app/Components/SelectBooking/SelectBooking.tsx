@@ -5,10 +5,13 @@ import { Booking } from "@prisma/client";
 import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/ui/drawer';
+import { set } from 'date-fns';
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
     const [loading, setLoading] = useState(false);
+    const [isOpened, setIsOpened] = useState(false);
     const { bookings: bookingsFromStore, initialiseBookings, daySelected } = useMainBookingStore();
     const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
@@ -16,6 +19,10 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     useEffect(() => {
         initialiseBookings(bookings);
     }, []);
+
+    useEffect(() => {
+        if (daySelected) setIsOpened(true);
+    }, [daySelected]);
 
     const handleCreateBook = async (booking: Booking) => {
 
@@ -27,11 +34,11 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(
-                        { stripePriceId: serviceSelected?.stripePriceId, bookingId:booking.id, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id }
+                        { stripePriceId: serviceSelected?.stripePriceId, bookingId: booking.id, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id }
                     ),
                 });
 
-                console.log('on passe ici ?', paymentPage)
+            console.log('on passe ici ?', paymentPage)
 
             const paymentPageJson = await paymentPage.json();
 
@@ -45,17 +52,29 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     }
 
     return (
-        <div>
-            <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
-                {
-                    bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
-                        <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
-                    ))
-                        :
-                        <Button variant="ghost">Pas de créneau disponible</Button>
-                }
-            </ul>
-        </div>
+        <Drawer open={isOpened}>
+            <DrawerContent className='flex justify-center items-center'>
+                <DrawerHeader>
+                    <DrawerTitle>Rendez-vous</DrawerTitle>
+                    <DrawerDescription>Selectionner un rendez-vous.</DrawerDescription>
+                </DrawerHeader>
+                <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
+
+                    {
+                        bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
+                            <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
+                        ))
+                            :
+                            <Button variant="ghost">Pas de créneau disponible</Button>
+                    }
+                </ul>
+                <DrawerFooter>
+                    <DrawerClose onClick={() => setIsOpened(false)}>
+                        <Button variant="outline">Annuler</Button>
+                    </DrawerClose>
+                </DrawerFooter>
+            </DrawerContent>
+        </Drawer>
     );
 };
 

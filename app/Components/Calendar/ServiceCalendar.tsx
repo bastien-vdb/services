@@ -14,6 +14,7 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
     const { reloadBookings } = useMainBookingsStore();
 
     const handleSelectDate = (date: Date) => {
+        console.log('ya quoi ici ?')
         selectDay(date);
         reloadBookings(userId, date);
     }
@@ -23,7 +24,7 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
             fromDate={new Date()}
             // toDate={lastDay}
             mode="single"
-            selected={daySelected ?? new Date()}
+            selected={undefined}
             onSelect={(date) => handleSelectDate(date!)}
             className="rounded-md border p-10"
         />

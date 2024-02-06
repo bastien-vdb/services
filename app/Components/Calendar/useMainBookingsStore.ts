@@ -5,7 +5,7 @@ import { create } from "zustand";
 
 type useMainBookingsStoreType = {
   bookings: Booking[];
-  daySelected: Date;
+  daySelected: Date | undefined;
   selectDay: (daySelected: Date) => void;
   initialiseBookings: (bookings: Booking[]) => void;
   removeBooking: (booking: Booking) => void;
@@ -14,7 +14,7 @@ type useMainBookingsStoreType = {
 
 const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
   bookings: [],
-  daySelected: new Date(),
+  daySelected: undefined,
   selectDay: (daySelected) => set({ daySelected }),
   initialiseBookings: (bookings) => set({ bookings }),
   removeBooking: (booking) => {
