@@ -14,7 +14,6 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
     const { reloadBookings } = useMainBookingsStore();
 
     const handleSelectDate = (date: Date) => {
-        console.log('ya quoi ici ?')
         selectDay(date);
         reloadBookings(userId, date);
     }

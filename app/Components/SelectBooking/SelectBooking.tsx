@@ -7,12 +7,12 @@ import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/ui/drawer';
 import { set } from 'date-fns';
+import { LoadingSpinner } from '@/src/components/ui/loader';
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
-    const [loading, setLoading] = useState(false);
     const [isOpened, setIsOpened] = useState(false);
-    const { bookings: bookingsFromStore, initialiseBookings, daySelected } = useMainBookingStore();
+    const { bookings: bookingsFromStore, initialiseBookings, daySelected, loading } = useMainBookingStore();
     const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
 
@@ -52,22 +52,25 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     }
 
     return (
-        <Drawer open={isOpened}>
+        <Drawer open={isOpened} onClose={() => setIsOpened(false)} onOpenChange={(state) => !state && setIsOpened(false)}>
             <DrawerContent className='flex justify-center items-center'>
-                <DrawerHeader>
-                    <DrawerTitle>Rendez-vous</DrawerTitle>
-                    <DrawerDescription>Selectionner un rendez-vous.</DrawerDescription>
-                </DrawerHeader>
-                <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
-
-                    {
-                        bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
-                            <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
-                        ))
-                            :
-                            <Button variant="ghost">Pas de créneau disponible</Button>
-                    }
-                </ul>
+                {loading ? <LoadingSpinner className="w-20 h-20 animate-spin" /> :
+                    (
+                        <>
+                            <DrawerHeader>
+                                <DrawerTitle>Rendez-vous</DrawerTitle>
+                                <DrawerDescription>Selectionner un rendez-vous.</DrawerDescription>
+                            </DrawerHeader>
+                            <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
+                                {bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
+                                    <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
+                                ))
+                                    :
+                                    <Button variant="ghost">Pas de créneau disponible</Button>
+                                }
+                            </ul>
+                        </>
+                    )}
                 <DrawerFooter>
                     <DrawerClose onClick={() => setIsOpened(false)}>
                         <Button variant="outline">Annuler</Button>
