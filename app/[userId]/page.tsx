@@ -3,7 +3,7 @@ import Steps from '@/app/Components/Steps';
 import { Booking, Service } from '@prisma/client';
 
 
-async function Business({ params }: { params: { userName: string } }) {
+async function Business({ params }: { params: { userId: string } }) {
 
     const { userId } = params;
 
