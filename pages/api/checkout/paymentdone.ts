@@ -49,7 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-            react: EmailBooked({magicLink:process.env.NEXTAUTH_URL}),
+            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }),
           });
         }
 

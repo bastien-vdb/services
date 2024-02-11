@@ -20,6 +20,7 @@ import useDeletePeriodData from './useDeletePeriodData';
 import usePeriodsStore from './usePeriodsStore';
 import { Label } from "@/src/components/ui/label";
 import { Checkbox } from "@/src/components/ui/checkbox";
+import { AlarmClockOff, Clock1, Plus, TimerReset, TrafficCone, Trash2 } from 'lucide-react';
 
 const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
 
@@ -86,16 +87,16 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
     }
 
     const formatDataToServiceTableHeader = [
-        { className: "w-20", text: 'From' },
-        { className: "", text: 'To' },
-        { className: "", text: '' }
+        { className: "w-20", tooltip:"Du", text: 'Du' },
+        { className: "", tooltip:"Au", text: 'Au' },
+        { className: "", tooltip:"", text: '' }
     ];
 
     const formatDataToServiceTableBody = periodsFromStore.map((period: Periods) => (
         [
             { className: "font-medium w-40", text: moment(period.start).format('DD/MM/YYYY').toString() },
             { className: "text-right", text: moment(period.end).format('DD/MM/YYYY').toString() },
-            { className: "text-right", text: <Button onClick={() => handleDeletePeriod(period)} disabled={loading} variant="destructive">Supprimer</Button> }
+            { className: "text-right", text: <Button title='Supprimer' onClick={() => handleDeletePeriod(period)} disabled={loading} variant="outline"><Trash2 className='text-destructive' /></Button> }
         ]
     ));
 
@@ -116,7 +117,7 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
             <div className='my-6 flex flex-col gap-4'>
 
                 <div className="flex flex-col items-left gap-2 my-8">
-                    <Label className='my-2' htmlFor="jours">Jours de travail :</Label>
+                    <Label className='my-2 flex items-center gap-2' htmlFor="jours"><TrafficCone /> Jours de travail :</Label>
                     {LISTE_JOURS.map((jour, key) => (
                         <div id="jours" className='flex gap-2' key={key}>
                             <Checkbox id={jour} onCheckedChange={() => setJoursOuvrables(s => {
@@ -134,9 +135,9 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
                 </div>
 
                 <Select onValueChange={setSelectDuree}>
-                    <Label>Durée créneau :</Label>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Durée créneau" />
+                    <Label className='flex items-center gap-2'><TimerReset /> Durée créneau :</Label>
+                    <SelectTrigger title='Sélectionner une durée de créneau' className="w-[180px]">
+                        <SelectValue placeholder={<span className='flex items-center gap-2'>...</span>} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="15">15min</SelectItem>
@@ -153,9 +154,9 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
                 {selectDuree && (
                     <>
                         <Select onValueChange={setSelectStartHour}>
-                            <Label>Heure de démarrage :</Label>
+                            <Label className='flex items-center gap-2'><Clock1 /> Heure de démarrage :</Label>
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Heure démarrage" />
+                                <SelectValue placeholder="..." />
                             </SelectTrigger>
                             <SelectContent>
                                 {tp.map((time) =>
@@ -165,31 +166,34 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
                         </Select>
 
                         {selectStartHour && (
-                            <Select onValueChange={setSelectEndHour}>
-                                <Label>Heure de fin :</Label>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Heure de fin" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {tp
-                                        .filter((time) => time.isAfter(moment(selectStartHour)))
-                                        .map((time) =>
-                                            <SelectItem value={time.toString()}>{time.format('HH:mm')}</SelectItem>
-                                        )}
-                                </SelectContent>
-                            </Select>
+                            <>
+                                <Select onValueChange={setSelectEndHour}>
+                                    <Label className='flex items-center gap-2'> <AlarmClockOff />Heure de fin :</Label>
+                                    <SelectTrigger className="w-[180px]">
+                                        <SelectValue placeholder="Heure de fin" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {tp
+                                            .filter((time) => time.isAfter(moment(selectStartHour)))
+                                            .map((time) =>
+                                                <SelectItem value={time.toString()}>{time.format('HH:mm')}</SelectItem>
+                                            )}
+                                    </SelectContent>
+                                </Select>
+                                {selectEndHour && <Button title='Ajouter' onClick={handleCreatePeriod}>Open Period<Plus size={32} color="#008026" /></Button>}
+                            </>
                         )}
                     </>
                 )}
 
             </div>
-            <Button className='w-60 my-16' onClick={handleCreatePeriod}>Open the selected Period</Button>
+
         </>
     )
 
     return (
         <>
-            <Badge className="w-20 m-auto">Periods</Badge><br />
+            <Badge title='Gestion des périodes' className="w-20 m-auto ml-2 my-10">Periodes</Badge><br />
             <div className='flex justify-center items-center lg:gap-40 flex-wrap'>
                 <Calendar
                     fromDate={new Date()}

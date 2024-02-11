@@ -15,11 +15,13 @@ function BookingsPayed({ bookings }: { bookings: Booking[] }) {
     }, [])
 
     const formatDataToServiceTableHeader = [
-        { className: "", text: 'From' },
-        { className: "text", text: 'To' },
+        { className: "", text: 'Du', tooltip: "Du" },
+        {
+            className: "text", text: 'Au', tooltip: "Au",
+        },
     ];
 
-    const formatDataToServiceTableBody = bookingsFromStore.filter(booking=> booking.payed).map((booking) => (
+    const formatDataToServiceTableBody = bookingsFromStore.filter(booking => booking.payed).map((booking) => (
         [
             { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
             { className: "", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
@@ -28,7 +30,7 @@ function BookingsPayed({ bookings }: { bookings: Booking[] }) {
 
     return (
         <>
-            <Badge className="m-auto">Bookings facturés</Badge><br />
+            <Badge className="m-auto ml-2 my-10">Bookings facturés</Badge><br />
             <TableMain caption="Liste des bookings facturés aux clients" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
         </>
     );

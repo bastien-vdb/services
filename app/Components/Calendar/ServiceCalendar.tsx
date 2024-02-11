@@ -25,7 +25,7 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
             mode="single"
             selected={undefined}
             onSelect={(date) => handleSelectDate(date!)}
-            className="rounded-md border p-10"
+            className="p-10"
         />
     )
 

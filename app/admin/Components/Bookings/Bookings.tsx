@@ -34,9 +34,9 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
     }
 
     const formatDataToServiceTableHeader = [
-        { className: "", text: 'From' },
-        { className: "text", text: 'To' },
-        { className: "", text: 'Actif' },
+        { className: "", text: 'Du', tooltip: "Du" },
+        { className: "text", text: 'Au', tooltip: "Au" },
+        { className: "", text: 'Actif', tooltip: "Actif" },
     ];
 
     const formatDataToServiceTableBody = bookingsFromStore.map((booking: Booking) => (
@@ -49,7 +49,7 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
 
     return (
         <>
-            <Badge className="m-auto">Bookings disponibles</Badge><br />
+            <Badge className="m-auto ml-2 my-10">Bookings disponibles</Badge><br />
             <TableMain caption="Sélection du rendez-vous" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
         </>
     );

@@ -3,6 +3,7 @@ import TableMain from '@/src/components/Table/TableMain';
 import { Button } from '@/src/components/ui/button';
 import { Service } from '@prisma/client';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
+import { Gem, CalendarPlus, Coins } from 'lucide-react';
 
 function SelectService({ services }: { services?: Service[] }) {
 
@@ -12,18 +13,29 @@ function SelectService({ services }: { services?: Service[] }) {
         changeServiceSelected(service);
     }
 
+    const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
+        return (
+            <div className='flex items-center gap-4'>
+                <span>{text}</span> {Icon}
+            </div>
+        )
+    };
+
     const formatDataToServiceTableHeader = [
         {
             className: "w-20",
-            text: 'Prestations'
+            text: HeaderWithIcon(<Gem size={18} />, 'Prestations'),
+            tooltip: 'Prestations'
         },
         {
-            className: "text-right",
-            text: 'Prix'
+            className: "float-right mt-8",
+            text: <Coins size={22} />,
+            tooltip: 'Prix'
         },
         {
             className: "",
-            text: '',
+            text: "",
+            tooltip:""
         }
     ];
 
@@ -35,12 +47,12 @@ function SelectService({ services }: { services?: Service[] }) {
             },
             {
                 className: "text-right",
-                text: service.price,
+                text: service.price + ' €',
             },
             {
                 className: "text-right",
-                text: (<Button key={key} onClick={() => handleSelectService(service)} color="indigo">
-                    Réserver
+                text: (<Button title='Réservation en ligne' key={key} onClick={() => handleSelectService(service)} color="indigo">
+                    <span className='mx-2'>Réserver</span> <CalendarPlus size={18} color="#008026" />
                 </Button>)
             }
         ]

@@ -1,7 +1,5 @@
 'use server'
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { prisma } from '@/src/db/prisma';
-import { getServerSession } from 'next-auth';
 
 async function useSetBookingUser({ bookingId }: { bookingId: string }) {
 
@@ -26,7 +24,7 @@ async function useSetBookingUser({ bookingId }: { bookingId: string }) {
     return true;
   } catch (error) {
     console.error(error);
-    throw new Error("Réservation impossible");
+    return false;
   }
 }
 

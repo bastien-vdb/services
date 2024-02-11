@@ -11,7 +11,7 @@ import React from "react";
 
 type TableMainProps = {
     caption: string,
-    headers: { className: string, text: string }[],
+    headers: { className: string, text: string | React.ReactNode, tooltip: string }[],
     rows: { className: string, text: string | React.ReactNode }[][],
 }
 
@@ -23,7 +23,7 @@ function TableMain({ caption, headers, rows }: TableMainProps) {
             <TableHeader>
                 <TableRow>
                     {headers.map((header, key) => (
-                        <TableHead key={key} className={header.className}>{header.text}</TableHead>
+                        <TableHead title={header.tooltip} key={key} className={header.className}>{header.text}</TableHead>
                     ))}
                 </TableRow>
 
