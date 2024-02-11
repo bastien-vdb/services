@@ -14,7 +14,12 @@ const useBookingStore = create<useBookingStoreType>((set) => ({
   bookings: [],
   initialiseBookings: (bookings) => set({ bookings }),
   removeBooking: (booking) => {
-    set((state) => ({ bookings: state.bookings.filter((b) => b.id !== booking.id) }));
+    set((state) => ({
+      bookings: state.bookings.map((b) => {
+        if (b.id === booking.id) b.isAvailable = !b.isAvailable;
+        return b;
+      }),
+    }));
   },
   reloadBookings: async (userId: string) => {
     const getBookings = async () => {
