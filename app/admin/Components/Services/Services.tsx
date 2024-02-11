@@ -21,8 +21,8 @@ function Services({ services }: { services: Service[] }) {
     const [servicePrice, setServicePrice] = useState<number | string>("");
 
     const formatDataToServiceTableHeader = [
-        { className: "w-20", text: 'Prestations', tooltip:"Prestations" },
-        { className: "text-right", text: 'Prix', tooltip:"Prix" },
+        { className: "w-20", text: 'Prestations', tooltip: "Prestations" },
+        { className: "text-right", text: 'Prix', tooltip: "Prix" },
         {
             className: "", text: "",
             tooltip: ""
@@ -32,7 +32,7 @@ function Services({ services }: { services: Service[] }) {
     const formatDataToServiceTableBody = servicesFromStore.map((service) => (
         [
             { className: "font-medium w-40", text: (service.name).charAt(0).toUpperCase() + (service.name).slice(1) }, //Pour mettre en majuscule
-            { className: "text-right", text: service.price + ' €' },
+            { className: "text-right", text: service.price/100 + ' €' },
             { className: "text-right", text: <Button title='Supprimer' onClick={() => handleDeleteService(service)} disabled={loading} variant="outline"><Trash2 className='text-destructive' /></Button> }
         ]
     ));
@@ -45,6 +45,8 @@ function Services({ services }: { services: Service[] }) {
         if (e.target.name === 'servicename') setServiceName(e.target.value);
         if (e.target.name === 'serviceprice') setServicePrice(Number(e.target.value));
     }
+
+    useEffect(() => { console.log(servicePrice) }, [servicePrice])
 
     const handleAddService = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -66,7 +68,7 @@ function Services({ services }: { services: Service[] }) {
 
         await useCreateServerData({
             name: temp_serviceName,
-            price: Number(temp_servicePrice) ?? 0,
+            price: Number(temp_servicePrice)*100 ?? 0,
         });
         reLoadServices(session?.data?.user.id!);
         setLoading(false);

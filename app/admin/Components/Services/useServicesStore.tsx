@@ -1,6 +1,6 @@
 import { Service } from '@prisma/client';
 import { create } from 'zustand';
-import useServerData from '../../../../src/hooks/useServerData';
+import useServerData from '@/src/hooks/useServerData';
 
 type ServiceStoreType = {
   services: Service[];

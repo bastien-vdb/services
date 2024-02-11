@@ -47,7 +47,7 @@ function SelectService({ services }: { services?: Service[] }) {
             },
             {
                 className: "text-right",
-                text: service.price + ' €',
+                text: service.price/100 + ' €',
             },
             {
                 className: "text-right",
