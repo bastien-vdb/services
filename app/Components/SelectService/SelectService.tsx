@@ -35,7 +35,7 @@ function SelectService({ services }: { services?: Service[] }) {
         {
             className: "",
             text: "",
-            tooltip:""
+            tooltip: ""
         }
     ];
 
@@ -52,7 +52,7 @@ function SelectService({ services }: { services?: Service[] }) {
             {
                 className: "text-right",
                 text: (<Button title='Réservation en ligne' key={key} onClick={() => handleSelectService(service)} color="indigo">
-                    <span className='mx-2'>Réserver</span> <CalendarPlus size={18} color="#008026" />
+                    <span className='mx-2 hidden sm:block'>Réserver</span> <CalendarPlus size={18} color="#008026" />
                 </Button>)
             }
         ]

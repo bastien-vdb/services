@@ -18,7 +18,7 @@ type TableMainProps = {
 function TableMain({ caption, headers, rows }: TableMainProps) {
 
     return (
-        <Table>
+        <Table key={caption}>
             <TableCaption>{caption}</TableCaption>
             <TableHeader>
                 <TableRow>

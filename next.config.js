@@ -3,13 +3,8 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "quickreserve",
+        protocol: process.env.PROTOCOL ?? "http",
+        hostname: process.env.HOSTNAME ?? "localhost",
         pathname: "/**",
       },
     ],
