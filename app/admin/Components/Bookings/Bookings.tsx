@@ -1,7 +1,6 @@
 'use client'
 import { useEffect } from 'react';
 import { Badge } from "@/src/components/ui/badge"
-import TableMain from '@/src/components/Table/TableMain';
 import moment from 'moment';
 import { Booking } from '@prisma/client';
 import useBookingStore from '@/app/admin/Components/Bookings/useBookingsStore';
@@ -9,13 +8,13 @@ import useActiveBooking from '@/app/admin/Components/Bookings/useActiveBooking';
 import { useSession } from 'next-auth/react';
 import useCancelBookingData from '@/app/admin/Components/Bookings/useCancelBooking';
 import { Switch } from "@/src/components/ui/switch"
-import { DataTable } from '@/src/components/Bookings/data-table';
-import { columns } from '@/src/components/Bookings/columns';
+import { DataTable } from '@/src/components/bookings_data_table/data-table';
+import { columns } from '@/src/components/bookings_data_table/columns';
 
 function Bookings({ bookings }: { bookings: Booking[] }) {
 
-    const { bookings: bookingsFromStore, reloadBookings, removeBooking, initialiseBookings } = useBookingStore();
-
+    const { bookings: bookingsFromStore, reloadBookings, isAvailableSwitchBooking, initialiseBookings } = useBookingStore();
+    
     const session = useSession()
 
     useEffect(() => {
@@ -24,14 +23,14 @@ function Bookings({ bookings }: { bookings: Booking[] }) {
 
     const handleActiveBooking = (booking: Booking) => {
         if (!booking.id) return;
-
+        isAvailableSwitchBooking(booking); //TODO Optimistic update
         useActiveBooking({ booking });
         reloadBookings(session.data?.user.id!);
     }
 
     const handleCancelBooking = (booking: Booking) => {
         if (!booking.id) return;
-        removeBooking(booking); //TODO Optimistic update
+        isAvailableSwitchBooking(booking); //TODO Optimistic update
         useCancelBookingData({ booking });
         reloadBookings(session.data?.user.id!);
     }

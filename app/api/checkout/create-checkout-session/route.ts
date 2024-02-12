@@ -21,8 +21,6 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
 
-  console.log("inside stripe 1: ");
-
   const session = await stripe.checkout.sessions.create({
     metadata: {
       bookingStartTime: String(startTime),
@@ -40,9 +38,10 @@ export async function POST(req: Request, res: NextApiResponse) {
     mode: "payment",
     success_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
     cancel_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/cancel`,
+  },
+  {
+    idempotencyKey: 'KG5LxwFBepaKHyUD',
   });
-
-  console.log("session stripe: ", session);
 
   if (!session.url) return NextResponse.json("Session cannot be created"); //return res.status(400).json("Session cannot be created");
   return NextResponse.json(session.url); //res.status(200).json(session.url);
