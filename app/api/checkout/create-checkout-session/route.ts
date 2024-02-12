@@ -40,7 +40,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     cancel_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/cancel`,
   },
   {
-    idempotencyKey: 'KG5LxwFBepaKHyUD',
+    idempotencyKey: 'KG5LxwFBepaKHyUDA',
   });
 
   if (!session.url) return NextResponse.json("Session cannot be created"); //return res.status(400).json("Session cannot be created");
