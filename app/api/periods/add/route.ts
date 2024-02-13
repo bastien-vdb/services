@@ -3,6 +3,7 @@ import { prisma } from "@/src/db/prisma";
 import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
+import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
         isAvailable: true,
         serviceId: "64b38177863f172be9fa3923",
         userId: session.user.id,
+        idemPotentKey: uuidv4()
       }));
 
       await prisma.booking.createMany({
