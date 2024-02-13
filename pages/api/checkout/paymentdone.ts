@@ -4,6 +4,7 @@ import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser
 import type { Readable } from "node:stream";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailBooked from "@/src/emails/EmailBooked";
+import useRenewIdemPotent from "@/pages/api/checkout/useRenewIdemPotent";
 
 export const config = {
   api: {
@@ -38,8 +39,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     switch (webhookEvent.type) {
-      case "checkout.session.completed":
-        const session = webhookEvent.data.object.metadata as any;
+      case "checkout.session.completed": {
+        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
         const customerDetails = webhookEvent.data.object.customer_details;
         const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
 
@@ -52,8 +53,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }),
           });
         }
-
         break;
+      }
+
+      case "checkout.session.async_payment_failed" || "checkout.session.expired": {
+        const session = webhookEvent.data.object.metadata as { bookingId: string };
+        const { bookingId } = session;
+        const newIdemPotent = await useRenewIdemPotent({ bookingId }); //renouveller identifiant unique stripe
+        if (!newIdemPotent) {
+          await useSendEmail({
+            from: "QuickReserve <no-answer@quickreserve.app>",
+            to: ["bastien.deboisrolin@gmail.com"], //l'admin principal de l'app (moi même) - prévoir une variable d'environnement
+            subject: `Le booking ${bookingId} est potentiellement bloqué`,
+            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }), //Email à adapter pour les erreurs admin
+          });
+        }
+        break;
+      }
       default:
     }
     res.status(200).send("Webhook received");

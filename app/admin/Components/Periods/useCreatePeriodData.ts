@@ -4,6 +4,7 @@ import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { prisma } from "@/src/db/prisma";
 import { now } from "moment";
 import { getServerSession } from "next-auth/next";
+import { v4 as uuidv4 } from 'uuid';
 
 async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { start: Date; end: Date; duree: number; joursOuvrables: number[] }) {
   const session = await getServerSession(authOptions);
@@ -55,6 +56,7 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
             endTime: slot.to,
             serviceId: "64b38177863f172be9fa3923",
             userId: session.user.id,
+            idemPotentKey: uuidv4()
           };
         })
         .filter((a) => a !== undefined);

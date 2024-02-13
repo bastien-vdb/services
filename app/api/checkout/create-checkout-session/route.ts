@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -8,6 +8,7 @@ export interface RequestBody {
   userId: string;
   serviceId: string;
   bookingId:string;
+  idemPotentKey: string;
 }
 
 export async function POST(req: Request, res: NextApiResponse) {
@@ -17,7 +18,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   const body: RequestBody = await req.json();
 
-  const { stripePriceId, startTime: startTime, userId, serviceId, bookingId } = body;
+  const { stripePriceId, startTime: startTime, userId, serviceId, bookingId, idemPotentKey } = body;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
 
@@ -40,7 +41,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     cancel_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/cancel`,
   },
   {
-    idempotencyKey: 'KG5LxwFBepaKHyUDB',
+    idempotencyKey: idemPotentKey,
   });
 
   if (!session.url) return NextResponse.json("Session cannot be created"); //return res.status(400).json("Session cannot be created");
