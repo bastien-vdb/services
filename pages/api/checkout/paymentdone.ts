@@ -56,7 +56,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         break;
       }
 
-      case "checkout.session.async_payment_failed" || "checkout.session.expired": {
+      case "checkout.session.expired": {
+        const session = webhookEvent.data.object.metadata as { bookingId: string };
+        const { bookingId } = session;
+        const newIdemPotent = await useRenewIdemPotent({ bookingId }); //renouveller identifiant unique stripe
+        if (!newIdemPotent) {
+          await useSendEmail({
+            from: "QuickReserve <no-answer@quickreserve.app>",
+            to: ["bastien.deboisrolin@gmail.com"], //l'admin principal de l'app (moi même) - prévoir une variable d'environnement
+            subject: `Exp: Le booking ${bookingId} est potentiellement bloqué`,
+            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }), //Email à adapter pour les erreurs admin
+          });
+        }
+        break;
+      }
+
+      case "checkout.session.async_payment_failed": {
         const session = webhookEvent.data.object.metadata as { bookingId: string };
         const { bookingId } = session;
         const newIdemPotent = await useRenewIdemPotent({ bookingId }); //renouveller identifiant unique stripe
