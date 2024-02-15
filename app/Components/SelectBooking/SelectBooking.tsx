@@ -7,13 +7,18 @@ import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/ui/drawer';
 import { LoadingSpinner } from '@/src/components/ui/loader';
+import { useToast } from "@/src/components/ui/use-toast"
+import useLoad from '@/src/hooks/useLoad';
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
+    const { toast } = useToast();
+
     const [isOpened, setIsOpened] = useState(false);
-    const { bookings: bookingsFromStore, initialiseBookings, daySelected, loading } = useMainBookingStore();
+    const { bookings: bookingsFromStore, initialiseBookings, daySelected, loadingBookings } = useMainBookingStore();
     const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
+    const { setLoading } = useLoad();
 
     useEffect(() => {
         initialiseBookings(bookings);
@@ -24,7 +29,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     }, [daySelected]);
 
     const handleCreateBook = async (booking: Booking) => {
-
+        setLoading(true);
         try {
             const paymentPage = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/checkout/create-checkout-session`,
                 {
@@ -42,8 +47,13 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
             window.location.assign(paymentPageJson);
         } catch (error) {
             console.error("error: ", error);
-            throw new Error("Une erreur est survenue lors de la prise de rendez-vous");
+            toast({
+                variant: "destructive",
+                title: "Une erreur est survenue lors de la prise de rendez-vous",
+                description: "Il serait préférable de sélectionner un autre créneau disponible",
+            })
         }
+        setLoading(false);
 
         if (!daySelected) throw new Error('No day selected');
     }
@@ -51,7 +61,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     return (
         <Drawer open={isOpened} onClose={() => setIsOpened(false)} onOpenChange={(state) => !state && setIsOpened(false)}>
             <DrawerContent className='flex justify-center items-center'>
-                {loading ? <LoadingSpinner className="w-20 h-20 animate-spin" /> :
+                {loadingBookings ? <LoadingSpinner className="w-20 h-20 animate-spin" /> :
                     (
                         <>
                             <DrawerHeader>

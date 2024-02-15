@@ -10,12 +10,12 @@ type useMainBookingsStoreType = {
   initialiseBookings: (bookings: Booking[]) => void;
   removeBooking: (booking: Booking) => void;
   reloadBookings: (createdById: string, dateSelected: Date) => void;
-  loading: boolean;
+  loadingBookings: boolean;
 };
 
 const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
   bookings: [],
-  loading: false,
+  loadingBookings: false,
   daySelected: undefined,
   selectDay: (daySelected) => set({ daySelected }),
   initialiseBookings: (bookings) => set({ bookings }),
@@ -24,7 +24,7 @@ const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
   },
   reloadBookings: async (userId, dateSelected) => {
     const getBookings = async () => {
-      set({ loading: true });
+      set({ loadingBookings: true });
       const bookings = await useServerData("booking", {
         startTime: {
           gte: moment(dateSelected).startOf("day").toDate(),
@@ -35,7 +35,7 @@ const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
         userId,
       });
       set({ bookings });
-      set({ loading: false });
+      set({ loadingBookings: false });
     };
     getBookings();
   },

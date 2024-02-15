@@ -10,6 +10,7 @@ import { useSession } from 'next-auth/react';
 import useCreateServerData from './useCreateServiceData';
 import useDeleteServiceData from './useDeleteServiceData';
 import { Plus, Trash2 } from 'lucide-react';
+import { toast } from '@/src/components/ui/use-toast';
 
 function Services({ services }: { services: Service[] }) {
 
@@ -72,6 +73,9 @@ function Services({ services }: { services: Service[] }) {
         });
         reLoadServices(session?.data?.user.id!);
         setLoading(false);
+        toast({
+            description: "Le service a été écrit",
+        })
     };
 
     const handleDeleteService = async (service: Service) => {
@@ -80,7 +84,10 @@ function Services({ services }: { services: Service[] }) {
         await useDeleteServiceData({ service });
         reLoadServices(session?.data?.user.id!);
         setLoading(false);
-
+        toast({
+            variant: "destructive",
+            description: "Service supprimé",
+        })
     }
 
     return (

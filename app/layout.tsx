@@ -1,9 +1,12 @@
-import './globals.css';
+import '@/app/globals.css';
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/src/contexts/theme-provider';
 import AuthSessionProvider from '@/src/components/Auth/AuthSessionProvider';
 import Header from '@/src/components/Header/Header';
+import { Toaster } from "@/src/components/ui/toaster"
+import { GlobalLoader } from '@/src/components/GlobalLoader';
+
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,6 +30,8 @@ export default function RootLayout({
         <link rel="manifest" href="/site.webmanifest"></link>
       </head>
       <body className={inter.className}>
+        <GlobalLoader className={"w-20 h-20 animate-spin"}/>
+        <Toaster />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
