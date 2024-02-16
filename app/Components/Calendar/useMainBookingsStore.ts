@@ -6,7 +6,7 @@ import { create } from "zustand";
 type useMainBookingsStoreType = {
   bookings: Booking[];
   daySelected: Date | undefined;
-  selectDay: (daySelected: Date) => void;
+  selectDay: (daySelected: Date | undefined) => void;
   initialiseBookings: (bookings: Booking[]) => void;
   removeBooking: (booking: Booking) => void;
   reloadBookings: (createdById: string, dateSelected: Date) => void;

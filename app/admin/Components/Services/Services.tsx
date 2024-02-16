@@ -33,7 +33,7 @@ function Services({ services }: { services: Service[] }) {
     const formatDataToServiceTableBody = servicesFromStore.map((service) => (
         [
             { className: "font-medium w-40", text: (service.name).charAt(0).toUpperCase() + (service.name).slice(1) }, //Pour mettre en majuscule
-            { className: "text-right", text: service.price/100 + ' €' },
+            { className: "text-right", text: service.price / 100 + ' €' },
             { className: "text-right", text: <Button title='Supprimer' onClick={() => handleDeleteService(service)} disabled={loading} variant="outline"><Trash2 className='text-destructive' /></Button> }
         ]
     ));
@@ -69,12 +69,13 @@ function Services({ services }: { services: Service[] }) {
 
         await useCreateServerData({
             name: temp_serviceName,
-            price: Number(temp_servicePrice)*100 ?? 0,
+            price: Number(temp_servicePrice) * 100 ?? 0,
         });
         reLoadServices(session?.data?.user.id!);
         setLoading(false);
         toast({
-            description: "Le service a été écrit",
+            variant: "success",
+            description: "Service créé",
         })
     };
 
@@ -85,14 +86,14 @@ function Services({ services }: { services: Service[] }) {
         reLoadServices(session?.data?.user.id!);
         setLoading(false);
         toast({
-            variant: "destructive",
+            variant: "success",
             description: "Service supprimé",
         })
     }
 
     return (
         <>
-            <Badge className="w-20 mx-2 my-10" title='Liste des prestations'>Services</Badge>
+            <Badge className="w-20 mx-2 my-10 bg-success" title='Liste des prestations'>Services</Badge>
             <TableMain caption="Sélection de la prestation" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
             <form onSubmit={handleAddService}>
                 <div className="ml-2 flex w-full max-w-sm items-center space-x-2 my-6">

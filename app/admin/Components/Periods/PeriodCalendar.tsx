@@ -21,6 +21,7 @@ import usePeriodsStore from './usePeriodsStore';
 import { Label } from "@/src/components/ui/label";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import { AlarmClockOff, Clock1, Plus, TimerReset, TrafficCone, Trash2 } from 'lucide-react';
+import { toast } from '@/src/components/ui/use-toast';
 
 const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
 
@@ -53,6 +54,10 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
         });
         reLoadPeriods(session?.data?.user.id!);
         setLoading(false);
+        toast({
+            variant: "success",
+            description: "Periode supprimée",
+        });
     }
 
     const handleCreatePeriod = async () => {
@@ -84,12 +89,16 @@ const PeriodceCalendar = ({ periods }: { periods: Periods[] }) => {
 
         reLoadPeriods(session?.data?.user.id!);
         setLoading(false);
+        toast({
+            variant: "success",
+            description: "Periode ajoutée avec succès",
+        });
     }
 
     const formatDataToServiceTableHeader = [
-        { className: "w-20", tooltip:"Du", text: 'Du' },
-        { className: "", tooltip:"Au", text: 'Au' },
-        { className: "", tooltip:"", text: '' }
+        { className: "w-20", tooltip: "Du", text: 'Du' },
+        { className: "", tooltip: "Au", text: 'Au' },
+        { className: "", tooltip: "", text: '' }
     ];
 
     const formatDataToServiceTableBody = periodsFromStore.map((period: Periods) => (

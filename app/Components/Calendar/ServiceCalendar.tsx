@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { Calendar } from "@/src/components/ui/calendar"
 import moment from 'moment';
 import useMainBookingsStore from '@/app/Components/Calendar/useMainBookingsStore';
@@ -17,6 +17,11 @@ const ServiceCalendar = memo(({ userId }: { userId: string }) => {
         selectDay(date);
         reloadBookings(userId, date);
     }
+
+    //Pour nettoyer le daySelected lorsque le composant est démonté
+    useEffect(() => {
+        return () => selectDay(undefined)
+    }, []);
 
     return (
         <Calendar
