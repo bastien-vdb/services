@@ -1,7 +1,7 @@
 'use server'
 import { prisma } from '@/src/db/prisma';
 
-async function useSetBookingUser({ bookingId }: { bookingId: string }) {
+async function useSetBookingUser({ bookingId, customerEmail }: { bookingId: string, customerEmail?: string | null }) {
 
   try {
     const bookinFound = await prisma.booking.findUnique({
@@ -18,7 +18,8 @@ async function useSetBookingUser({ bookingId }: { bookingId: string }) {
       },
       data: {
         payed: true,
-        isAvailable: false
+        isAvailable: false,
+        ...customerEmail && { payedBy: String(customerEmail) },
       },
     });
     return true;

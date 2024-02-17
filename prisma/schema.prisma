@@ -50,7 +50,7 @@ model Booking {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   payed         Boolean  @default(false)
-  payedBy       String?
+  payedBy       String
   idemPotentKey String
 }
 

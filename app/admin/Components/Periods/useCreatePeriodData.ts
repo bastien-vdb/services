@@ -56,7 +56,8 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
             endTime: slot.to,
             serviceId: "64b38177863f172be9fa3923",
             userId: session.user.id,
-            idemPotentKey: uuidv4()
+            idemPotentKey: uuidv4(),
+            payedBy: "",
           };
         })
         .filter((a) => a !== undefined);

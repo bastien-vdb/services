@@ -44,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const customerDetails = webhookEvent.data.object.customer_details;
         const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
 
-        const isBooked = await useSetBookingUser({ bookingId });
+        const isBooked = await useSetBookingUser({ bookingId, customerEmail: customerDetails?.email });
         if (isBooked && customerDetails?.email) {
           await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",

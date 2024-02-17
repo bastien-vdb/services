@@ -1,10 +1,11 @@
 'use client'
 import { useEffect } from 'react';
-import { Badge } from "@/src/components/ui/badge"
-import TableMain from '@/src/components/Table/TableMain';
 import moment from 'moment';
 import { Booking } from '@prisma/client';
 import useBookingStore from '@/app/admin/Components/Bookings/useBookingsStore';
+import { DataTable } from '@/src/components/bookings_payed_table/data-table';
+import { columns } from '@/src/components/bookings_payed_table/columns';
+import { Badge } from '@/src/components/ui/badge';
 
 function BookingsPayed({ bookings }: { bookings: Booking[] }) {
 
@@ -14,24 +15,21 @@ function BookingsPayed({ bookings }: { bookings: Booking[] }) {
         initialiseBookings(bookings);
     }, [])
 
-    const formatDataToServiceTableHeader = [
-        { className: "", text: 'Du', tooltip: "Du" },
-        {
-            className: "text", text: 'Au', tooltip: "Au",
-        },
-    ];
+    const data = bookingsFromStore.filter((booking) => booking.payed).map((booking) => {
+        return {
+            id: booking.id,
+            du: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString(),
+            au: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString(),
+            userEmail: String(booking.payedBy) ?? 'Non renseigné',
+        }
+    });
 
-    const formatDataToServiceTableBody = bookingsFromStore.filter(booking => booking.payed).map((booking) => (
-        [
-            { className: "font-medium", text: moment(booking.startTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
-            { className: "", text: moment(booking.endTime).format('DD/MM/YYYY - HH:mm:ss').toString() },
-        ]
-    ));
+    console.log('data', data)
 
     return (
         <>
             <Badge className="m-auto ml-2 my-10">Bookings facturés</Badge><br />
-            <TableMain caption="Liste des bookings facturés aux clients" headers={formatDataToServiceTableHeader} rows={formatDataToServiceTableBody} />
+            <DataTable columns={columns} data={data} />
         </>
     );
 }
