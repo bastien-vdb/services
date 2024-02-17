@@ -58,7 +58,8 @@ export async function POST(request: Request) {
         isAvailable: true,
         serviceId: "64b38177863f172be9fa3923",
         userId: session.user.id,
-        idemPotentKey: uuidv4()
+        idemPotentKey: uuidv4(),
+        payedBy: "",
       }));
 
       await prisma.booking.createMany({
