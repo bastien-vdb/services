@@ -4,7 +4,6 @@ import Steps from "@/app/Components/Steps";
 import useServerData from "@/src/hooks/useServerData";
 import { Booking, Service, User } from "@prisma/client";
 import moment from "moment";
-import Login from "@/app/Components/Login/Login";
 import { Hero } from "./Components/Hero";
 import Stripe from "stripe";
 import Subscribe from "./Components/Subscribe/Subscribe";
@@ -20,7 +19,6 @@ async function Home() {
       <div className="mt-16"></div>
 
       <Hero />
-      <Login />
     </div>
   )
 
@@ -48,8 +46,6 @@ async function Home() {
     userId,
     payed: false,
   });
-
-
 
   if (!statusAccount || !stripeAccount) return <Subscribe userId={userId} stripeAccount={stripeAccount} />
 

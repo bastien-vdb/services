@@ -1,10 +1,16 @@
+'use client'
 import { Typography } from "@/src/components/ui/typography";
 import { ReviewSmall } from "./ReviewSmall";
 import { CircleSvg } from "./CircleSvg";
+import { Button, buttonVariants } from "@/src/components/ui/button";
+import { cn } from "@/src/lib/utils";
+import Link from "next/link";
+import { Rocket } from "lucide-react";
+import { signIn } from "next-auth/react";
 
 export const Hero = () => {
   return (
-    <main className="m-auto mx-4 my-20 flex flex-col items-center justify-center gap-4">
+    <main className="m-auto mx-4 my-2 flex flex-col items-center justify-center gap-4">
       <div className="relative flex flex-1 flex-col items-start gap-4 lg:gap-6 xl:gap-8">
         <Typography variant="h1" className="!leading-tight">
           <p>Réservation Instantanée pour{" "}</p>
@@ -16,7 +22,7 @@ export const Hero = () => {
             </span>
           </p>
         </Typography>
-        <Typography variant="large">
+        <Typography variant="large" className="text-justify flex flex-col gap-2">
           <p>Révolutionnez Votre Business en Quelques Clics !</p>
 
           <p><b>QuickReserve.app</b> est l'outil ultime pour les freelances </p>
@@ -26,12 +32,15 @@ export const Hero = () => {
           <p>et laissez vos clients réserver en toute simplicité.</p>
         </Typography>
 
-        {/* <Link
-          href="#pricing"
-          className={cn(buttonVariants({ size: "lg", variant: "default" }))}
-        >
-          <Rocket size={20} className="mr-2" /> Rejoins maintenant
-        </Link> */}
+        <Button size="lg" variant="ghost" onClick={() => signIn()}>
+          <Link
+            href="/"
+            className={cn(buttonVariants({ size: "lg", variant: "default" }), 'bg-yellow-400 border mx-auto my-6')}
+          >
+
+            <Rocket size={20} className="mr-2 text-black" /> <span>Rejoins maintenant</span>
+          </Link>
+        </Button>
 
         <ReviewSmall
           stars={5}
