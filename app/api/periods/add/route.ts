@@ -3,7 +3,7 @@ import { prisma } from "@/src/db/prisma";
 import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
 import { getServerSession } from "next-auth";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: Request) {
   const body = await request.json();

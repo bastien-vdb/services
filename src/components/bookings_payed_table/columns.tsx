@@ -11,6 +11,7 @@ export type BookingsTable = {
     du: string
     au: string
     userEmail: string
+    annuler: JSX.Element
 }
 
 export const columns: ColumnDef<BookingsTable>[] = [
@@ -55,5 +56,10 @@ export const columns: ColumnDef<BookingsTable>[] = [
                 </Button>
             )
         },
+    },
+    {
+        accessorKey: "annuler",
+        header: () => <span>Annuler</span>,
+        cell: ({ row }) => row.getValue("annuler"),
     },
 ]

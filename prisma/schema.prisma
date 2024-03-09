@@ -33,6 +33,7 @@ model User {
   image           String?
   accounts        Account[]
   sessions        Session[]
+  stripeAccount   String?
 
   @@map("users")
 }

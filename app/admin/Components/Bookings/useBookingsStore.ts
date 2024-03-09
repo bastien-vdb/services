@@ -7,6 +7,7 @@ type useBookingStoreType = {
   initialiseBookings: (bookings: Booking[]) => void;
   isAvailableSwitchBooking: (booking: Booking) => void;
   reloadBookings: (createdById: string) => void;
+  deleteBooking: (booking: Booking) => void;
 };
 
 const useBookingStore = create<useBookingStoreType>((set) => ({
@@ -18,6 +19,11 @@ const useBookingStore = create<useBookingStoreType>((set) => ({
         if (b.id === booking.id) b.isAvailable = !b.isAvailable;
         return b;
       }),
+    }));
+  },
+  deleteBooking: (booking) => {
+    set((state) => ({
+      bookings: state.bookings.filter((b) => b.id !== booking.id),
     }));
   },
   reloadBookings: async (userId: string) => {
