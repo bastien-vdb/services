@@ -2,7 +2,6 @@
 import { prisma } from '@/src/db/prisma';
 
 async function useSetBookingUser({ bookingId, customerEmail }: { bookingId: string, customerEmail?: string | null }) {
-
   try {
     const bookinFound = await prisma.booking.findUnique({
       where: {

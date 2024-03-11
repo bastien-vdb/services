@@ -14,10 +14,7 @@ export async function PUT(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  if (!process.env.STRIPE_SECRET_KEY) return new Response("Stripe secret key is not defined", { status: 400 });
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-
     const updatedBooking = await prisma.booking.update({
       where: {
         id,

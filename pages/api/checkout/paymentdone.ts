@@ -5,6 +5,7 @@ import type { Readable } from "node:stream";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailBooked from "@/src/emails/EmailBooked";
 import useRenewIdemPotent from "@/pages/api/checkout/useRenewIdemPotent";
+import useCheckStripe from "@/src/hooks/useCheckStripe";
 
 export const config = {
   api: {
@@ -21,11 +22,7 @@ async function buffer(readable: Readable) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
-
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2023-10-16",
-  });
+  const stripe = useCheckStripe();
 
   const buf = await buffer(req);
 

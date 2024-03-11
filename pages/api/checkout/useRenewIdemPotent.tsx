@@ -3,7 +3,6 @@ import { prisma } from '@/src/db/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
 async function useRenewIdemPotent({ bookingId }: { bookingId: string }) {
-
   try {
 
     await prisma.booking.update({

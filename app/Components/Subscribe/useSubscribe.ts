@@ -1,17 +1,14 @@
-'use server'
+"use server";
 import Stripe from "stripe";
-import actionNewStripeAccount from "./actionNewStripeAccount";
+import useNewStripeAccount from "./useNewStripeAccount";
+import useCheckStripe from "@/src/hooks/useCheckStripe";
 
 const useSubscribe = async ({ userId, stripeAccount }: { userId: string; stripeAccount?: string }) => {
-    console.log('front ou back ?')
-  if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-
-  //Stripe.Response<Stripe.AccountLink> | undefined;
+  const stripe = useCheckStripe();
 
   try {
     if (!stripeAccount) {
-      const newStripeAccountId = await actionNewStripeAccount({ userId });
+      const newStripeAccountId = await useNewStripeAccount({ userId });
       const link = await stripe.accountLinks.create({
         account: newStripeAccountId,
         refresh_url: `${process.env.NEXT_PUBLIC_HOST}/`,

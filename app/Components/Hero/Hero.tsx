@@ -1,12 +1,12 @@
 'use client'
 import { Typography } from "@/src/components/ui/typography";
-import { ReviewSmall } from "./ReviewSmall";
-import { CircleSvg } from "./CircleSvg";
 import { Button, buttonVariants } from "@/src/components/ui/button";
 import { cn } from "@/src/lib/utils";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 import { signIn } from "next-auth/react";
+import { CircleSvg } from "@/src/components/Hero/CircleSvg";
+import { ReviewSmall } from "@/src/components/Hero/ReviewSmall";
 
 export const Hero = () => {
   return (

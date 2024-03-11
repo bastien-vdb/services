@@ -3,6 +3,7 @@ import { prisma } from "@/src/db/prisma";
 import Stripe from "stripe";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/authOptions";
+import useCheckStripe from "@/src/hooks/useCheckStripe";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -12,10 +13,8 @@ export async function POST(request: Request) {
 
   if (!session) return new Response("You are not authenticated", { status: 400 });
 
-  if (!process.env.STRIPE_SECRET_KEY) return new Response("Stripe secret key is not defined", { status: 400 });
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2023-10-16" });
-
+    const stripe = useCheckStripe();
     const service = await stripe.products.create({
       name,
     });
@@ -44,7 +43,6 @@ export async function POST(request: Request) {
       return NextResponse.json(result);
     }
   } catch (error: unknown) {
-    console.log(error);
-    // return new Response("Service cannot be created", { status: 400 });
+    console.error(error);
   }
 }

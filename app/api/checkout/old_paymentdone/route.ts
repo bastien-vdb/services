@@ -4,7 +4,6 @@ import getRawBody from "raw-body";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: Request, res: Response) {
-  console.log('la methode est: ', req);
   if (!process.env.STRIPE_SECRET_KEY) throw new Error("Stripe secret key is not defined");
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -12,8 +11,6 @@ export async function POST(req: Request, res: Response) {
   });
 
   const rawBody = await req.text()
-
-  console.log("paymentDone page lancee !!!!!!!!!!!!!!");
 
   if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
 
@@ -25,7 +22,6 @@ export async function POST(req: Request, res: Response) {
   if (webhookEvent.type === "checkout.session.completed") {
     const session = webhookEvent.data.object as any;
     // const { slot, serviceId, stripePriceId, userId } = session.metadata;
-    console.log("Le paiement est maintenant effectué !!!!!!!!!!!!!!!!!!");
     NextResponse.redirect(`https://www.youtube.com/`);
     return new NextResponse(session);
   }
