@@ -23,7 +23,7 @@ export async function POST(req: Request, res: NextApiResponse) {
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
 
-  if (!stripeAccount) throw new Error("no destination for the founds");
+  if (!stripeAccount) throw new Error("Missing of the destination to receive the funds");
 
   const stripe = useCheckStripe();
   const session = await stripe.checkout.sessions.create(

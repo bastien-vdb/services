@@ -54,7 +54,7 @@ async function Admin() {
   ]
 
   return (
-    <main className="flex flex-col p-6 gap-6 xl:mx-96">
+    <main className="flex flex-col mt-10 p-6 gap-6 xl:mx-96">
       <Accordion type="single" collapsible>
         {adminMenu.map(menu => (
           <AccordionItem value={menu.value}>

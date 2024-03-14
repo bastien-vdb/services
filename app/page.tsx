@@ -8,6 +8,7 @@ import { Hero } from "./Components/Hero/Hero";
 import Stripe from "stripe";
 import Subscribe from "./Components/Subscribe/Subscribe";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
+import Header from "@/src/components/Header/Header";
 
 async function Home() {
   const session = await getServerSession(authOptions);
@@ -43,7 +44,12 @@ async function Home() {
     userId,
     payed: false,
   });
-  return <Steps bookings={bookings} services={services} userId={userId} />
+  return (
+    <div>
+      <Header />
+      <Steps bookings={bookings} services={services} userId={userId} />
+    </div>
+  )
 
 };
 

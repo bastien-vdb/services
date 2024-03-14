@@ -36,7 +36,6 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthSessionProvider>
-            <Header />
             {children}
           </AuthSessionProvider>
         </ThemeProvider>

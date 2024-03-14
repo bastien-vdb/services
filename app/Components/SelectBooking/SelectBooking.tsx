@@ -9,6 +9,11 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dr
 import { LoadingSpinner } from '@/src/components/ui/loader';
 import { useToast } from "@/src/components/ui/use-toast"
 import useLoad from '@/src/hooks/useLoad';
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) throw new Error("stripe PK missing");
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
@@ -19,6 +24,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     const { serviceSelected } = useServiceStore();
     const { data: session } = useSession();
     const { setLoading } = useLoad();
+    const [clientSecret, setClientSecret] = useState('');
 
     useEffect(() => {
         initialiseBookings(bookings);
@@ -26,12 +32,14 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
     useEffect(() => {
         if (daySelected) setIsOpened(true);
+        if (clientSecret) setClientSecret('');
     }, [daySelected]);
 
     const handleCreateBook = async (booking: Booking) => {
         setLoading(true);
+        setIsOpened(false);
         try {
-            const paymentPage = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/checkout/create-checkout-session`,
+            const paymentPage = await fetch(`/api/checkout_sessions`,
                 {
                     method: "POST",
                     headers: {
@@ -44,7 +52,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
 
             const paymentPageJson = await paymentPage.json();
 
-            window.location.assign(paymentPageJson);
+            setClientSecret(paymentPageJson.clientSecret);
         } catch (error) {
             console.error("error: ", error);
             toast({
@@ -59,32 +67,45 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
     }
 
     return (
-        <Drawer open={isOpened} onClose={() => setIsOpened(false)} onOpenChange={(state) => !state && setIsOpened(false)}>
-            <DrawerContent className='flex justify-center items-center'>
-                {loadingBookings ? <LoadingSpinner className="w-20 h-20 animate-spin" /> :
-                    (
-                        <>
-                            <DrawerHeader>
-                                <DrawerTitle>Rendez-vous</DrawerTitle>
-                                <DrawerDescription>Selectionner un rendez-vous.</DrawerDescription>
-                            </DrawerHeader>
-                            <ul className='flex flex-wrap w-80 gap-2 items-center justify-center p-2'>
-                                {bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
-                                    <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
-                                ))
-                                    :
-                                    <Button variant="ghost">Pas de créneau disponible</Button>
-                                }
-                            </ul>
-                        </>
-                    )}
-                <DrawerFooter>
-                    <DrawerClose onClick={() => setIsOpened(false)}>
-                        <Button variant="outline">Annuler</Button>
-                    </DrawerClose>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
+        <>
+            <div id="checkout">
+                {clientSecret && (
+                    <EmbeddedCheckoutProvider
+                        stripe={stripePromise}
+                        options={{ clientSecret }}
+                    >
+                        <EmbeddedCheckout />
+                    </EmbeddedCheckoutProvider>
+                )}
+            </div>
+
+            <Drawer open={isOpened} onClose={() => setIsOpened(false)} onOpenChange={(state) => !state && setIsOpened(false)}>
+                <DrawerContent className='flex justify-center items-center'>
+                    {loadingBookings ? <LoadingSpinner className="w-20 h-20 animate-spin" /> :
+                        (
+                            <>
+                                <DrawerHeader>
+                                    <DrawerTitle>Rendez-vous</DrawerTitle>
+                                    <DrawerDescription>Selectionner un rendez-vous.</DrawerDescription>
+                                </DrawerHeader>
+                                <ul className='h-96 flex gap-4 justify-center flex-wrap items-top'>
+                                    {bookingsFromStore.length > 0 ? bookingsFromStore?.map((booking, key) => (
+                                        <li key={key}><Button onClick={() => handleCreateBook(booking)}>{moment(booking.startTime).format('HH:mm:ss').toString()}</Button></li>
+                                    ))
+                                        :
+                                        <Button variant="ghost">Pas de créneau disponible</Button>
+                                    }
+                                </ul>
+                            </>
+                        )}
+                    <DrawerFooter>
+                        <DrawerClose onClick={() => setIsOpened(false)}>
+                            <Button variant="outline">Annuler</Button>
+                        </DrawerClose>
+                    </DrawerFooter>
+                </DrawerContent>
+            </Drawer>
+        </>
     );
 };
 
