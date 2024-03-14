@@ -39,7 +39,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
         setLoading(true);
         setIsOpened(false);
         try {
-            const paymentPage = await fetch(`/api/checkout_sessions`,
+            const paymentPage = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
                 {
                     method: "POST",
                     headers: {
