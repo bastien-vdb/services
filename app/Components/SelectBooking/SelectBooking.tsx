@@ -2,7 +2,6 @@ import moment from 'moment';
 import { Button } from '@/src/components/ui/button';
 import { useEffect, useState } from 'react';
 import { Booking } from "@prisma/client";
-import { useSession } from 'next-auth/react';
 import useServiceStore from '@/app/admin/Components/Services/useServicesStore';
 import useMainBookingStore from '@/app/Components/Calendar/useMainBookingsStore';
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/src/components/ui/drawer';
@@ -15,14 +14,13 @@ import { loadStripe } from '@stripe/stripe-js';
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) throw new Error("stripe PK missing");
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
+const SelectBooking = ({ bookings, userId }: { bookings: Booking[], userId: string }) => {
 
     const { toast } = useToast();
 
     const [isOpened, setIsOpened] = useState(false);
     const { bookings: bookingsFromStore, initialiseBookings, daySelected, loadingBookings } = useMainBookingStore();
     const { serviceSelected } = useServiceStore();
-    const { data: session } = useSession();
     const { setLoading } = useLoad();
     const [clientSecret, setClientSecret] = useState('');
 
@@ -46,7 +44,7 @@ const SelectBooking = ({ bookings }: { bookings: Booking[] }) => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify(
-                        { stripePriceId: serviceSelected?.stripePriceId, bookingId: booking.id, startTime: booking.startTime, userId: session?.user.id, serviceId: serviceSelected?.id, idemPotentKey: booking.idemPotentKey }
+                        { stripePriceId: serviceSelected?.stripePriceId, bookingId: booking.id, startTime: booking.startTime, userId, serviceId: serviceSelected?.id, idemPotentKey: booking.idemPotentKey }
                     ),
                 });
 

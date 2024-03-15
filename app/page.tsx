@@ -5,7 +5,6 @@ import useServerData from "@/src/hooks/useServerData";
 import { Booking, Service, User } from "@prisma/client";
 import moment from "moment";
 import { Hero } from "./Components/Hero/Hero";
-import Stripe from "stripe";
 import Subscribe from "./Components/Subscribe/Subscribe";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import Header from "@/src/components/Header/Header";

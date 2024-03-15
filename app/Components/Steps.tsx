@@ -30,7 +30,7 @@ const Steps = ({ services, userId, bookings }: { services: Service[], userId: st
                     </svg>
                 </Button>
                 <ServiceCalendar userId={userId} />
-                <SelectBooking bookings={bookings} />
+                <SelectBooking bookings={bookings} userId={userId} />
             </div>
         </main >
     );
