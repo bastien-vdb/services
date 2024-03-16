@@ -8,8 +8,9 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, Dr
 import { LoadingSpinner } from '@/src/components/ui/loader';
 import { useToast } from "@/src/components/ui/use-toast"
 import useLoad from '@/src/hooks/useLoad';
-import { EmbeddedCheckout, EmbeddedCheckoutProvider } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import EmbeddedCheckoutComp from '../EmbeddedCheckoutComp/EmbeddedCheckoutComp';
+import { useUnmount } from '@/src/hooks/useUnmount';
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) throw new Error("stripe PK missing");
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
@@ -47,15 +48,13 @@ const SelectBooking = ({ bookings, userId }: { bookings: Booking[], userId: stri
                         { stripePriceId: serviceSelected?.stripePriceId, bookingId: booking.id, startTime: booking.startTime, userId, serviceId: serviceSelected?.id, idemPotentKey: booking.idemPotentKey }
                     ),
                 });
-
             const paymentPageJson = await paymentPage.json();
-
             setClientSecret(paymentPageJson.clientSecret);
         } catch (error) {
             console.error("error: ", error);
             toast({
                 variant: "destructive",
-                title: "Une erreur est survenue lors de la prise de rendez-vous",
+                title: "Le rendez-vous est déjà en cours de réservation",
                 description: "Il serait préférable de sélectionner un autre créneau disponible",
             })
         }
@@ -66,16 +65,9 @@ const SelectBooking = ({ bookings, userId }: { bookings: Booking[], userId: stri
 
     return (
         <>
-            <div id="checkout">
-                {clientSecret && (
-                    <EmbeddedCheckoutProvider
-                        stripe={stripePromise}
-                        options={{ clientSecret }}
-                    >
-                        <EmbeddedCheckout />
-                    </EmbeddedCheckoutProvider>
-                )}
-            </div>
+            {clientSecret && (
+                <EmbeddedCheckoutComp stripePromise={stripePromise} clientSecret={clientSecret} />
+            )}
 
             <Drawer open={isOpened} onClose={() => setIsOpened(false)} onOpenChange={(state) => !state && setIsOpened(false)}>
                 <DrawerContent className='flex justify-center items-center'>

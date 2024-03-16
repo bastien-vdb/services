@@ -49,11 +49,22 @@ export async function POST(req: Request, res: NextApiResponse) {
         idempotencyKey: idemPotentKey,
       }
     );
-
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
-    console.error(err);
-    return NextResponse.json("error test non définie");
+    if (err.type === 'StripeIdempotencyError') {
+      return new Response("Réservation en cours sur ce créneau, merci de changer", {
+        status: err.statusCode, // Ou tout autre statut HTTP approprié
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    }
+    return new Response("Erreur lors de la création de la session de paiement", {
+      status: 500, // Ou tout autre statut HTTP approprié
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  });
   }
   // break;
   //   case "GET":
