@@ -10,7 +10,6 @@ import { useToast } from "@/src/components/ui/use-toast"
 import useLoad from '@/src/hooks/useLoad';
 import { loadStripe } from '@stripe/stripe-js';
 import EmbeddedCheckoutComp from '../EmbeddedCheckoutComp/EmbeddedCheckoutComp';
-import { useUnmount } from '@/src/hooks/useUnmount';
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) throw new Error("stripe PK missing");
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
