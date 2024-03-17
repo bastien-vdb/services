@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-            react: EmailRdvBooked({ customerName: customerDetails.name }),
+            react: EmailRdvBooked({ customerName: customerDetails.name ?? "" }),
           });
         }
         if (!hasBeenPassedToReserved && customerDetails?.email) {
@@ -62,30 +62,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       case "checkout.session.expired": {
-        const session = webhookEvent.data.object.metadata as { bookingId: string };
-        const { bookingId } = session;
-        const newIdemPotent = await useRenewIdemPotent({ bookingId }); //renouveller identifiant unique stripe
-        if (!newIdemPotent) {
-          await useSendEmail({
+        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
+        const customerDetails = webhookEvent.data.object.customer_details;
+        if(customerDetails) {  
+        await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
-            to: ["bastien.deboisrolin@gmail.com"], //l'admin principal de l'app (moi même) - prévoir une variable d'environnement
-            subject: `Exp: Le booking ${bookingId} est potentiellement bloqué`,
-            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }), //Email à adapter pour les erreurs admin
+            to: [String(customerDetails.email)],
+            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
+            react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
           });
         }
         break;
       }
 
       case "checkout.session.async_payment_failed": {
-        const session = webhookEvent.data.object.metadata as { bookingId: string };
-        const { bookingId } = session;
-        const newIdemPotent = await useRenewIdemPotent({ bookingId }); //renouveller identifiant unique stripe
-        if (!newIdemPotent) {
-          await useSendEmail({
+        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
+        const customerDetails = webhookEvent.data.object.customer_details;
+        if(customerDetails) {  
+        await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
-            to: ["bastien.deboisrolin@gmail.com"], //l'admin principal de l'app (moi même) - prévoir une variable d'environnement
-            subject: `Le booking ${bookingId} est potentiellement bloqué`,
-            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }), //Email à adapter pour les erreurs admin
+            to: [String(customerDetails.email)],
+            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
+            react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
           });
         }
         break;
