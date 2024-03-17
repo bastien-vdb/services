@@ -15,6 +15,7 @@ import * as React from "react";
 
 interface EmailRdvBookedProps {
   customerName?: string;
+  bookingStartTime?: Date;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
@@ -23,19 +24,20 @@ const baseUrl = process.env.NEXT_PUBLIC_HOST
 
 export const EmailRdvBooked = ({
   customerName,
+  bookingStartTime,
 }: EmailRdvBookedProps) => (
   <Html>
     <Head />
-    <Preview>Log in with this magic link.</Preview>
+    <Preview>Confirmation de rendez-vous</Preview>
     <Body style={main}>
       <Container style={container}>
         <Img
-          src={`${baseUrl}/static/raycast-logo.png`}
+          src={`${baseUrl}/vendorImages/fineststudiologo.png`}
           width={48}
           height={48}
-          alt="Raycast"
+          alt="FinestLashStudio"
         />
-        <Heading style={heading}>🪄 Bonjour {customerName} et merci pour votre réservation au sein du %company_name% le %appointment_date% à %appointment_start_time%
+        <Heading style={heading}>🪄 Bonjour {customerName} et merci pour votre réservation au sein du FinestLash Studio le {bookingStartTime?.getDate.toString().toString()} à {bookingStartTime?.getTime()}
 
         </Heading>
         <Section style={body}>
@@ -67,8 +69,7 @@ export const EmailRdvBooked = ({
         </Text>
         <Hr style={hr} />
         <Img
-          // src={`${baseUrl}/static/raycast-logo.png`}
-          src={'https://www.finestlash.studio/images/logo.svg'}
+          src={`${baseUrl}/vendorImages/fineststudiologo.png`}
           width={32}
           height={32}
           style={{
@@ -87,10 +88,6 @@ export const EmailRdvBooked = ({
     </Body>
   </Html>
 );
-
-EmailRdvBooked.PreviewProps = {
-  magicLink: "https://raycast.com",
-} as EmailRdvBookedProps;
 
 export default EmailRdvBooked;
 
