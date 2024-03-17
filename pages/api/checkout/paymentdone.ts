@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Stripe } from "stripe";
 import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 import type { Readable } from "node:stream";
 import useSendEmail from "@/src/emails/useSendEmail";
-import EmailBooked from "@/src/emails/EmailBooked";
+import EmailRdvBooked from "@/src/emails/EmailBooked";
 import useRenewIdemPotent from "@/pages/api/checkout/useRenewIdemPotent";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
@@ -44,16 +43,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const hasBeenPassedToReserved = await useSetBookingUser({ bookingId, customerEmail: customerDetails?.email });
         if (hasBeenPassedToReserved && customerDetails?.email) {
-          console.log('hasBeenPassedToReserved ==>', hasBeenPassedToReserved)
           await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-            react: EmailBooked({ magicLink: process.env.NEXTAUTH_URL }),
+            react: EmailRdvBooked({ customerName: customerDetails.name }),
           });
         }
         if (!hasBeenPassedToReserved && customerDetails?.email) {
-          console.log('Already Reserved ==>', hasBeenPassedToReserved)
           await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
@@ -61,7 +58,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
           });
         }
-        console.log('ni l1 ni lautre==>', hasBeenPassedToReserved)
         break;
       }
 
