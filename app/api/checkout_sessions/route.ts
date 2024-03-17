@@ -45,9 +45,9 @@ export async function POST(req: Request, res: NextApiResponse) {
         mode: "payment",
         return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
       },
-      {
-        idempotencyKey: idemPotentKey,
-      }
+      // {
+      //   idempotencyKey: idemPotentKey,
+      // }
     );
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {

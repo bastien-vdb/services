@@ -58,7 +58,6 @@ const SelectBooking = ({ bookings, userId }: { bookings: Booking[], userId: stri
             })
         }
         setLoading(false);
-
         if (!daySelected) throw new Error('No day selected');
     }
 
