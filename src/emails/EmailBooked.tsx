@@ -38,7 +38,7 @@ export const EmailRdvBooked = ({
           alt="FinestLashStudio"
         />
         <Heading style={heading}>
-          🪄 Bonjour {customerName} et merci pour votre réservation au sein du FinestLash Studio le {bookingStartTime && new Date(bookingStartTime).getDate().toString()} à {bookingStartTime && new Date(bookingStartTime).getHours().toString()}h{bookingStartTime && new Date(bookingStartTime).getMinutes().toString()} !
+          🪄 Bonjour {customerName} et merci pour votre réservation au sein du FinestLash Studio le {bookingStartTime && new Date(bookingStartTime).toString()} à {bookingStartTime && new Date(bookingStartTime).getHours().toString()}h{bookingStartTime && new Date(bookingStartTime).getMinutes().toString()} !
         </Heading>
         <Section style={body}>
           <Text style={paragraph}>

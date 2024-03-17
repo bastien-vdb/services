@@ -41,13 +41,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const customerDetails = webhookEvent.data.object.customer_details;
         const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
 
+        console.log('bookingStartTime ==>', bookingStartTime);
+
         const hasBeenPassedToReserved = await useSetBookingUser({ bookingId, customerEmail: customerDetails?.email });
         if (hasBeenPassedToReserved && customerDetails?.email) {
           await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-            react: EmailRdvBooked({ customerName: customerDetails.name ?? "" }),
+            react: EmailRdvBooked({ customerName: customerDetails.name ?? "", bookingStartTime:bookingStartTime }),
           });
         }
         if (!hasBeenPassedToReserved && customerDetails?.email) {
