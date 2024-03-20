@@ -20,7 +20,7 @@ export default function PayPalButton() {
               {
                 amount: {
                   value: "1.99", // Montant du paiement
-                  currency_code: "EUR",
+                  currency_code: "USD",
                 },
               },
             ],
