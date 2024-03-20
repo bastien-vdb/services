@@ -1,7 +1,6 @@
 "use client";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function PayPalButton() {
   const router = useRouter();
@@ -21,7 +20,7 @@ export default function PayPalButton() {
               {
                 amount: {
                   value: "1.99", // Montant du paiement
-                  currency_code: "USD",
+                  currency_code: "EUR",
                 },
               },
             ],
