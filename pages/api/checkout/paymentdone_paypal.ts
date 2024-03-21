@@ -43,7 +43,7 @@ export default async function handler(
     console.log("webhookEvent ==>", webhookEvent);
 
     // Exemple de gestion d'un événement de paiement réussi
-    if (webhookEvent.event_type === "CHECKOUT.ORDER.COMPLETED") {
+    if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
       // Logique spécifique à l'événement, par exemple, mise à jour de la base de données
       console.log("Paiement réussi", webhookEvent);
 
