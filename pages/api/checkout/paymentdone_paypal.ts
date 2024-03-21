@@ -17,7 +17,7 @@ export default async function handler(
   const buf = await buffer(req);
   const rawBody = buf.toString("utf-8");
 
-  console.log("req ==>", req);
+  // console.log("req ==>", req);
 
   console.log("buf ==>", buf);
 
@@ -40,9 +40,19 @@ export default async function handler(
   try {
     // Parsez le corps de la requête pour obtenir l'objet de l'événement
     const webhookEvent = JSON.parse(rawBody);
+    console.log("webhookEvent ==>", webhookEvent);
 
     // Exemple de gestion d'un événement de paiement réussi
     if (webhookEvent.event_type === "PAYMENT.SALE.COMPLETED") {
+      // Logique spécifique à l'événement, par exemple, mise à jour de la base de données
+      console.log("Paiement réussi", webhookEvent);
+
+      // Réponse au serveur PayPal
+      return res.status(200).send("Webhook traité avec succès");
+    }
+
+    // Exemple de gestion d'un événement de paiement réussi
+    if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       // Logique spécifique à l'événement, par exemple, mise à jour de la base de données
       console.log("Paiement réussi", webhookEvent);
 
