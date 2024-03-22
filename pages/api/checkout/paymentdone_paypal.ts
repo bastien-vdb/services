@@ -31,13 +31,17 @@ export default async function handler(
 
     if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       console.log("webhookEvent ==>", webhookEvent);
-      // const {email_address, } = webhookEvent.resource.payer;
-      // await useSendEmail({
-      //   from: "QuickReserve <no-answer@quickreserve.app>",
-      //   to: [String(payerEmail)],
-      //   subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-      //   react: EmailRdvBooked({ customerName: customerDetails.name ?? "", bookingStartTime:bookingStartTime }),
-      // });
+      const { email_address } = webhookEvent.resource.payee;
+      await useSendEmail({
+        from: "QuickReserve <no-answer@quickreserve.app>",
+        to: [String(email_address)],
+        subject: `Votre créneau a bien été réservé`,
+        react: EmailRdvBooked({
+          customerName: email_address ?? "",
+          bookingStartTime: new Date().toString(), // a supprimer
+          // bookingStartTime: bookingStartTime,
+        }),
+      });
       return res.status(200).send("Webhook traité avec succès");
     }
   } catch (error) {

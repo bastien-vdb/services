@@ -45,6 +45,7 @@ const SelectBooking = ({
   const { serviceSelected } = useServiceStore();
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
+  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
 
   useEffect(() => {
     initialiseBookings(bookings);
@@ -58,6 +59,7 @@ const SelectBooking = ({
   const handleCreateBook = async (booking: Booking) => {
     setLoading(true);
     setIsOpened(false);
+    setBookingSelectedPaypal(booking);
     try {
       const paymentPage = await fetch(
         `${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
@@ -72,7 +74,7 @@ const SelectBooking = ({
             startTime: booking.startTime,
             userId,
             serviceId: serviceSelected?.id,
-            idemPotentKey: booking.idemPotentKey,
+            idemPotentKey: booking.idemPotentKey, //plus utilisé - penser à peut être supprimer ici et dans le schema (Mars2024)
           }),
         }
       );
@@ -93,13 +95,13 @@ const SelectBooking = ({
 
   return (
     <>
-      {clientSecret && (
+      {clientSecret && bookingSelectedPaypal && (
         <>
           <EmbeddedCheckoutComp
             stripePromise={stripePromise}
             clientSecret={clientSecret}
           />
-          <PayPalButton />
+          <PayPalButton bookingStartTime={bookingSelectedPaypal.startTime} />
         </>
       )}
 

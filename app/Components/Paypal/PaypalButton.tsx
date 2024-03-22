@@ -2,7 +2,11 @@
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { useRouter } from "next/navigation";
 
-export default function PayPalButton() {
+export default function PayPalButton({
+  bookingStartTime,
+}: {
+  bookingStartTime: Date;
+}) {
   const router = useRouter();
 
   if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
