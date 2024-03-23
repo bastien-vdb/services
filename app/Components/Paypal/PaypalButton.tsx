@@ -1,17 +1,22 @@
 "use client";
+import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { Booking } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 export default function PayPalButton({
-  bookingStartTime,
+  bookingSelectedPaypal,
 }: {
-  bookingStartTime: Date;
+  bookingSelectedPaypal: Booking;
 }) {
   const router = useRouter();
+  const { serviceSelected } = useServiceStore();
 
   if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
     throw new Error("Paypal client ID missing");
   }
+
+  if (!serviceSelected?.price) throw new Error("Prix du service non défini");
   return (
     <PayPalScriptProvider
       options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
@@ -23,9 +28,20 @@ export default function PayPalButton({
             purchase_units: [
               {
                 amount: {
-                  value: "1.99", // Montant du paiement
+                  value: String(serviceSelected.price), // Montant du paiement
                   currency_code: "USD",
                 },
+                items: [
+                  {
+                    name: serviceSelected.name,
+                    description: String(bookingSelectedPaypal.startTime),
+                    unit_amount: {
+                      currency_code: "USD",
+                      value: String(serviceSelected.price),
+                    },
+                    quantity: "1",
+                  },
+                ],
               },
             ],
           });

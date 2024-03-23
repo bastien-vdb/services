@@ -101,7 +101,7 @@ const SelectBooking = ({
             stripePromise={stripePromise}
             clientSecret={clientSecret}
           />
-          <PayPalButton bookingStartTime={bookingSelectedPaypal.startTime} />
+          <PayPalButton bookingSelectedPaypal={bookingSelectedPaypal} />
         </>
       )}
 
