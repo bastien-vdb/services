@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
+import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 
 export const config = {
   api: {
@@ -31,17 +32,25 @@ export default async function handler(
 
     if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
       console.log("webhookEvent res ==>", webhookEvent.resource);
-      const { email_address } = webhookEvent.resource.payee;
-      await useSendEmail({
-        from: "QuickReserve <no-answer@quickreserve.app>",
-        to: [String(email_address)],
-        subject: `Votre créneau a bien été réservé`,
-        react: EmailRdvBooked({
-          customerName: email_address ?? "",
-          bookingStartTime: new Date().toString(), // a supprimer
-          // bookingStartTime: bookingStartTime,
-        }),
+      const { email_address: customerEmail } = webhookEvent.resource.payee;
+      const { custom_id: bookingId } = webhookEvent.resource;
+
+      const hasBeenPassedToReserved = await useSetBookingUser({
+        bookingId,
+        customerEmail,
       });
+      if (hasBeenPassedToReserved && customerEmail) {
+        await useSendEmail({
+          from: "QuickReserve <no-answer@quickreserve.app>",
+          to: [String(customerEmail)],
+          subject: `Votre créneau a bien été réservé`,
+          react: EmailRdvBooked({
+            customerName: customerEmail ?? "",
+            bookingStartTime: new Date().toString(), // a supprimer
+            // bookingStartTime: bookingStartTime,
+          }),
+        });
+      }
       return res.status(200).send("Webhook traité avec succès");
     }
   } catch (error) {
