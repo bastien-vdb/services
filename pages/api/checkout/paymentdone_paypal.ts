@@ -30,7 +30,10 @@ export default async function handler(
     }
 
     if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
-      console.log("webhookEvent ==>", webhookEvent);
+      console.log(
+        "webhookEvent res ==>",
+        webhookEvent.resource.supplementary_data
+      );
       const { email_address } = webhookEvent.resource.payee;
       await useSendEmail({
         from: "QuickReserve <no-answer@quickreserve.app>",
