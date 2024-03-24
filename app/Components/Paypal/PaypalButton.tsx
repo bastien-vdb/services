@@ -17,6 +17,8 @@ export default function PayPalButton({
   }
 
   if (!serviceSelected?.price) throw new Error("Prix du service non défini");
+
+  console.log("serviceSelected.name", serviceSelected.name);
   return (
     <PayPalScriptProvider
       options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
@@ -27,6 +29,7 @@ export default function PayPalButton({
             intent: "CAPTURE", // Ajoutez cette ligne,
             purchase_units: [
               {
+                custom_id: bookingSelectedPaypal.id,
                 amount: {
                   value: String(serviceSelected.price / 100), // Montant du paiement
                   currency_code: "USD",
