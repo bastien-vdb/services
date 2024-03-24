@@ -28,8 +28,15 @@ export default function PayPalButton({
             purchase_units: [
               {
                 amount: {
-                  value: String(serviceSelected.price), // Montant du paiement
+                  value: String(serviceSelected.price / 100), // Montant du paiement
                   currency_code: "USD",
+                  breakdown: {
+                    item_total: {
+                      // Total des articles, doit correspondre à la somme des prix des articles * quantité
+                      currency_code: "USD",
+                      value: String(serviceSelected.price / 100),
+                    },
+                  },
                 },
                 items: [
                   {
@@ -37,7 +44,7 @@ export default function PayPalButton({
                     description: String(bookingSelectedPaypal.startTime),
                     unit_amount: {
                       currency_code: "USD",
-                      value: String(serviceSelected.price),
+                      value: String(serviceSelected.price / 100),
                     },
                     quantity: "1",
                   },
