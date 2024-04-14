@@ -3,7 +3,6 @@ import useBookingStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useDeleteBooking from "@/app/admin/Components/Bookings/useDeleteBooking";
 import { columns } from "@/src/components/bookings_payed_table/columns";
 import { DataTable } from "@/src/components/bookings_payed_table/data-table";
-import { Badge } from "@/src/components/ui/badge";
 import { toast } from "@/src/components/ui/use-toast";
 import { Booking } from "@prisma/client";
 import { Trash2 } from "lucide-react";
@@ -62,13 +61,7 @@ function BookingsPayed({ bookings }: { bookings: Booking[] }) {
       };
     });
 
-  return (
-    <>
-      <Badge className="m-auto ml-2 my-10">Bookings facturés</Badge>
-      <br />
-      <DataTable columns={columns} data={data} />
-    </>
-  );
+  return <DataTable columns={columns} data={data} />;
 }
 
 export default BookingsPayed;
