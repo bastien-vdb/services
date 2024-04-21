@@ -21,9 +21,18 @@ export default function PayPalButton({
   console.log("serviceSelected.name", serviceSelected.name);
   return (
     <PayPalScriptProvider
-      options={{ clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID }}
+      options={{
+        clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
+        disableFuiding: "", // Très très étrange mais trouvé par hasard,
+        //c'est le seul moyen de Disable credit
+        //and debit cards tout en gardant le button paypal jaune
+      }}
     >
       <PayPalButtons
+        style={{
+          layout: "horizontal",
+          tagline: false,
+        }} // il faut aussi ce bout de code css pour voir le bouton ... très étrange mais fonctionnel
         createOrder={(data, actions) => {
           return actions.order.create({
             intent: "CAPTURE", // Ajoutez cette ligne,

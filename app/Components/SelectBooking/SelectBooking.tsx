@@ -106,7 +106,6 @@ const SelectBooking = ({
       )}
 
       <Drawer
-        direction="right"
         open={isOpened}
         onClose={() => setIsOpened(false)}
         onOpenChange={(state) => !state && setIsOpened(false)}
