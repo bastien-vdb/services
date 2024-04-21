@@ -79,7 +79,7 @@ function SelectService({ services }: { services?: Service[] }) {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="w-[550px]">
+                    <SelectTrigger className="md:w-[550px]">
                       <SelectValue placeholder="Que souhaitez vous faire ?" />
                     </SelectTrigger>
                   </FormControl>
