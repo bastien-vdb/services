@@ -1,7 +1,15 @@
-'use server'
-import { prisma } from '@/src/db/prisma';
+"use server";
+import { prisma } from "@/src/db/prisma";
 
-async function useSetBookingUser({ bookingId, customerEmail }: { bookingId: string, customerEmail?: string | null }) {
+async function useSetBookingUser({
+  bookingId,
+  customerEmail,
+  serviceId,
+}: {
+  bookingId: string;
+  customerEmail?: string | null;
+  serviceId?: string;
+}) {
   try {
     const bookinFound = await prisma.booking.findUnique({
       where: {
@@ -11,6 +19,7 @@ async function useSetBookingUser({ bookingId, customerEmail }: { bookingId: stri
 
     if (bookinFound?.payed) throw new Error("Réservation déjà payée");
 
+    console.log("ca doit mettre ce service !!=>", serviceId);
     await prisma.booking.update({
       where: {
         id: bookingId,
@@ -18,7 +27,8 @@ async function useSetBookingUser({ bookingId, customerEmail }: { bookingId: stri
       data: {
         payed: true,
         isAvailable: false,
-        ...customerEmail && { payedBy: String(customerEmail) },
+        serviceId,
+        ...(customerEmail && { payedBy: String(customerEmail) }),
       },
     });
     return true;

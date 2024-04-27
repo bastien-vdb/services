@@ -7,14 +7,24 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request, res: NextApiResponse) {
   const body: any = await req.json();
 
-  const { stripePriceId, startTime: startTime, userId, serviceId, bookingId, idemPotentKey } = body;
+  const {
+    stripePriceId,
+    startTime: startTime,
+    userId,
+    serviceId,
+    bookingId,
+    idemPotentKey,
+  } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
 
-  if (!stripeAccount) throw new Error("Missing of the destination to receive the funds");
-  
+  if (!stripeAccount)
+    throw new Error("Missing of the destination to receive the funds");
+
   const stripe = useCheckStripe();
+
+  console.log("serviceId", serviceId);
 
   try {
     // Create Checkout Sessions from body params.
@@ -44,27 +54,33 @@ export async function POST(req: Request, res: NextApiResponse) {
         },
         mode: "payment",
         return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
-      },
+      }
       // {
       //   idempotencyKey: idemPotentKey,
       // }
     );
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
-    if (err.type === 'StripeIdempotencyError') {
-      return new Response("Réservation en cours sur ce créneau, merci de changer", {
-        status: err.statusCode, // Ou tout autre statut HTTP approprié
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    });
+    if (err.type === "StripeIdempotencyError") {
+      return new Response(
+        "Réservation en cours sur ce créneau, merci de changer",
+        {
+          status: err.statusCode, // Ou tout autre statut HTTP approprié
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
-    return new Response("Erreur lors de la création de la session de paiement", {
-      status: 500, // Ou tout autre statut HTTP approprié
-      headers: {
-          'Content-Type': 'application/json',
-      },
-  });
+    return new Response(
+      "Erreur lors de la création de la session de paiement",
+      {
+        status: 500, // Ou tout autre statut HTTP approprié
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
   // break;
   //   case "GET":

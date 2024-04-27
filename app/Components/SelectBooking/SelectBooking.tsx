@@ -60,6 +60,7 @@ const SelectBooking = ({
     setLoading(true);
     setIsOpened(false);
     setBookingSelectedPaypal(booking);
+    console.log("selectId from handleCreateBook:", serviceSelected?.id);
     try {
       const paymentPage = await fetch(
         `${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
@@ -74,7 +75,7 @@ const SelectBooking = ({
             startTime: booking.startTime,
             userId,
             serviceId: serviceSelected?.id,
-            idemPotentKey: booking.idemPotentKey, //plus utilisé - penser à peut être supprimer ici et dans le schema (Mars2024)
+            idemPotentKey: booking.idemPotentKey, //TODO plus utilisé - penser à peut être supprimer ici et dans le schema (Mars2024)
           }),
         }
       );
@@ -92,6 +93,8 @@ const SelectBooking = ({
     setLoading(false);
     if (!daySelected) throw new Error("No day selected");
   };
+
+  console.log("serviceSelected", serviceSelected);
 
   return (
     <>

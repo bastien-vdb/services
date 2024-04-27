@@ -21,35 +21,63 @@ async function buffer(readable: Readable) {
   return Buffer.concat(chunks);
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const stripe = useCheckStripe();
 
   const buf = await buffer(req);
 
-  if (!process.env.STRIPE_WEBHOOK_SECRET) throw new Error("Stripe webhook secret key is not defined");
+  if (!process.env.STRIPE_WEBHOOK_SECRET)
+    throw new Error("Stripe webhook secret key is not defined");
 
   const signature = req.headers["stripe-signature"];
 
-  if (signature === undefined) throw new Error("Stripe signature is not defined");
+  if (signature === undefined)
+    throw new Error("Stripe signature is not defined");
 
-  const webhookEvent = stripe.webhooks.constructEvent(buf, signature, process.env.STRIPE_WEBHOOK_SECRET);
+  const webhookEvent = stripe.webhooks.constructEvent(
+    buf,
+    signature,
+    process.env.STRIPE_WEBHOOK_SECRET
+  );
 
   try {
     switch (webhookEvent.type) {
       case "checkout.session.completed": {
-        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
+        const session = webhookEvent.data.object.metadata as {
+          bookingStartTime: string;
+          serviceId: string;
+          stripePriceId: string;
+          bookingId: string;
+          userId: string;
+        };
         const customerDetails = webhookEvent.data.object.customer_details;
-        const { bookingStartTime, serviceId, stripePriceId, bookingId, userId } = session;
+        const {
+          bookingStartTime,
+          serviceId,
+          stripePriceId,
+          bookingId,
+          userId,
+        } = session;
 
-        console.log('bookingStartTime ==>', bookingStartTime);
+        console.log("bookingStartTime ==>", bookingStartTime);
 
-        const hasBeenPassedToReserved = await useSetBookingUser({ bookingId, customerEmail: customerDetails?.email });
+        const hasBeenPassedToReserved = await useSetBookingUser({
+          bookingId,
+          customerEmail: customerDetails?.email,
+          serviceId,
+        });
         if (hasBeenPassedToReserved && customerDetails?.email) {
           await useSendEmail({
-            from: "QuickReserve <no-answer@quickreserve.app>",
+            from: "Finest lash <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
-            react: EmailRdvBooked({ customerName: customerDetails.name ?? "", bookingStartTime:bookingStartTime }),
+            react: EmailRdvBooked({
+              customerName: customerDetails.name ?? "",
+              bookingStartTime: bookingStartTime,
+            }),
           });
         }
         if (!hasBeenPassedToReserved && customerDetails?.email) {
@@ -64,10 +92,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       case "checkout.session.expired": {
-        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
+        const session = webhookEvent.data.object.metadata as {
+          bookingStartTime: string;
+          serviceId: string;
+          stripePriceId: string;
+          bookingId: string;
+          userId: string;
+        };
         const customerDetails = webhookEvent.data.object.customer_details;
-        if(customerDetails) {  
-        await useSendEmail({
+        if (customerDetails) {
+          await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
@@ -78,10 +112,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       case "checkout.session.async_payment_failed": {
-        const session = webhookEvent.data.object.metadata as { bookingStartTime: string; serviceId: string; stripePriceId: string; bookingId: string; userId: string };
+        const session = webhookEvent.data.object.metadata as {
+          bookingStartTime: string;
+          serviceId: string;
+          stripePriceId: string;
+          bookingId: string;
+          userId: string;
+        };
         const customerDetails = webhookEvent.data.object.customer_details;
-        if(customerDetails) {  
-        await useSendEmail({
+        if (customerDetails) {
+          await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
