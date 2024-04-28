@@ -4,7 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import useServerData from "@/src/hooks/useServerData";
 import { Booking, Periods } from "@prisma/client";
-import PeriodceCalendar from "@/app/admin/Components/Periods/PeriodCalendar";
 import Login from "@/app/Components/Login/Login";
 import BookingsPayed from "./Components/Bookings/BookingsPayed";
 import {
@@ -39,12 +38,6 @@ async function Admin() {
       text: "Gestion des prestations",
       icon: <Gem />,
       content: <Services services={services} />,
-    },
-    {
-      value: "Periodes",
-      text: "Gestion des périodes",
-      icon: <CalendarClock />,
-      content: <PeriodceCalendar periods={periods} />,
     },
     {
       value: "Bookings",

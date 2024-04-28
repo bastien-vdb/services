@@ -1,7 +1,7 @@
 import useServerData from "@/src/hooks/useServerData";
 import { Booking } from "@prisma/client";
 import { create } from "zustand";
-import actionCreatePeriodData from "./action-createBooking";
+import actionCreateBooking from "./action-createBooking";
 import actionDeleteBooking from "./action-deleteBooking";
 
 type useBookingStoreType = {
@@ -25,7 +25,7 @@ const useBookingStore = create<useBookingStoreType>((set) => ({
     }));
   },
   createBooking: async (start, end) => {
-    const result = await actionCreatePeriodData({
+    const result = await actionCreateBooking({
       start,
       end,
     });
