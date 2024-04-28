@@ -19,7 +19,6 @@ async function useSetBookingUser({
 
     if (bookinFound?.payed) throw new Error("Réservation déjà payée");
 
-    console.log("ca doit mettre ce service !!=>", serviceId);
     await prisma.booking.update({
       where: {
         id: bookingId,
@@ -27,7 +26,7 @@ async function useSetBookingUser({
       data: {
         payed: true,
         isAvailable: false,
-        serviceId,
+        serviceId: serviceId,
         ...(customerEmail && { payedBy: String(customerEmail) }),
       },
     });

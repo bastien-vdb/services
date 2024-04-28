@@ -19,6 +19,7 @@ import {
   CalendarSearch,
   Gem,
 } from "lucide-react";
+import Calendar from "./Components/Calendar/Calendar";
 
 async function Admin() {
   const session = await getServerSession(authOptions);
@@ -61,6 +62,7 @@ async function Admin() {
 
   return (
     <main className="flex flex-col mt-10 p-6 gap-6 xl:mx-96">
+      <Calendar />
       <Accordion type="single" collapsible>
         {adminMenu.map((menu) => (
           <AccordionItem value={menu.value}>

@@ -4,32 +4,67 @@ import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { prisma } from "@/src/db/prisma";
 import { now } from "moment";
 import { getServerSession } from "next-auth/next";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import { Booking } from "@prisma/client";
 
-async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { start: Date; end: Date; duree: number; joursOuvrables: number[] }) {
+async function useCreatePeriodData({
+  start,
+  end,
+  duree,
+  joursOuvrables,
+}: {
+  start: Date;
+  end: Date;
+  duree: number;
+  joursOuvrables: number[];
+}) {
   const session = await getServerSession(authOptions);
 
   if (!session) throw new Error("You are not allowed to access this resource.");
 
+  // try {
+  //   const periodeExistante = await prisma.periods.findMany({
+  //     where: {
+  //       createdById: session.user.id,
+  //       OR: [
+  //         {
+  //           start: {
+  //             lte: end,
+  //           },
+  //           end: {
+  //             gte: start,
+  //           },
+  //         },
+  //       ],
+  //     },
+  //   });
+  //   if (periodeExistante && periodeExistante.length > 0) {
+  //     throw new Error("Une période existe déjà sur cette période");
+  //   }
+  // } catch (error) {
+  //   console.error(error);
+  //   throw new Error("Erreur lors de la recherche de périodes existantes");
+  // }
+
+  const bookingsInConflict: Booking[] = [];
+
   try {
-    const periodeExistante = await prisma.periods.findMany({
+    const result = await prisma.booking.findMany({
       where: {
-        createdById: session.user.id,
+        userId: session.user.id,
         OR: [
           {
-            start: {
+            startTime: {
               lte: end,
             },
-            end: {
+            endTime: {
               gte: start,
             },
           },
         ],
       },
     });
-    if (periodeExistante && periodeExistante.length > 0) {
-      throw new Error("Une période existe déjà sur cette période");
-    }
+    if (result.length) bookingsInConflict.push(result);
   } catch (error) {
     console.error(error);
     throw new Error("Erreur lors de la recherche de périodes existantes");
@@ -44,17 +79,26 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
         createdById: session.user.id,
       },
     });
+
+    let sortedBookings = bookingsInConflict.sort(
+      (a, b) => a.startTime.getTime() - b.startTime.getTime()
+    );
+
     if (periods) {
       const listOfSlot = createSetOfSLots(start, end, duree);
+
+      console.log("sortedBookings", sortedBookings);
+      console.log("listOfSlot", listOfSlot);
 
       const bookingsData = listOfSlot
         .map((slot) => {
           if (!joursOuvrables.includes(slot.from.getDay())) return;
+          if (checkForConflicts(slot, sortedBookings)) return;
           return {
             date: new Date(),
             startTime: slot.from,
             endTime: slot.to,
-            serviceId: "64b38177863f172be9fa3923",
+            serviceId: "64b38177863f172be9fa3923", // par default
             userId: session.user.id,
             idemPotentKey: uuidv4(),
             payedBy: "",
@@ -80,3 +124,16 @@ async function useCreatePeriodData({ start, end, duree, joursOuvrables }: { star
 }
 
 export default useCreatePeriodData;
+
+function checkForConflicts(newSlot, sortedBookings) {
+  // Recherche binaire (ou linéaire simplifiée ici pour l'exemple)
+  for (let booking of sortedBookings) {
+    if (newSlot.from < booking.endTime && newSlot.to > booking.startTime) {
+      return true; // Conflit trouvé
+    }
+    if (booking.startTime > newSlot.to) {
+      break; // Plus besoin de chercher si les créneaux suivants commencent après la fin du nouveau créneau
+    }
+  }
+  return false;
+}
