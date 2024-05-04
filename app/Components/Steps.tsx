@@ -4,17 +4,15 @@ import SelectBooking from "./SelectBooking/SelectBooking";
 import SelectService from "./SelectService/SelectService";
 import { Button } from "@/src/components/ui/button";
 import { useCallback } from "react";
-import { Booking, Service } from "@prisma/client";
+import { Service } from "@prisma/client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 
 const Steps = ({
   services,
   userId,
-  bookings,
 }: {
   services: Service[];
   userId: string;
-  bookings: Booking[];
 }) => {
   const { serviceSelected, changeServiceSelected } = useServiceStore();
   const handleReset = useCallback(() => {
@@ -47,7 +45,7 @@ const Steps = ({
             />
           </svg>
         </Button>
-        <SelectBooking bookings={bookings} userId={userId} />
+        <SelectBooking userId={userId} />
         <ServiceCalendar userId={userId} />
       </div>
     </main>

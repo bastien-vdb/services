@@ -2,8 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import Steps from "@/app/Components/Steps";
 import useServerData from "@/src/hooks/useServerData";
-import { Booking, Service, User } from "@prisma/client";
-import moment from "moment";
+import { Service, User } from "@prisma/client";
 import { Hero } from "./Components/Hero/Hero";
 import Subscribe from "./Components/Subscribe/Subscribe";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
@@ -26,6 +25,7 @@ async function Home() {
   //**** Si l'utilisateur est connecté à l'app mais n'a pas commencé ou finalisé son inscription à Stripe ****
   const stripe = useCheckStripe();
   const user: User[] = await useServerData("user", { id: userId });
+
   const { stripeAccount } = user[0];
   let statusAccount: boolean = false;
   if (stripeAccount) {
@@ -39,19 +39,11 @@ async function Home() {
   const services: Service[] = await useServerData("service", {
     createdById: userId,
   });
-  const bookings: Booking[] = await useServerData("booking", {
-    startTime: {
-      gte: moment().startOf("day").toDate(),
-      lt: moment().endOf("day").toDate(),
-    },
-    status: "AVAILABLE",
-    userId,
-  });
 
   return (
     <>
       <Header />
-      <Steps bookings={bookings} services={services} userId={userId} />
+      <Steps services={services} userId={userId} />
     </>
   );
 }

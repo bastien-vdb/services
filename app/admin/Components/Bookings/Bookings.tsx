@@ -4,7 +4,7 @@ import { DataTable } from "@/src/components/bookings_data_table/data-table";
 import { Switch } from "@/src/components/ui/switch";
 import { toast } from "@/src/components/ui/use-toast";
 import moment from "moment";
-import useBookingStore from "../Calendar/useBookingsStore";
+import useBookingStore from "../Calendar/useAvailabilityStore";
 
 function Bookings() {
   const { bookings, changeStatus } = useBookingStore();

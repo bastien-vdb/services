@@ -1,7 +1,7 @@
 import moment from "moment";
 import { Button } from "@/src/components/ui/button";
 import { useEffect, useState } from "react";
-import { Booking } from "@prisma/client";
+import { Availability, Booking, Service } from "@prisma/client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import useMainBookingStore from "@/app/Components/Calendar/useMainBookingsStore";
 import {
@@ -19,9 +19,9 @@ import useLoad from "@/src/hooks/useLoad";
 import { loadStripe } from "@stripe/stripe-js";
 import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
-import { addHours, addMinutes, isAfter } from "date-fns";
+import { addMinutes, isAfter } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { s } from "@fullcalendar/core/internal-common";
+import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -29,22 +29,16 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const SelectBooking = ({
-  bookings,
-  userId,
-}: {
-  bookings: Booking[];
-  userId: string;
-}) => {
+const SelectBooking = ({ userId }: { userId: string }) => {
   const { toast } = useToast();
 
   const [isOpened, setIsOpened] = useState(false);
-  const {
-    bookings: bookingsFromStore,
-    initialiseBookings,
-    daySelected,
-    loadingBookings,
-  } = useMainBookingStore();
+
+  const { daySelected } = useMainBookingStore();
+
+  const { availabilities, getAvailabilities, loadingAvailability } =
+    useAvailabilityStore();
+
   const { serviceSelected } = useServiceStore();
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
@@ -53,7 +47,7 @@ const SelectBooking = ({
   const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
-    initialiseBookings(bookings);
+    getAvailabilities(userId);
   }, []);
 
   useEffect(() => {
@@ -76,8 +70,8 @@ const SelectBooking = ({
           },
           body: JSON.stringify({
             stripePriceId: serviceSelected?.stripePriceId,
-            bookingId: booking.id,
             startTime: booking.startTime,
+            endTime: booking.endTime,
             userId,
             serviceId: serviceSelected?.id,
           }),
@@ -99,11 +93,12 @@ const SelectBooking = ({
   };
 
   useEffect(() => {
-    const cuttedBookings = bookingsFromStore.flatMap((booking) =>
-      splitBookingIntoServiceDuration(booking, 90)
+    if (!serviceSelected) return;
+    const cuttedBookings = availabilities.flatMap((booking) =>
+      splitBookingIntoServiceDuration(booking, serviceSelected)
     );
     setSlots(cuttedBookings); // Directement un tableau simple
-  }, [bookingsFromStore]);
+  }, [availabilities]);
 
   return (
     <>
@@ -123,7 +118,7 @@ const SelectBooking = ({
         onOpenChange={(state) => !state && setIsOpened(false)}
       >
         <DrawerContent className="flex justify-center items-center">
-          {loadingBookings ? (
+          {loadingAvailability ? (
             <LoadingSpinner className="w-20 h-20 animate-spin" />
           ) : (
             <>
@@ -162,13 +157,16 @@ const SelectBooking = ({
 
 export default SelectBooking;
 
-function splitBookingIntoServiceDuration(booking: Booking, durationMM: number) {
+function splitBookingIntoServiceDuration(
+  avaibility: Availability,
+  serviceSelected: Service
+) {
   const slots: Booking[] = [];
-  let currentTime = new Date(booking.startTime);
-  const endTime = new Date(booking.endTime);
+  let currentTime = new Date(avaibility.startTime);
+  const endTime = new Date(avaibility.endTime);
 
   while (isAfter(endTime, currentTime)) {
-    const nextTime = addMinutes(currentTime, durationMM);
+    const nextTime = addMinutes(currentTime, serviceSelected.duration);
 
     // Empêche de dépasser l'heure de fin
     if (endTime >= nextTime) {
@@ -177,11 +175,11 @@ function splitBookingIntoServiceDuration(booking: Booking, durationMM: number) {
         date: new Date(),
         startTime: currentTime,
         endTime: nextTime,
-        serviceId: booking.serviceId,
-        userId: booking.userId,
-        status: booking.status,
-        payedBy: booking.payedBy,
-        createdAt: booking.createdAt,
+        serviceId: serviceSelected?.id,
+        userId: avaibility.userId,
+        status: "PENDING",
+        payedBy: "",
+        createdAt: new Date(),
         updatedAt: new Date(),
       });
     }

@@ -29,7 +29,7 @@ async function Admin() {
       <Calendar />
 
       <Accordion type="multiple">
-        <AccordionItem value={"Bookings"}>
+        {/* <AccordionItem value={"Bookings"}>
           <AccordionTrigger>
             <div className="flex items-center gap-4">
               <CalendarSearch />
@@ -51,7 +51,7 @@ async function Admin() {
           <AccordionContent>
             <BookingsPayed services={services} />
           </AccordionContent>
-        </AccordionItem>
+        </AccordionItem> */}
 
         <AccordionItem value={"Services"}>
           <AccordionTrigger>

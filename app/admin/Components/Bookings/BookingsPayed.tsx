@@ -7,7 +7,7 @@ import { Service } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import moment from "moment";
 import { useMemo, useState } from "react";
-import useBookingStore from "../Calendar/useBookingsStore";
+import useBookingStore from "../Calendar/useAvailabilityStore";
 
 function BookingsPayed({ services }: { services: Service[] }) {
   const { bookings, deleteBooking } = useBookingStore();

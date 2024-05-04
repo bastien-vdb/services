@@ -1,11 +1,18 @@
-'use server'
-import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
-import { prisma } from '@/src/db/prisma';
-import useCheckStripe from '@/src/hooks/useCheckStripe';
-import { getServerSession } from 'next-auth/next';
+"use server";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { prisma } from "@/src/db/prisma";
+import useCheckStripe from "@/src/hooks/useCheckStripe";
+import { getServerSession } from "next-auth/next";
 
-async function useCreateServerData({ name, price: productPrice }: { name: string, price: number }) {
-
+async function actionCreateService({
+  name,
+  price: productPrice,
+  duration,
+}: {
+  name: string;
+  price: number;
+  duration: number;
+}) {
   const session = await getServerSession(authOptions);
 
   if (!session) throw new Error("Session is not defined");
@@ -26,6 +33,7 @@ async function useCreateServerData({ name, price: productPrice }: { name: string
       data: {
         name: service.name,
         price: price.unit_amount ?? 0,
+        duration,
         createdById: session.user.id,
         stripeId: service.id,
         stripePriceId: price.id,
@@ -43,7 +51,6 @@ async function useCreateServerData({ name, price: productPrice }: { name: string
     console.log(error);
     throw new Error("Service cannot be created");
   }
-
 }
 
-export default useCreateServerData;
+export default actionCreateService;

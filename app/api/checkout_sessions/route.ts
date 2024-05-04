@@ -7,13 +7,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request, res: NextApiResponse) {
   const body: any = await req.json();
 
-  const {
-    stripePriceId,
-    startTime: startTime,
-    userId,
-    serviceId,
-    bookingId,
-  } = body;
+  const { stripePriceId, startTime, endTime, userId, serviceId } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
@@ -23,15 +17,13 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   const stripe = useCheckStripe();
 
-  console.log("serviceId", serviceId);
-
   try {
     // Create Checkout Sessions from body params.
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       metadata: {
-        bookingStartTime: String(startTime),
-        bookingId,
+        startTime,
+        endTime,
         serviceId,
         stripePriceId,
         userId,
@@ -53,9 +45,12 @@ export async function POST(req: Request, res: NextApiResponse) {
       mode: "payment",
       return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
     });
+
+    console.log("va ton ici");
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
     if (err.type === "StripeIdempotencyError") {
+      console.log("Réservation en cours sur ce créneau, merci de changer");
       return new Response(
         "Réservation en cours sur ce créneau, merci de changer",
         {

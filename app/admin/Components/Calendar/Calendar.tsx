@@ -3,32 +3,43 @@
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { addHours } from "date-fns";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
-import useBookingStore from "./useBookingsStore";
+import useAvailabilityStore from "./useAvailabilityStore";
 import { v4 as uuidv4 } from "uuid";
 
 const Calendar = () => {
-  const { bookings, reloadBookings, createBooking, deleteBooking } =
-    useBookingStore();
+  const {
+    availabilities,
+    getAvailabilities,
+    createAvailability,
+    deleteAvailability,
+  } = useAvailabilityStore();
   const today = useMemo(() => new Date(), []);
-
   const session = useSession();
+  const [events, setEvents] = useState<
+    {
+      id: string;
+      title: string;
+      start: Date;
+      end: Date;
+    }[]
+  >([]);
 
   useEffect(() => {
-    reloadBookings(session.data?.user.id!);
+    getAvailabilities(session.data?.user.id!);
   }, []);
 
-  const [events, setEvents] = useState([
-    { title: "Meeting", start: new Date(), end: addHours(new Date(), 1) },
-    {
-      id: "1",
-      title: "Cils",
-      start: addHours(new Date(), 4),
-      end: addHours(new Date(), 5),
-    },
-  ]);
+  useEffect(() => {
+    setEvents(
+      availabilities.map((availability) => ({
+        id: availability.id,
+        title: "Rendez-vous",
+        start: availability.startTime,
+        end: availability.endTime,
+      }))
+    );
+  }, [availabilities]);
 
   const handleEventClick = (clickInfo) => {
     if (
@@ -37,16 +48,14 @@ const Calendar = () => {
       )
     ) {
       clickInfo.event.remove(); // Supprime l'événement du calendrier
-      deleteBooking(clickInfo.event.id);
+      deleteAvailability(clickInfo.event.id);
     }
   };
 
   const handleDateSelect = async (selectInfo) => {
-    let title = "disponible"; // prompt("Enter a new title for this event:");
+    let title = "Rendez-vous"; // prompt("Enter a new title for this event:");
     let calendarApi = selectInfo.view.calendar;
     calendarApi.unselect(); // clear date selection
-
-    await createBooking(selectInfo.startStr, selectInfo.endStr);
 
     setEvents([
       ...events,
@@ -57,6 +66,8 @@ const Calendar = () => {
         end: selectInfo.endStr,
       },
     ]);
+
+    await createAvailability(selectInfo.startStr, selectInfo.endStr);
   };
 
   return (
@@ -69,13 +80,7 @@ const Calendar = () => {
         validRange={{
           start: today,
         }}
-        events={bookings.map((booking) => ({
-          id: booking.id,
-          title: "Rendez-vous",
-          start: booking.startTime,
-          end: booking.endTime,
-          statuts: "confirmed",
-        }))}
+        events={events}
         duration={30}
         headerToolbar={{
           left: "prev,next today",

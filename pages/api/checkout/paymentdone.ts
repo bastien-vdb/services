@@ -5,6 +5,7 @@ import EmailRdvBooked from "@/src/emails/EmailBooked";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
 import actionSetBookingUser from "@/app/admin/Components/Bookings/action-setBookingUser";
+import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 
 export const config = {
   api: {
@@ -46,40 +47,41 @@ export default async function handler(
     switch (webhookEvent.type) {
       case "checkout.session.completed": {
         const session = webhookEvent.data.object.metadata as {
-          bookingStartTime: string;
+          startTime: string;
+          endTime: string;
           serviceId: string;
           stripePriceId: string;
           bookingId: string;
           userId: string;
         };
         const customerDetails = webhookEvent.data.object.customer_details;
-        const {
-          bookingStartTime,
+        const { startTime, endTime, serviceId, stripePriceId, userId } =
+          session;
+
+        console.log("bookingStartTime ==>", startTime);
+
+        const bookingCreated = await actionCreateBooking({
+          startTime: new Date(startTime),
+          endTime: new Date(endTime),
           serviceId,
-          stripePriceId,
-          bookingId,
           userId,
-        } = session;
-
-        console.log("bookingStartTime ==>", bookingStartTime);
-
-        const hasBeenPassedToReserved = await actionSetBookingUser({
-          bookingId,
-          customerEmail: customerDetails?.email,
-          serviceId,
+          emailCustomer: customerDetails?.email,
         });
-        if (hasBeenPassedToReserved && customerDetails?.email) {
+
+        console.log("bookingCreated ==>", bookingCreated);
+
+        if (bookingCreated && customerDetails?.email) {
           await useSendEmail({
             from: "Finest lash <no-answer@quickreserve.app>",
-            to: [String(customerDetails.email)],
+            to: [customerDetails.email],
             subject: `${customerDetails.name} Votre créneau a bien été réservé`,
             react: EmailRdvBooked({
               customerName: customerDetails.name ?? "",
-              bookingStartTime: bookingStartTime,
+              bookingStartTime: startTime,
             }),
           });
         }
-        if (!hasBeenPassedToReserved && customerDetails?.email) {
+        if (!bookingCreated && customerDetails?.email) {
           await useSendEmail({
             from: "QuickReserve <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
