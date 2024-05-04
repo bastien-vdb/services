@@ -172,7 +172,6 @@ function splitBookingIntoServiceDuration(
     if (endTime >= nextTime) {
       slots.push({
         id: uuidv4(), // ID temporaire
-        date: new Date(),
         startTime: currentTime,
         endTime: nextTime,
         serviceId: serviceSelected?.id,
