@@ -18,7 +18,6 @@ export default function PayPalButton({
 
   if (!serviceSelected?.price) throw new Error("Prix du service non défini");
 
-  console.log("serviceSelected.name", serviceSelected.name);
   return (
     <PayPalScriptProvider
       options={{

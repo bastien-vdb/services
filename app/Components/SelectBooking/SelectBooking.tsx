@@ -19,6 +19,9 @@ import useLoad from "@/src/hooks/useLoad";
 import { loadStripe } from "@stripe/stripe-js";
 import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
+import { addHours, addMinutes, isAfter } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
+import { s } from "@fullcalendar/core/internal-common";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -46,6 +49,8 @@ const SelectBooking = ({
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
+
+  const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
     initialiseBookings(bookings);
@@ -93,7 +98,12 @@ const SelectBooking = ({
     if (!daySelected) throw new Error("No day selected");
   };
 
-  console.log("serviceSelected", serviceSelected);
+  useEffect(() => {
+    const cuttedBookings = bookingsFromStore.flatMap((booking) =>
+      splitBookingIntoServiceDuration(booking, 90)
+    );
+    setSlots(cuttedBookings); // Directement un tableau simple
+  }, [bookingsFromStore]);
 
   return (
     <>
@@ -124,24 +134,15 @@ const SelectBooking = ({
                 </DrawerDescription>
               </DrawerHeader>
               <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
-                {bookingsFromStore.length > 0 ? (
-                  bookingsFromStore?.map((booking, key) => {
-                    const duration =
-                      moment(booking.endTime).diff(
-                        moment(booking.startTime),
-                        "minutes"
-                      ) / 60;
-
-                    return (
-                      <li key={key}>
-                        <Button onClick={() => handleCreateBook(booking)}>
-                          {moment(booking.startTime)
-                            .format("HH:mm:ss")
-                            .toString()}
-                        </Button>
-                      </li>
-                    );
-                  })
+                {slots.length > 0 ? (
+                  slots?.map((booking, key) => (
+                    <li key={key}>
+                      <Button onClick={() => handleCreateBook(booking)}>
+                        {moment(booking.startTime).format("HH:mm").toString()}-
+                        {moment(booking.endTime).format("HH:mm").toString()}
+                      </Button>
+                    </li>
+                  ))
                 ) : (
                   <Button variant="ghost">Pas de créneau disponible</Button>
                 )}
@@ -160,3 +161,33 @@ const SelectBooking = ({
 };
 
 export default SelectBooking;
+
+function splitBookingIntoServiceDuration(booking: Booking, durationMM: number) {
+  const slots: Booking[] = [];
+  let currentTime = new Date(booking.startTime);
+  const endTime = new Date(booking.endTime);
+
+  while (isAfter(endTime, currentTime)) {
+    const nextTime = addMinutes(currentTime, durationMM);
+
+    // Empêche de dépasser l'heure de fin
+    if (endTime >= nextTime) {
+      slots.push({
+        id: uuidv4(), // ID temporaire
+        date: new Date(),
+        startTime: currentTime,
+        endTime: nextTime,
+        serviceId: booking.serviceId,
+        userId: booking.userId,
+        status: booking.status,
+        payedBy: booking.payedBy,
+        createdAt: booking.createdAt,
+        updatedAt: new Date(),
+      });
+    }
+
+    currentTime = nextTime;
+  }
+
+  return slots;
+}
