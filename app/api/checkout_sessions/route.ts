@@ -13,7 +13,6 @@ export async function POST(req: Request, res: NextApiResponse) {
     userId,
     serviceId,
     bookingId,
-    idemPotentKey,
   } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
@@ -28,37 +27,32 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   try {
     // Create Checkout Sessions from body params.
-    const session = await stripe.checkout.sessions.create(
-      {
-        ui_mode: "embedded",
-        metadata: {
-          bookingStartTime: String(startTime),
-          bookingId,
-          serviceId,
-          stripePriceId,
-          userId,
+    const session = await stripe.checkout.sessions.create({
+      ui_mode: "embedded",
+      metadata: {
+        bookingStartTime: String(startTime),
+        bookingId,
+        serviceId,
+        stripePriceId,
+        userId,
+      },
+      line_items: [
+        {
+          // Provide the exact Price ID (for example, pr_1234) of
+          // the product you want to sell
+          price: stripePriceId,
+          quantity: 1,
         },
-        line_items: [
-          {
-            // Provide the exact Price ID (for example, pr_1234) of
-            // the product you want to sell
-            price: stripePriceId,
-            quantity: 1,
-          },
-        ],
-        payment_intent_data: {
-          application_fee_amount: 250,
-          transfer_data: {
-            destination: stripeAccount,
-          },
+      ],
+      payment_intent_data: {
+        application_fee_amount: 250,
+        transfer_data: {
+          destination: stripeAccount,
         },
-        mode: "payment",
-        return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
-      }
-      // {
-      //   idempotencyKey: idemPotentKey,
-      // }
-    );
+      },
+      mode: "payment",
+      return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
+    });
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
     if (err.type === "StripeIdempotencyError") {

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { buffer } from "micro";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
-import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
+import actionSetBookingUser from "@/app/admin/Components/Bookings/action-setBookingUser";
 
 export const config = {
   api: {
@@ -35,7 +35,7 @@ export default async function handler(
       const { email_address: customerEmail } = webhookEvent.resource.payee;
       const { custom_id: bookingId } = webhookEvent.resource;
 
-      const hasBeenPassedToReserved = await useSetBookingUser({
+      const hasBeenPassedToReserved = await actionSetBookingUser({
         bookingId,
         customerEmail,
       });

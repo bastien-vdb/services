@@ -1,7 +1,6 @@
 "use client";
 
 import FullCalendar from "@fullcalendar/react";
-// import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { addHours } from "date-fns";
@@ -13,7 +12,6 @@ import { v4 as uuidv4 } from "uuid";
 const Calendar = () => {
   const { bookings, reloadBookings, createBooking, deleteBooking } =
     useBookingStore();
-  const [eventGuid, setEventGuid] = useState(0);
   const today = useMemo(() => new Date(), []);
 
   const session = useSession();
@@ -21,8 +19,6 @@ const Calendar = () => {
   useEffect(() => {
     reloadBookings(session.data?.user.id!);
   }, []);
-
-  console.log("bookings", bookings);
 
   const [events, setEvents] = useState([
     { title: "Meeting", start: new Date(), end: addHours(new Date(), 1) },
@@ -45,14 +41,12 @@ const Calendar = () => {
     }
   };
 
-  const handleDateSelect = (selectInfo) => {
+  const handleDateSelect = async (selectInfo) => {
     let title = "disponible"; // prompt("Enter a new title for this event:");
     let calendarApi = selectInfo.view.calendar;
     calendarApi.unselect(); // clear date selection
 
-    console.log("c", selectInfo);
-
-    const r = createBooking(selectInfo.startStr, selectInfo.endStr);
+    await createBooking(selectInfo.startStr, selectInfo.endStr);
 
     setEvents([
       ...events,
@@ -80,6 +74,7 @@ const Calendar = () => {
           title: "Rendez-vous",
           start: booking.startTime,
           end: booking.endTime,
+          statuts: "confirmed",
         }))}
         duration={30}
         headerToolbar={{

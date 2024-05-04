@@ -1,14 +1,15 @@
 import useServerData from "@/src/hooks/useServerData";
-import { Booking } from "@prisma/client";
+import { Booking, BookingStatus } from "@prisma/client";
 import { create } from "zustand";
 import actionCreateBooking from "./action-createBooking";
 import actionDeleteBooking from "./action-deleteBooking";
+import actionStatusBooking from "../Bookings/action-statusBooking";
 
 type useBookingStoreType = {
   bookings: Booking[];
   initialiseBookings: (bookings: Booking[]) => void;
   createBooking: (start: Date, end: Date) => void;
-  isAvailableSwitchBooking: (booking: Booking) => void;
+  changeStatus: (id: string, status: BookingStatus) => void;
   reloadBookings: (createdById: string) => void;
   deleteBooking: (bookindId: string) => void;
 };
@@ -16,19 +17,17 @@ type useBookingStoreType = {
 const useBookingStore = create<useBookingStoreType>((set) => ({
   bookings: [],
   initialiseBookings: (bookings) => set({ bookings }),
-  isAvailableSwitchBooking: (booking) => {
-    set((state) => ({
-      bookings: state.bookings.map((b) => {
-        if (b.id === booking.id) b.isAvailable = !b.isAvailable;
-        return b;
-      }),
-    }));
-  },
   createBooking: async (start, end) => {
     const result = await actionCreateBooking({
       start,
       end,
     });
+    set((state) => ({
+      bookings: [...state.bookings, result],
+    }));
+  },
+  changeStatus: async (id, status) => {
+    const result = await actionStatusBooking(id, status);
     set((state) => ({
       bookings: [...state.bookings, result],
     }));

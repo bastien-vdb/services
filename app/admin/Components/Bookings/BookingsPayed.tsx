@@ -1,44 +1,23 @@
 "use client";
-import useBookingStore from "@/app/admin/Components/Bookings/useBookingsStore";
-import useDeleteBooking from "@/app/admin/Components/Bookings/useDeleteBooking";
+import AlertModal from "@/src/components/Modal/AlertModal";
 import { columns } from "@/src/components/bookings_payed_table/columns";
 import { DataTable } from "@/src/components/bookings_payed_table/data-table";
 import { toast } from "@/src/components/ui/use-toast";
-import { Booking, Service } from "@prisma/client";
+import { Service } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import moment from "moment";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import AlertModal from "@/src/components/Modal/AlertModal";
+import { useMemo, useState } from "react";
+import useBookingStore from "../Calendar/useBookingsStore";
 
-function BookingsPayed({
-  bookings,
-  services,
-}: {
-  bookings: Booking[];
-  services: Service[];
-}) {
-  const {
-    bookings: bookingsFromStore,
-    reloadBookings,
-    deleteBooking,
-    initialiseBookings,
-  } = useBookingStore();
+function BookingsPayed({ services }: { services: Service[] }) {
+  const { bookings, deleteBooking } = useBookingStore();
 
   const [loading, setLoading] = useState(false);
-  const session = useSession();
 
-  useEffect(() => {
-    initialiseBookings(bookings);
-  }, []);
-
-  const handleDeleteBooking = async (booking: Booking) => {
-    if (!booking.id) return;
-
+  const handleDeleteBooking = async (bookingId: string) => {
+    if (!bookingId) return;
     setLoading(true);
-    deleteBooking(booking); //Optimistic update
-    await useDeleteBooking({ booking });
-    reloadBookings(session.data?.user.id!);
+    await deleteBooking(bookingId);
     setLoading(false);
     toast({
       variant: "success",
@@ -55,30 +34,32 @@ function BookingsPayed({
     {}
   );
 
-  console.log("serviceMap >", serviceMap);
-  console.log("bookingsFromStore", bookingsFromStore);
-  const data = bookingsFromStore
-    .filter((booking) => booking.payed)
-    .map((booking) => {
-      return {
-        id: booking.id,
-        du: moment(booking.startTime)
-          .format("DD/MM/YYYY - HH:mm:ss")
-          .toString(),
-        au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm:ss").toString(),
-        userEmail: String(booking.payedBy) ?? "Non renseigné",
-        prestation: serviceMap[booking.serviceId]?.name,
-        prix: serviceMap[booking.serviceId]?.price,
-        annuler: (
-          <AlertModal
-            disabled={loading}
-            onAction={() => handleDeleteBooking(booking)}
-          >
-            <Trash2 className="text-destructive"></Trash2>
-          </AlertModal>
-        ),
-      };
-    });
+  const data = useMemo(
+    () =>
+      bookings
+        .filter((booking) => booking.status === "CONFIRMED")
+        .map((booking) => {
+          return {
+            id: booking.id,
+            du: moment(booking.startTime)
+              .format("DD/MM/YYYY - HH:mm")
+              .toString(),
+            au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
+            userEmail: String(booking.payedBy) ?? "Non renseigné",
+            prestation: serviceMap[booking.serviceId]?.name,
+            prix: serviceMap[booking.serviceId]?.price,
+            annuler: (
+              <AlertModal
+                disabled={loading}
+                onAction={() => handleDeleteBooking(booking.id)}
+              >
+                <Trash2 className="text-destructive"></Trash2>
+              </AlertModal>
+            ),
+          };
+        }),
+    [bookings]
+  );
 
   return <DataTable columns={columns} data={data} />;
 }

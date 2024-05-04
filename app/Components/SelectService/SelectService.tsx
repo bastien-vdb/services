@@ -42,10 +42,6 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 function SelectService({ services }: { services?: Service[] }) {
   const { changeServiceSelected } = useServiceStore();
 
-  const handleSelectService = (service: Service) => {
-    changeServiceSelected(service);
-  };
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
@@ -54,7 +50,9 @@ function SelectService({ services }: { services?: Service[] }) {
     const serviceSelected = services?.find(
       (service) => service.id === data.service
     );
-    handleSelectService(serviceSelected as Service);
+
+    serviceSelected && changeServiceSelected(serviceSelected);
+
     toast({
       title: "Vous avez sélectionné",
       description: serviceSelected?.name,

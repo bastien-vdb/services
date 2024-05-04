@@ -11,6 +11,7 @@ import Header from "@/src/components/Header/Header";
 
 async function Home() {
   const session = await getServerSession(authOptions);
+
   const userId = session?.user.id;
 
   //**** Si l'utilisateur n'est pas connecté à l'app (visiteur) ****
@@ -43,15 +44,15 @@ async function Home() {
       gte: moment().startOf("day").toDate(),
       lt: moment().endOf("day").toDate(),
     },
-    isAvailable: true,
+    status: "AVAILABLE",
     userId,
-    payed: false,
   });
+
   return (
-    <div>
+    <>
       <Header />
       <Steps bookings={bookings} services={services} userId={userId} />
-    </div>
+    </>
   );
 }
 

@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/src/db/prisma";
 
-async function useSetBookingUser({
+async function actionSetBookingUser({
   bookingId,
   customerEmail,
   serviceId,
@@ -17,15 +17,15 @@ async function useSetBookingUser({
       },
     });
 
-    if (bookinFound?.payed) throw new Error("Réservation déjà payée");
+    if (bookinFound?.status === "CONFIRMED")
+      throw new Error("Réservation déjà payée");
 
     await prisma.booking.update({
       where: {
         id: bookingId,
       },
       data: {
-        payed: true,
-        isAvailable: false,
+        status: "CONFIRMED",
         serviceId: serviceId,
         ...(customerEmail && { payedBy: String(customerEmail) }),
       },
@@ -37,4 +37,4 @@ async function useSetBookingUser({
   }
 }
 
-export default useSetBookingUser;
+export default actionSetBookingUser;

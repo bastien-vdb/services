@@ -75,7 +75,6 @@ const SelectBooking = ({
             startTime: booking.startTime,
             userId,
             serviceId: serviceSelected?.id,
-            idemPotentKey: booking.idemPotentKey, //TODO plus utilisé - penser à peut être supprimer ici et dans le schema (Mars2024)
           }),
         }
       );
@@ -126,15 +125,23 @@ const SelectBooking = ({
               </DrawerHeader>
               <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
                 {bookingsFromStore.length > 0 ? (
-                  bookingsFromStore?.map((booking, key) => (
-                    <li key={key}>
-                      <Button onClick={() => handleCreateBook(booking)}>
-                        {moment(booking.startTime)
-                          .format("HH:mm:ss")
-                          .toString()}
-                      </Button>
-                    </li>
-                  ))
+                  bookingsFromStore?.map((booking, key) => {
+                    const duration =
+                      moment(booking.endTime).diff(
+                        moment(booking.startTime),
+                        "minutes"
+                      ) / 60;
+
+                    return (
+                      <li key={key}>
+                        <Button onClick={() => handleCreateBook(booking)}>
+                          {moment(booking.startTime)
+                            .format("HH:mm:ss")
+                            .toString()}
+                        </Button>
+                      </li>
+                    );
+                  })
                 ) : (
                   <Button variant="ghost">Pas de créneau disponible</Button>
                 )}

@@ -20,7 +20,9 @@ const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
   selectDay: (daySelected) => set({ daySelected }),
   initialiseBookings: (bookings) => set({ bookings }),
   removeBooking: (booking) => {
-    set((state) => ({ bookings: state.bookings.filter((b) => b.id !== booking.id) }));
+    set((state) => ({
+      bookings: state.bookings.filter((b) => b.id !== booking.id),
+    }));
   },
   reloadBookings: async (userId, dateSelected) => {
     const getBookings = async () => {
@@ -30,8 +32,7 @@ const useMainBookingsStore = create<useMainBookingsStoreType>((set) => ({
           gte: moment(dateSelected).startOf("day").toDate(),
           lt: moment(dateSelected).endOf("day").toDate(),
         },
-        isAvailable: true,
-        payed:false,
+        status: "AVAILABLE",
         userId,
       });
       set({ bookings });

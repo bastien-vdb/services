@@ -4,7 +4,6 @@ import { createSetOfSLots } from "@/src/lib/createSetOfSlots";
 import { prisma } from "@/src/db/prisma";
 import { now } from "moment";
 import { getServerSession } from "next-auth/next";
-import { v4 as uuidv4 } from "uuid";
 import { Booking } from "@prisma/client";
 
 async function actionCreateBooking({ start, end }: { start: Date; end: Date }) {
@@ -21,7 +20,6 @@ async function actionCreateBooking({ start, end }: { start: Date; end: Date }) {
         serviceId: "64b38177863f172be9fa3923", // par default
         userId: session.user.id,
         payedBy: "",
-        idemPotentKey: uuidv4(),
       } as Booking,
     });
   } catch (error) {

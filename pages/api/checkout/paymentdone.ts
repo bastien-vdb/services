@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import useSetBookingUser from "@/app/admin/Components/Bookings/useSetBookingUser";
 import type { Readable } from "node:stream";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
-import useRenewIdemPotent from "@/pages/api/checkout/useRenewIdemPotent";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
+import actionSetBookingUser from "@/app/admin/Components/Bookings/action-setBookingUser";
 
 export const config = {
   api: {
@@ -64,7 +63,7 @@ export default async function handler(
 
         console.log("bookingStartTime ==>", bookingStartTime);
 
-        const hasBeenPassedToReserved = await useSetBookingUser({
+        const hasBeenPassedToReserved = await actionSetBookingUser({
           bookingId,
           customerEmail: customerDetails?.email,
           serviceId,
