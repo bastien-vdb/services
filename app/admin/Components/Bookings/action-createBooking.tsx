@@ -1,5 +1,6 @@
 import { av } from "@fullcalendar/core/internal-common";
 import { Availability, PrismaClient } from "@prisma/client";
+import { de } from "date-fns/locale";
 const prisma = new PrismaClient();
 
 async function actionCreateBooking({
@@ -88,3 +89,5 @@ async function actionCreateBooking({
     throw new Error("Failed to create booking");
   }
 }
+
+export default actionCreateBooking;
