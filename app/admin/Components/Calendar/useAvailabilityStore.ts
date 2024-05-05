@@ -1,15 +1,16 @@
 import useServerData from "@/src/hooks/useServerData";
-import { Availability, BookingStatus } from "@prisma/client";
+import { Availability } from "@prisma/client";
 import { create } from "zustand";
 import actionCreateAvailability from "./action-createAvailability";
 import actionDeleteAvailability from "./action-deleteAvailability";
+import { endOfDay, startOfDay } from "date-fns";
 
 type useAvailabilityStoreType = {
   availabilities: Availability[];
   loadingAvailability: boolean;
   initialiseAvailabilities: (availabilities: Availability[]) => void;
   createAvailability: (start: Date, end: Date) => void;
-  getAvailabilities: (userId: string) => void;
+  getAvailabilities: (userId: string, daySelected?: Date) => void;
   deleteAvailability: (availabilityId: string) => void;
 };
 
@@ -32,9 +33,18 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
       availabilities: state.availabilities.filter((b) => b.id !== result.id),
     }));
   },
-  getAvailabilities: async (userId: string) => {
+  getAvailabilities: async (userId, daySelected) => {
     set({ loadingAvailability: true });
-    const availabilities = await useServerData("availability", { userId });
+    //daySelected optional parameter for filtering availabilities
+    const availabilities = await useServerData("availability", {
+      ...(daySelected && {
+        startTime: {
+          gte: startOfDay(daySelected),
+          lt: endOfDay(daySelected),
+        },
+      }),
+      userId,
+    });
     set({ availabilities });
     set({ loadingAvailability: false });
   },

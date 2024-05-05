@@ -1,31 +1,20 @@
-import { memo, useEffect } from "react";
+import { memo, useState } from "react";
 import { Calendar } from "@/src/components/ui/calendar";
-import moment from "moment";
-import useMainBookingsStore from "@/app/Components/Calendar/useMainBookingsStore";
+import SelectBooking from "../SelectBooking/SelectBooking";
 
 const ServiceCalendar = memo(({ userId }: { userId: string }) => {
-  const { selectDay } = useMainBookingsStore();
-
-  const { reloadBookings } = useMainBookingsStore();
-
-  const handleSelectDate = (date: Date) => {
-    selectDay(date);
-    reloadBookings(userId, date);
-  };
-
-  //Pour nettoyer le daySelected lorsque le composant est démonté
-  useEffect(() => {
-    return () => selectDay(undefined);
-  }, []);
-
+  const [daySelected, setDaySelected] = useState<Date | undefined>(undefined);
   return (
-    <Calendar
-      fromDate={new Date()}
-      mode="single"
-      selected={undefined}
-      onSelect={(date) => handleSelectDate(date!)}
-      className="p-10"
-    />
+    <>
+      <Calendar
+        fromDate={new Date()}
+        mode="single"
+        selected={undefined}
+        onSelect={setDaySelected}
+        className="p-10"
+      />
+      <SelectBooking userId={userId} daySelected={daySelected} />
+    </>
   );
 });
 

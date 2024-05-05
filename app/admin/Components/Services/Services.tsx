@@ -30,6 +30,7 @@ function Services({ services }: { services: Service[] }) {
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
     { className: "text-right", text: "Prix", tooltip: "Prix" },
+    { className: "text-right", text: "Durée", tooltip: "Durée" },
     {
       className: "",
       text: "",
@@ -43,6 +44,10 @@ function Services({ services }: { services: Service[] }) {
       text: service.name.charAt(0).toUpperCase() + service.name.slice(1),
     }, //Pour mettre en majuscule
     { className: "text-right", text: service.price / 100 + " €" },
+    {
+      className: "text-right",
+      text: service.duration + " min",
+    },
     {
       className: "text-right",
       text: (

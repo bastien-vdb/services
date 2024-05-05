@@ -29,12 +29,16 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const SelectBooking = ({ userId }: { userId: string }) => {
+const SelectBooking = ({
+  userId,
+  daySelected,
+}: {
+  userId: string;
+  daySelected: Date | undefined;
+}) => {
   const { toast } = useToast();
 
   const [isOpened, setIsOpened] = useState(false);
-
-  const { daySelected } = useMainBookingStore();
 
   const { availabilities, getAvailabilities, loadingAvailability } =
     useAvailabilityStore();
@@ -47,8 +51,8 @@ const SelectBooking = ({ userId }: { userId: string }) => {
   const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
-    getAvailabilities(userId);
-  }, []);
+    daySelected && getAvailabilities(userId, daySelected);
+  }, [daySelected]);
 
   useEffect(() => {
     if (daySelected) setIsOpened(true);
@@ -130,14 +134,18 @@ const SelectBooking = ({ userId }: { userId: string }) => {
               </DrawerHeader>
               <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
                 {slots.length > 0 ? (
-                  slots?.map((booking, key) => (
-                    <li key={key}>
-                      <Button onClick={() => handleCreateBook(booking)}>
-                        {moment(booking.startTime).format("HH:mm").toString()}-
-                        {moment(booking.endTime).format("HH:mm").toString()}
-                      </Button>
-                    </li>
-                  ))
+                  slots
+                    ?.sort(
+                      (a, b) => a.startTime.getTime() - b.startTime.getTime()
+                    )
+                    ?.map((booking, key) => (
+                      <li key={key}>
+                        <Button onClick={() => handleCreateBook(booking)}>
+                          {moment(booking.startTime).format("HH:mm").toString()}
+                          -{moment(booking.endTime).format("HH:mm").toString()}
+                        </Button>
+                      </li>
+                    ))
                 ) : (
                   <Button variant="ghost">Pas de créneau disponible</Button>
                 )}

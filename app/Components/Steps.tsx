@@ -1,6 +1,5 @@
 "use client";
 import ServiceCalendar from "@/app/Components/Calendar/ServiceCalendar";
-import SelectBooking from "./SelectBooking/SelectBooking";
 import SelectService from "./SelectService/SelectService";
 import { Button } from "@/src/components/ui/button";
 import { useCallback } from "react";
@@ -45,7 +44,6 @@ const Steps = ({
             />
           </svg>
         </Button>
-        <SelectBooking userId={userId} />
         <ServiceCalendar userId={userId} />
       </div>
     </main>
