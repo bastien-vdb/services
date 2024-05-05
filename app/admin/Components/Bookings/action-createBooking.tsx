@@ -1,6 +1,6 @@
-"use server";
-import { prisma } from "@/src/db/prisma";
-import { co } from "@fullcalendar/core/internal-common";
+import { av } from "@fullcalendar/core/internal-common";
+import { Availability, PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 async function actionCreateBooking({
   startTime,
@@ -16,8 +16,8 @@ async function actionCreateBooking({
   emailCustomer: string | undefined | null;
 }) {
   try {
-    //reduce the availability by the booking time
-    const avaibility = await prisma.availability.findFirst({
+    // Chercher la première disponibilité qui chevauche la réservation
+    const availability = await prisma.availability.findFirst({
       where: {
         startTime: {
           lte: endTime,
@@ -28,28 +28,63 @@ async function actionCreateBooking({
       },
     });
 
-    console.log("avaibility", avaibility);
-
-    if (!avaibility) {
-      console.log("No availability found");
+    if (!availability) {
       throw new Error("No availability found");
     }
 
-    // Create a new booking
-    return await prisma.booking.create({
-      data: {
-        startTime,
-        endTime,
-        serviceId,
-        userId,
-        status: "PENDING",
-        payedBy: emailCustomer ?? "",
-      },
+    // Gérer la création de la réservation et la mise à jour des disponibilités dans une transaction
+    const result = await prisma.$transaction(async (prisma) => {
+      const updates = [] as Availability[];
+
+      // Si la réservation commence après le début de la disponibilité
+      if (startTime > availability.startTime) {
+        const newAvailability = await prisma.availability.create({
+          data: {
+            startTime: availability.startTime,
+            endTime: startTime,
+            userId: availability.userId,
+          },
+        });
+        updates.push(newAvailability);
+      }
+
+      // Si la réservation finit avant la fin de la disponibilité
+      if (endTime < availability.endTime) {
+        const newAvailability = await prisma.availability.create({
+          data: {
+            startTime: endTime,
+            endTime: availability.endTime,
+            userId: availability.userId,
+          },
+        });
+        updates.push(newAvailability);
+      }
+
+      // Supprimer l'ancienne disponibilité
+      await prisma.availability.delete({
+        where: { id: availability.id },
+      });
+
+      // Créer la nouvelle réservation
+      const booking = await prisma.booking.create({
+        data: {
+          startTime,
+          endTime,
+          serviceId,
+          userId,
+          status: "PENDING",
+          payedBy: emailCustomer ?? "",
+        },
+      });
+
+      updates.push(booking);
+
+      return updates;
     });
+
+    return result;
   } catch (error) {
     console.error(error);
-    throw new Error("Activation impossible");
+    throw new Error("Failed to create booking");
   }
 }
-
-export default actionCreateBooking;
