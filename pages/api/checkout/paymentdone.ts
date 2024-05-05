@@ -4,7 +4,6 @@ import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
-import actionSetBookingUser from "@/app/admin/Components/Bookings/action-setBookingUser";
 import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 
 export const config = {
@@ -55,8 +54,7 @@ export default async function handler(
           userId: string;
         };
         const customerDetails = webhookEvent.data.object.customer_details;
-        const { startTime, endTime, serviceId, stripePriceId, userId } =
-          session;
+        const { startTime, endTime, serviceId, userId } = session;
 
         console.log("bookingStartTime ==>", startTime);
 
