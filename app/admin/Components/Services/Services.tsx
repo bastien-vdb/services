@@ -1,31 +1,34 @@
 "use client";
-import { useEffect, useState } from "react";
 import TableMain from "@/src/components/Table/TableMain";
-import { Input } from "@/src/components/ui/input";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
-import useServiceStore from "./useServicesStore";
-import { useSession } from "next-auth/react";
-import useDeleteServiceData from "./useDeleteServiceData";
-import { Plus, Trash2 } from "lucide-react";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/src/components/ui/form";
+import { Input } from "@/src/components/ui/input";
 import { toast } from "@/src/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
-import actionCreateService from "./action-createService";
+import { Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import useServiceStore from "./useServicesStore";
 
 function Services({ services }: { services: Service[] }) {
-  const [loading, setLoading] = useState(false);
   const {
     services: servicesFromStore,
-    reLoadServices,
-    addService,
     removeService,
     initialiseServices,
+    addService,
+    loadingService,
   } = useServiceStore();
-
-  const session = useSession();
-  const [serviceName, setServiceName] = useState("");
-  const [servicePrice, setServicePrice] = useState<number | string>("");
-  const [serviceDuration, setServiceDuration] = useState<number | string>("");
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -54,7 +57,7 @@ function Services({ services }: { services: Service[] }) {
         <Button
           title="Supprimer"
           onClick={() => handleDeleteService(service)}
-          disabled={loading}
+          disabled={loadingService}
           variant="outline"
         >
           <Trash2 className="text-destructive" />
@@ -67,59 +70,63 @@ function Services({ services }: { services: Service[] }) {
     initialiseServices(services);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === "servicename") setServiceName(e.target.value);
-    if (e.target.name === "serviceprice")
-      setServicePrice(Number(e.target.value));
-    if (e.target.name === "serviceduration")
-      setServiceDuration(Number(e.target.value));
-  };
-
-  const handleAddService = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    const temp_serviceName = serviceName;
-    const temp_servicePrice = servicePrice;
-    const temp_serviceDuration = serviceDuration;
-    setServiceName(""); //Vider les inputs
-    setServicePrice(""); //Vider les inputs
-    setServiceDuration(""); //Vider les inputs
-
-    //Optimistic update with fake data
-    addService({
-      id: "",
-      name: temp_serviceName,
-      price: Number(temp_servicePrice) ?? 0,
-      duration: Number(temp_serviceDuration) ?? 0,
-      createdById: "",
-      stripeId: "",
-      stripePriceId: "",
-    });
-
-    await actionCreateService({
-      name: temp_serviceName,
-      price: Number(temp_servicePrice) * 100 ?? 0,
-      duration: Number(temp_serviceDuration) ?? 0,
-    });
-    reLoadServices(session?.data?.user.id!);
-    setLoading(false);
-    toast({
-      variant: "success",
-      description: "Service créé",
-    });
-  };
-
   const handleDeleteService = async (service: Service) => {
-    setLoading(true);
     removeService(service); //Optimistic update
-    await useDeleteServiceData({ service });
-    reLoadServices(session?.data?.user.id!);
-    setLoading(false);
     toast({
       variant: "success",
       description: "Service supprimé",
     });
   };
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(2, "Le nom de la prestation doit contenir au moins 2 caractères.")
+      .max(
+        100,
+        "Le nom de la prestation doit contenir moins de 100 caractères."
+      ),
+    price: z
+      .string()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value >= 1, {
+        message: "Prix minimum supérieur à 1 €.",
+      })
+      .refine((value) => value <= 1000, {
+        message: "Prix maximum inférieur à 10000 €.",
+      }),
+    duration: z
+      .string()
+      .transform((value) => parseFloat(value))
+      .refine((value) => !isNaN(value) && value >= 15, {
+        message: "Durée minimum supérieure à 15 minutes.",
+      })
+      .refine((value) => value <= 1440, {
+        message: "Durée maximum inférieure à 1440 minutes.",
+      }),
+  });
+
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      price: String(0) as unknown as number,
+      duration: String(0) as unknown as number,
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // ✅ This will be type-safe and validated.
+
+    addService(values).then(() => {
+      form.reset();
+      toast({
+        variant: "success",
+        description: "Service créé avec succès",
+      });
+    });
+  }
 
   return (
     <>
@@ -134,36 +141,60 @@ function Services({ services }: { services: Service[] }) {
         headers={formatDataToServiceTableHeader}
         rows={formatDataToServiceTableBody}
       />
-      <form onSubmit={handleAddService}>
+
+      <Form {...form}>
         <div className="ml-2 flex w-full max-w-sm items-center space-x-2 my-6">
-          <Input
-            onChange={handleChange}
-            value={serviceName}
-            type="text"
-            name="servicename"
-            placeholder="Nom de la prestation"
-          />
-          <Input
-            onChange={handleChange}
-            value={servicePrice}
-            type="number"
-            name="serviceprice"
-            className="w-20"
-            placeholder="€"
-          />
-          <Input
-            onChange={handleChange}
-            value={serviceDuration}
-            type="number"
-            name="serviceduration"
-            className="w-20"
-            placeholder="min"
-          />
-          <Button title="Ajouter" variant={"secondary"} type="submit">
-            <Plus size={32} color="#008026" />
-          </Button>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Nom de service</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>Nom de la prestation</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Prix</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Prix de la prestation en euros
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Durée</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Durée de la prestation en minutes
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Créer</Button>
+          </form>
         </div>
-      </form>
+      </Form>
     </>
   );
 }

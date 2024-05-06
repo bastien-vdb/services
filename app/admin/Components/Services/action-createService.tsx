@@ -29,7 +29,7 @@ async function actionCreateService({
       product: service.id,
     });
 
-    const services = await prisma.service.create({
+    return await prisma.service.create({
       data: {
         name: service.name,
         price: price.unit_amount ?? 0,
@@ -39,15 +39,7 @@ async function actionCreateService({
         stripePriceId: price.id,
       },
     });
-    if (services) {
-      const result = await prisma.service.findMany({
-        where: {
-          createdById: session.user.id,
-        },
-      });
-      return result;
-    }
-  } catch (error: unknown) {
+  } catch (error) {
     console.log(error);
     throw new Error("Service cannot be created");
   }
