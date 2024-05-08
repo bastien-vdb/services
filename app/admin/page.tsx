@@ -13,13 +13,13 @@ import {
 } from "@/src/components/ui/accordion";
 import { CalendarSearch, Gem } from "lucide-react";
 import Calendar from "./Components/Calendar/Calendar";
+import actionGetBooking from "./Components/Bookings/action-getBooking";
 
 async function Admin() {
   const session = await getServerSession(authOptions);
   const userId = session?.user.id;
 
   const services = await useServerData("service", { createdById: userId });
-  const bookings: Booking[] = await useServerData("booking", { userId });
 
   if (!session) return <Login />;
 
@@ -39,18 +39,6 @@ async function Admin() {
             <Bookings />
           </AccordionContent>
         </AccordionItem>
-
-        {/* <AccordionItem value={"BookingsPayed"}>
-          <AccordionTrigger>
-            <div className="flex items-center gap-4">
-              <CalendarCheck2 />
-              <span>{"Gestion des rendez-vous payés"}</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <BookingsPayed services={services} />
-          </AccordionContent>
-        </AccordionItem> */}
 
         <AccordionItem value={"Services"}>
           <AccordionTrigger>

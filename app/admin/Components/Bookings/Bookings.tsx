@@ -5,10 +5,10 @@ import moment from "moment";
 import useBookingsStore from "./useBookingsStore";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { columns } from "./columns";
+import { BookingColumns } from "./BookingColumns";
 import AlertModal from "@/src/components/Modal/AlertModal";
 import { Trash2 } from "lucide-react";
-import { Service } from "@prisma/client";
+import { Booking, Customer, Service } from "@prisma/client";
 import useServiceStore from "../Services/useServicesStore";
 
 function Bookings() {
@@ -49,35 +49,31 @@ function Bookings() {
     });
   };
 
-  //Pour optimiser la recherche de service on crée un map. (et en plus on le useMemo)
-  const serviceMap: Record<string, Service> = services.reduce(
-    (serviceMap, service) => {
-      serviceMap[service.id] = service;
-      return serviceMap;
-    },
-    {}
+  const formatDataToServiceTableBody = bookings.map(
+    (booking: Booking & { service: Service; customer: Customer }) => {
+      return {
+        id: booking.id,
+        du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
+        au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
+        customerName: booking.customer?.name ?? "Non renseigné",
+        customerEmail: String(booking.payedBy) ?? "Non renseigné",
+        prestation: booking.service?.name,
+        prix: String(booking.service.price / 100) + " €",
+        annuler: (
+          <AlertModal
+            disabled={loadingBookings}
+            onAction={() => handleDeleteBooking(booking.id)}
+          >
+            <Trash2 className="text-destructive"></Trash2>
+          </AlertModal>
+        ),
+      };
+    }
   );
 
-  const formatDataToServiceTableBody = bookings.map((booking) => {
-    return {
-      id: booking.id,
-      du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
-      au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
-      userEmail: String(booking.payedBy) ?? "Non renseigné",
-      prestation: serviceMap[booking.serviceId]?.name,
-      prix: serviceMap[booking.serviceId]?.price,
-      annuler: (
-        <AlertModal
-          disabled={loadingBookings}
-          onAction={() => handleDeleteBooking(booking.id)}
-        >
-          <Trash2 className="text-destructive"></Trash2>
-        </AlertModal>
-      ),
-    };
-  });
-
-  return <DataTable columns={columns} data={formatDataToServiceTableBody} />;
+  return (
+    <DataTable columns={BookingColumns} data={formatDataToServiceTableBody} />
+  );
 }
 
 export default Bookings;

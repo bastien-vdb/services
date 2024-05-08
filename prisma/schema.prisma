@@ -20,10 +20,12 @@ enum BookingStatus {
 
 // Address is an embedded document
 type Address {
-  street String
-  city   String
-  state  String
-  zip    String
+  city    String
+  state   String
+  zip     String
+  country String
+  line1   String
+  line2   String
 }
 
 model Service {
@@ -67,8 +69,8 @@ model Booking {
   payedBy    String
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
-  customer   Customer      @relation(fields: [customerId], references: [id])
-  customerId String        @db.ObjectId
+  customer   Customer?     @relation(fields: [customerId], references: [id])
+  customerId String?       @db.ObjectId
 }
 
 model Customer {
@@ -78,7 +80,7 @@ model Customer {
   phone     String
   address   Address
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime  @default(now())
   Booking   Booking[]
 }
 

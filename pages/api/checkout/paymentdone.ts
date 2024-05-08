@@ -56,18 +56,36 @@ export default async function handler(
         const customerDetails = webhookEvent.data.object.customer_details;
         const { startTime, endTime, serviceId, userId } = session;
 
-        console.log("bookingStartTime ==>", startTime);
-
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),
           serviceId,
           userId,
-          emailCustomer: customerDetails?.email,
-          name: customerDetails?.name,
-          address: customerDetails?.address,
-          phone: customerDetails?.phone,
-          amountPaid: webhookEvent.data.object.amount_total,
+          customerInfo: {
+            name: customerDetails?.name ? customerDetails.name : "NC",
+            email: customerDetails?.email ? customerDetails.email : "NC",
+            phone: customerDetails?.phone ? customerDetails.phone : "NC",
+            address: {
+              city: customerDetails?.address?.city
+                ? customerDetails.address.city
+                : "NC",
+              country: customerDetails?.address?.country
+                ? customerDetails.address.country
+                : "NC",
+              state: customerDetails?.address?.state
+                ? customerDetails.address.state
+                : "NC",
+              zip: customerDetails?.address?.postal_code
+                ? customerDetails.address.postal_code
+                : "NC",
+              line1: customerDetails?.address?.line1
+                ? customerDetails.address.line1
+                : "NC",
+              line2: customerDetails?.address?.line2
+                ? customerDetails.address.line2
+                : "NC",
+            },
+          },
         });
 
         console.log("bookingCreated ==>", bookingCreated);

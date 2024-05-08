@@ -1,6 +1,7 @@
-import { av } from "@fullcalendar/core/internal-common";
-import { Availability, PrismaClient } from "@prisma/client";
-import { de } from "date-fns/locale";
+import { co } from "@fullcalendar/core/internal-common";
+import { Availability, Customer, PrismaClient } from "@prisma/client";
+import { th } from "date-fns/locale";
+import { custom } from "zod";
 const prisma = new PrismaClient();
 
 async function actionCreateBooking({
@@ -8,13 +9,13 @@ async function actionCreateBooking({
   endTime,
   serviceId,
   userId,
-  emailCustomer,
+  customerInfo,
 }: {
   startTime: Date;
   endTime: Date;
   serviceId: string;
   userId: string;
-  emailCustomer: string | undefined | null;
+  customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
 }) {
   try {
     // Chercher la première disponibilité qui chevauche la réservation
@@ -66,6 +67,33 @@ async function actionCreateBooking({
         where: { id: availability.id },
       });
 
+      // Rechercher ou créer un client basé sur l'email fourni
+      let customer = await prisma.customer.findFirst({
+        where: { email: customerInfo.email },
+      });
+
+      if (!customer) {
+        customer = await prisma.customer.create({
+          data: {
+            name: customerInfo.name, // Assurez-vous que les champs nécessaires sont fournis
+            email: customerInfo.email,
+            phone: customerInfo.phone,
+            address: {
+              city: customerInfo.address.city,
+              state: customerInfo.address.state,
+              zip: customerInfo.address.zip,
+              country: customerInfo.address.country,
+              line1: customerInfo.address.line1,
+              line2: customerInfo.address.line2 || "", // `line2` peut être facultatif
+            },
+          },
+        });
+      }
+
+      if (!customer) throw new Error("Customer not found or cannot be created");
+
+      console.log("Customer created", customer);
+
       // Créer la nouvelle réservation
       const booking = await prisma.booking.create({
         data: {
@@ -74,7 +102,8 @@ async function actionCreateBooking({
           serviceId,
           userId,
           status: "PENDING",
-          payedBy: emailCustomer ?? "",
+          payedBy: customerInfo.email ?? "",
+          customerId: customer.id,
         },
       });
 
