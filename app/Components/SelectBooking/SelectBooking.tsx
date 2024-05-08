@@ -187,6 +187,7 @@ function splitBookingIntoServiceDuration(
         payedBy: "",
         createdAt: new Date(),
         updatedAt: new Date(),
+        customerId: "",
       });
     }
 
