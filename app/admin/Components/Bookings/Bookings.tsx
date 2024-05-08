@@ -1,13 +1,26 @@
 "use client";
-import { columns } from "@/src/components/bookings_data_table/columns";
 import { DataTable } from "@/src/components/bookings_data_table/data-table";
-import { Switch } from "@/src/components/ui/switch";
 import { toast } from "@/src/components/ui/use-toast";
 import moment from "moment";
-import useBookingStore from "../Calendar/useAvailabilityStore";
+import useBookingsStore from "./useBookingsStore";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { columns } from "./columns";
+import AlertModal from "@/src/components/Modal/AlertModal";
+import { Trash2 } from "lucide-react";
+import { Service } from "@prisma/client";
+import useServiceStore from "../Services/useServicesStore";
 
 function Bookings() {
-  // const { bookings, changeStatus } = useBookingStore();
+  const { bookings, getBookings, deleteBooking, loadingBookings } =
+    useBookingsStore();
+  const { services } = useServiceStore();
+  const { data: session } = useSession();
+  const UserId = session?.user.id;
+
+  useEffect(() => {
+    UserId && getBookings(UserId);
+  }, []);
 
   // const handleActiveBooking = (bookingId: string) => {
   //   changeStatus(bookingId, "AVAILABLE");
@@ -27,28 +40,44 @@ function Bookings() {
   //   });
   // };
 
-  // const formatDataToServiceTableBody = bookings.map((b) => {
-  //   return {
-  //     id: b.id,
-  //     du: moment(b.startTime).format("DD/MM/YYYY - HH:mm:ss").toString(),
-  //     au: moment(b.endTime).format("DD/MM/YYYY - HH:mm:ss").toString(),
-  //     actif: (
-  //       <Switch
-  //         className="float-right"
-  //         checked={b.status !== "CANCELLED"}
-  //         onCheckedChange={() =>
-  //           b.status !== "CANCELLED"
-  //             ? handleCancelBooking(b.id)
-  //             : handleActiveBooking(b.id)
-  //         }
-  //       />
-  //     ),
-  //   };
-  // });
+  const handleDeleteBooking = async (bookingId: string) => {
+    if (!bookingId) return;
+    await deleteBooking(bookingId);
+    toast({
+      variant: "success",
+      description: "Réservation supprimée",
+    });
+  };
 
-  // return <DataTable columns={columns} data={formatDataToServiceTableBody} />;
+  //Pour optimiser la recherche de service on crée un map. (et en plus on le useMemo)
+  const serviceMap: Record<string, Service> = services.reduce(
+    (serviceMap, service) => {
+      serviceMap[service.id] = service;
+      return serviceMap;
+    },
+    {}
+  );
 
-  return <></>;
+  const formatDataToServiceTableBody = bookings.map((booking) => {
+    return {
+      id: booking.id,
+      du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
+      au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
+      userEmail: String(booking.payedBy) ?? "Non renseigné",
+      prestation: serviceMap[booking.serviceId]?.name,
+      prix: serviceMap[booking.serviceId]?.price,
+      annuler: (
+        <AlertModal
+          disabled={loadingBookings}
+          onAction={() => handleDeleteBooking(booking.id)}
+        >
+          <Trash2 className="text-destructive"></Trash2>
+        </AlertModal>
+      ),
+    };
+  });
+
+  return <DataTable columns={columns} data={formatDataToServiceTableBody} />;
 }
 
 export default Bookings;

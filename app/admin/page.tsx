@@ -5,14 +5,13 @@ import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import useServerData from "@/src/hooks/useServerData";
 import { Booking } from "@prisma/client";
 import Login from "@/app/Components/Login/Login";
-import BookingsPayed from "./Components/Bookings/BookingsPayed";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/src/components/ui/accordion";
-import { CalendarCheck2, CalendarSearch, Gem } from "lucide-react";
+import { CalendarSearch, Gem } from "lucide-react";
 import Calendar from "./Components/Calendar/Calendar";
 
 async function Admin() {
@@ -29,7 +28,7 @@ async function Admin() {
       <Calendar />
 
       <Accordion type="multiple">
-        {/* <AccordionItem value={"Bookings"}>
+        <AccordionItem value={"Bookings"}>
           <AccordionTrigger>
             <div className="flex items-center gap-4">
               <CalendarSearch />
@@ -41,7 +40,7 @@ async function Admin() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value={"BookingsPayed"}>
+        {/* <AccordionItem value={"BookingsPayed"}>
           <AccordionTrigger>
             <div className="flex items-center gap-4">
               <CalendarCheck2 />

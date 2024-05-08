@@ -64,6 +64,10 @@ export default async function handler(
           serviceId,
           userId,
           emailCustomer: customerDetails?.email,
+          name: customerDetails?.name,
+          address: customerDetails?.address,
+          phone: customerDetails?.phone,
+          amountPaid: webhookEvent.data.object.amount_total,
         });
 
         console.log("bookingCreated ==>", bookingCreated);
