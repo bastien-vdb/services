@@ -21,12 +21,16 @@ import PayPalButton from "../Paypal/PaypalButton";
 import { addMinutes, isAfter } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
+import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
+import { Label } from "@/src/components/ui/label";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
+
+const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un fichier settings
 
 const SelectBooking = ({
   userId,
@@ -46,8 +50,8 @@ const SelectBooking = ({
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
-
   const [slots, setSlots] = useState<Booking[]>([]);
+  const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
 
   useEffect(() => {
     daySelected && getAvailabilities(userId, daySelected);
@@ -58,11 +62,15 @@ const SelectBooking = ({
     if (clientSecret) setClientSecret("");
   }, [daySelected]);
 
-  const handleCreateBook = async (booking: Booking) => {
+  const handleCreatePayment = async (
+    booking: Booking,
+    deposit: boolean = false
+  ) => {
+    if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
     setLoading(true);
     setIsOpened(false);
     setBookingSelectedPaypal(booking);
-    console.log("selectId from handleCreateBook:", serviceSelected?.id);
+
     try {
       const paymentPage = await fetch(
         `${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
@@ -72,7 +80,9 @@ const SelectBooking = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            stripePriceId: serviceSelected?.stripePriceId,
+            stripePriceId: deposit
+              ? prixFixDeposit
+              : serviceSelected?.stripePriceId,
             startTime: booking.startTime,
             endTime: booking.endTime,
             userId,
@@ -105,6 +115,37 @@ const SelectBooking = ({
 
   return (
     <>
+      {fullOrDepotDisplayed && (
+        <RadioGroup defaultValue="option-one">
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem
+              onClick={() => {
+                setClientSecret("");
+                bookingSelectedPaypal &&
+                  handleCreatePayment(bookingSelectedPaypal);
+              }}
+              value="option-one"
+              id="option-one"
+            />
+            <Label className="text-xl" htmlFor="option-one">
+              Paiement en 1 fois
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem
+              onClick={() => {
+                setClientSecret("");
+                bookingSelectedPaypal &&
+                  handleCreatePayment(bookingSelectedPaypal, true);
+              }}
+              value="option-two"
+              id="option-two"
+            />
+            <Label htmlFor="option-two">Dépot</Label>
+          </div>
+        </RadioGroup>
+      )}
+
       {clientSecret && bookingSelectedPaypal && (
         <>
           <EmbeddedCheckoutComp
@@ -139,7 +180,7 @@ const SelectBooking = ({
                     )
                     ?.map((booking, key) => (
                       <li key={key}>
-                        <Button onClick={() => handleCreateBook(booking)}>
+                        <Button onClick={() => handleCreatePayment(booking)}>
                           {moment(booking.startTime).format("HH:mm").toString()}
                           -{moment(booking.endTime).format("HH:mm").toString()}
                         </Button>
