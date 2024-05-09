@@ -56,7 +56,7 @@ function Bookings() {
         du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
         au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
         customerName: booking.customer?.name ?? "Non renseigné",
-        customerEmail: String(booking.payedBy) ?? "Non renseigné",
+        customerEmail: booking.customer?.email ?? "Non renseigné",
         prestation: booking.service?.name,
         prix: String(booking.service.price / 100) + " €",
         annuler: (

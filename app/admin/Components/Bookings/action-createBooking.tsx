@@ -9,12 +9,14 @@ async function actionCreateBooking({
   endTime,
   serviceId,
   userId,
+  amountPayed,
   customerInfo,
 }: {
   startTime: Date;
   endTime: Date;
   serviceId: string;
   userId: string;
+  amountPayed;
   customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
 }) {
   try {
@@ -103,6 +105,7 @@ async function actionCreateBooking({
           userId,
           status: "PENDING",
           payedBy: customerInfo.email ?? "",
+          amountPayed,
           customerId: customer.id,
         },
       });
