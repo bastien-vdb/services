@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import useAvailabilityStore from "./useAvailabilityStore";
 import { v4 as uuidv4 } from "uuid";
+import useBookingsStore from "../Bookings/useBookingsStore";
 
 const Calendar = () => {
   const {
@@ -15,6 +16,7 @@ const Calendar = () => {
     createAvailability,
     deleteAvailability,
   } = useAvailabilityStore();
+  const { bookings, getBookings } = useBookingsStore();
   const today = useMemo(() => new Date(), []);
   const session = useSession();
   const [events, setEvents] = useState<
@@ -27,19 +29,29 @@ const Calendar = () => {
   >([]);
 
   useEffect(() => {
+    if (!session.data?.user) return;
     getAvailabilities(session.data?.user.id!);
-  }, []);
+    getBookings(session.data?.user.id!);
+  }, [session.data?.user]);
 
   useEffect(() => {
-    setEvents(
-      availabilities.map((availability) => ({
-        id: availability.id,
-        title: "Rendez-vous",
-        start: availability.startTime,
-        end: availability.endTime,
-      }))
-    );
-  }, [availabilities]);
+    const bookingsEvents = bookings.map((booking) => ({
+      id: booking.id,
+      title: "Rendez-vous",
+      start: booking.startTime,
+      end: booking.endTime,
+      color: booking.status === "PENDING" ? "pink" : "green",
+    }));
+
+    const availabilitiesEvents = availabilities.map((availability) => ({
+      id: availability.id,
+      title: "Rendez-vous",
+      start: availability.startTime,
+      end: availability.endTime,
+    }));
+
+    setEvents([...bookingsEvents, ...availabilitiesEvents]);
+  }, [availabilities, bookings]);
 
   const handleEventClick = (clickInfo) => {
     if (
