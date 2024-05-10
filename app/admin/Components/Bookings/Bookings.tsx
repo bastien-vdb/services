@@ -7,14 +7,20 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { BookingColumns } from "./BookingColumns";
 import AlertModal from "@/src/components/Modal/AlertModal";
-import { Trash2 } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 import { Booking, Customer, Service } from "@prisma/client";
-import useServiceStore from "../Services/useServicesStore";
+import actionSetBookingUser from "./action-setBookingUser";
+import useSendEmail from "@/src/emails/useSendEmail";
+import EmailRdvBooked from "@/src/emails/EmailBooked";
 
 function Bookings() {
-  const { bookings, getBookings, deleteBooking, loadingBookings } =
-    useBookingsStore();
-  const { services } = useServiceStore();
+  const {
+    bookings,
+    getBookings,
+    changeStatusBooking,
+    deleteBooking,
+    loadingBookings,
+  } = useBookingsStore();
   const { data: session } = useSession();
   const UserId = session?.user.id;
 
@@ -58,7 +64,51 @@ function Bookings() {
         customerName: booking.customer?.name ?? "Non renseigné",
         customerEmail: booking.customer?.email ?? "Non renseigné",
         prestation: booking.service?.name,
-        prix: String(booking.service.price / 100) + " €",
+        prix: booking.amountPayed
+          ? String(booking.amountPayed / 100) + " €"
+          : "NA ",
+        status: booking.status,
+        confirmer: (
+          <AlertModal
+            disabled={loadingBookings}
+            onAction={() => {
+              changeStatusBooking({
+                bookingId: booking.id,
+                status: "CONFIRMED",
+              })
+                .then(async () => {
+                  const { error } = await useSendEmail({
+                    from: "Finest lash <no-answer@quickreserve.app>",
+                    to: [booking.customer.email],
+                    subject: `${booking.customer.name} Votre créneau a bien été réservé`,
+                    react: EmailRdvBooked({
+                      customerName: booking.customer.name,
+                      bookingStartTime: booking.startTime.toString(),
+                    }),
+                  });
+                  if (error) {
+                    return toast({
+                      variant: "destructive",
+                      description: "Erreur: Email non envoyé",
+                    });
+                  }
+                  toast({
+                    variant: "success",
+                    description: "Réservation confirmée",
+                  });
+                })
+                .catch(() => {
+                  toast({
+                    variant: "destructive",
+                    description:
+                      "Erreur lors de la confirmation de la réservation",
+                  });
+                });
+            }}
+          >
+            <Check className="text-success"></Check>
+          </AlertModal>
+        ),
         annuler: (
           <AlertModal
             disabled={loadingBookings}

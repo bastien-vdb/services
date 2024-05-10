@@ -17,6 +17,25 @@ export type BookingsTable = {
 
 export const BookingColumns: ColumnDef<BookingsTable>[] = [
   {
+    accessorKey: "status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "confirmer",
+    header: () => <span>Confirmer</span>,
+    cell: ({ row }) => row.getValue("confirmer"),
+  },
+  {
     accessorKey: "du",
     header: ({ column }) => {
       return (

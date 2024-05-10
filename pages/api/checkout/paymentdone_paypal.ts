@@ -37,7 +37,7 @@ export default async function handler(
 
       const hasBeenPassedToReserved = await actionSetBookingUser({
         bookingId,
-        customerEmail,
+        status: "CONFIRMED",
       });
       if (hasBeenPassedToReserved && customerEmail) {
         await useSendEmail({

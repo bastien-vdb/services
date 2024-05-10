@@ -24,7 +24,7 @@ async function Admin() {
   if (!session) return <Login />;
 
   return (
-    <main className="flex flex-col mt-10 p-6 gap-6 xl:mx-96">
+    <main className="flex flex-col mt-10 p-6 gap-6">
       <Calendar />
 
       <Accordion type="multiple">
