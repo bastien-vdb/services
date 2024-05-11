@@ -94,8 +94,6 @@ async function actionCreateBooking({
 
       if (!customer) throw new Error("Customer not found or cannot be created");
 
-      console.log("Customer created", customer);
-
       // Créer la nouvelle réservation
       const booking = await prisma.booking.create({
         data: {

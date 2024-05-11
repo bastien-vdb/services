@@ -10,8 +10,7 @@ async function useServerData(
       where,
     });
   } catch (error) {
-    console.log("Data cannot be reach", prismaKey, where);
-    console.log(error);
+    console.error(error);
     throw new Error("Data cannot be reach from the db");
   }
 }

@@ -12,6 +12,7 @@ import { Booking, Customer, Service } from "@prisma/client";
 import actionSetBookingUser from "./action-setBookingUser";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
+import actionSendConfirmationEmail from "@/src/emails/action-send-confirmation-email";
 
 function Bookings() {
   const {
@@ -44,7 +45,7 @@ function Bookings() {
   //     title: "Rendez-vous désactivé",
   //     description: "Le rendez-vous n'est plus disponible",
   //   });
-  // };
+  // };g
 
   const handleDeleteBooking = async (bookingId: string) => {
     if (!bookingId) return;
@@ -67,46 +68,63 @@ function Bookings() {
         prix: booking.amountPayed
           ? String(booking.amountPayed / 100) + " €"
           : "NA ",
-        status: booking.status,
+        status: (
+          <div
+            className={`
+            text-white
+            p-2
+            ${
+              booking.status === "PENDING"
+                ? "bg-pink-400"
+                : booking.status === "CONFIRMED"
+                ? "bg-green-600"
+                : ""
+            }`}
+          >
+            {booking.status}
+          </div>
+        ),
         confirmer: (
           <AlertModal
-            disabled={loadingBookings}
-            onAction={() => {
-              changeStatusBooking({
+            disabled={loadingBookings || booking.status !== "PENDING"}
+            onAction={async () => {
+              const r = await changeStatusBooking({
                 bookingId: booking.id,
                 status: "CONFIRMED",
-              })
-                .then(async () => {
-                  const { error } = await useSendEmail({
-                    from: "Finest lash <no-answer@quickreserve.app>",
-                    to: [booking.customer.email],
-                    subject: `${booking.customer.name} Votre créneau a bien été réservé`,
-                    react: EmailRdvBooked({
-                      customerName: booking.customer.name,
-                      bookingStartTime: booking.startTime.toString(),
-                    }),
-                  });
-                  if (error) {
-                    return toast({
-                      variant: "destructive",
-                      description: "Erreur: Email non envoyé",
-                    });
-                  }
-                  toast({
-                    variant: "success",
-                    description: "Réservation confirmée",
-                  });
-                })
-                .catch(() => {
+              });
+              if (r.status === "CONFIRMED") {
+                const { error } = await actionSendConfirmationEmail({
+                  from: "Finest lash <no-answer@quickreserve.app>",
+                  to: [booking.customer.email],
+                  subject: `${booking.customer.name} Confirmation de réservation`,
+                  customerName: booking.customer.name,
+                  bookingStartTime: booking.startTime.toString(),
+                });
+                if (error) {
                   toast({
                     variant: "destructive",
-                    description:
-                      "Erreur lors de la confirmation de la réservation",
+                    description: "Erreur lors de l'envoi de l'email",
                   });
+                  return;
+                }
+                toast({
+                  variant: "success",
+                  description:
+                    "Réservation confirmée: Email de confirmation envoyé",
                 });
+              } else {
+                toast({
+                  variant: "destructive",
+                  description: `Erreur lors de la confirmation de la réservation: status actuel: ${r.status}`,
+                });
+              }
             }}
           >
-            <Check className="text-success"></Check>
+            <Check
+              className={`${
+                booking.status === "CONFIRMED" ? "hidden" : "text-success"
+              }`}
+            ></Check>
           </AlertModal>
         ),
         annuler: (

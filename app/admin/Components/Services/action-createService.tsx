@@ -40,7 +40,7 @@ async function actionCreateService({
       },
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw new Error("Service cannot be created");
   }
 }

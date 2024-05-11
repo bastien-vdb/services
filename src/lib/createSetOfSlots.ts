@@ -11,19 +11,11 @@ export const createSetOfSLots = (start: Date, end: Date, duree: number) => {
   const minToday = minFromMidnightFormatter(startDate);
   const maxToday = minFromMidnightFormatter(endDate);
 
-  console.log("startDate-->", startDate);
-  console.log("endDate-->", endDate);
-  console.log("minToday-->", minToday);
-  console.log("maxToday-->", maxToday);
-
   const ListOfSlot: { from: Date; to: Date }[] = [];
 
   while (startDate.isBefore(endDate)) {
     const min = minFromMidnightFormatter(startDate);
     const max = minFromMidnightFormatter(startDate) + duree;
-    console.log("min:", min, "minToday:", minToday);
-    console.log("max:", max, "maxToday:", maxToday);
-    console.log(min >= minToday && max <= maxToday);
     if (min >= minToday && max <= maxToday) {
       ListOfSlot.push({
         from: startDate.toDate(),
@@ -32,8 +24,6 @@ export const createSetOfSLots = (start: Date, end: Date, duree: number) => {
     }
     startDate.add(duree, "minutes");
   }
-
-  console.log("ListOfSlot-->", ListOfSlot);
 
   return ListOfSlot;
 };

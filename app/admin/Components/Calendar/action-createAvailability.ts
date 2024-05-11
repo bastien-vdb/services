@@ -15,7 +15,6 @@ async function actionCreateAvailability({
 
   if (!session) throw new Error("You are not allowed to access this resource.");
 
-  console.log("dates from server", startTime, endTime);
   try {
     return await prisma.availability.create({
       data: {

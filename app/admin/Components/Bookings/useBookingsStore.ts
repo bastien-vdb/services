@@ -3,7 +3,6 @@ import { create } from "zustand";
 import actionDeleteBooking from "./action-deleteBooking";
 import actionGetBooking from "./action-getBooking";
 import actionSetBookingUser from "./action-setBookingUser";
-import { promises } from "dns";
 
 type useBookingsStoreType = {
   bookings: Booking[];
@@ -15,7 +14,7 @@ type useBookingsStoreType = {
   }: {
     bookingId: string;
     status: BookingStatus;
-  }) => Promise<void>;
+  }) => Promise<Booking>;
   deleteBooking: (bookingId: string) => void;
   getBookings: (userId: string) => void;
 };
@@ -26,7 +25,7 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
   initialiseBookings: (bookings) => set({ bookings }),
   changeStatusBooking: async ({ bookingId, status }) => {
     set({ loadingBookings: true });
-    return await actionSetBookingUser({ bookingId, status })
+    return actionSetBookingUser({ bookingId, status })
       .then((r) => {
         console.log("Réservation mise à jour", r);
         set((state) => ({
@@ -34,9 +33,11 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
             b.id === bookingId ? { ...b, status } : b
           ),
         }));
+        return r;
       })
       .catch((error) => {
         console.error(error);
+        throw new Error("Erreur lors de la mise à jour de la réservation");
       })
       .finally(() => {
         set({ loadingBookings: false });

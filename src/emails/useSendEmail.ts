@@ -15,12 +15,16 @@ const useSendEmail = async ({ from, to, subject, react }: useSendEmailType) => {
   if (!resendApiKey) throw new Error("No valid resend API key filled");
   const resend = new Resend(resendApiKey);
 
-  return await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from,
     to,
     subject,
     react,
   } as any);
+  console.log("data, error", data, error);
+
+  if (error) return error;
+  return data;
 };
 
 export default useSendEmail;

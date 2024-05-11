@@ -17,7 +17,6 @@ async function actionGetBooking(userId?: string) {
         service: true, // Inclure les détails du service
       },
     });
-    console.log("Réservations récupérées", r);
     return r;
   } catch (error) {
     console.error(error);

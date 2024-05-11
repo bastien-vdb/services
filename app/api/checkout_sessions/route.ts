@@ -46,7 +46,6 @@ export async function POST(req: Request, res: NextApiResponse) {
       return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
     });
 
-    console.log("va ton ici");
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
     if (err.type === "StripeIdempotencyError") {
