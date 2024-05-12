@@ -39,6 +39,12 @@ export default async function handler(
         bookingId,
         status: "CONFIRMED",
       });
+
+      const bookingFound = await prisma?.booking.findUnique({
+        where: { id: bookingId },
+        include: { service: true, customer: true },
+      });
+
       if (hasBeenPassedToReserved && customerEmail) {
         await useSendEmail({
           from: "QuickReserve <no-answer@quickreserve.app>",
@@ -46,9 +52,12 @@ export default async function handler(
           subject: `Votre créneau a bien été réservé`,
           react: EmailRdvBooked({
             customerName: customerEmail ?? "",
-            bookingStartTime: new Date().toString(), // a supprimer
-            // bookingStartTime: bookingStartTime,
+            bookingStartTime: bookingFound?.startTime.toString() ?? "",
+            serviceName: bookingFound?.service?.name ?? "",
+            employeeName: "Natacha S",
+            businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
           }),
+          // bookingStartTime: bookingStartTime,
         });
       }
       return res.status(200).send("Webhook traité avec succès");
