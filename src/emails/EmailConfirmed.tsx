@@ -6,7 +6,6 @@ import {
   Hr,
   Html,
   Img,
-  Link,
   Preview,
   Section,
   Text,
@@ -16,21 +15,15 @@ import * as React from "react";
 interface EmailRdvBookedProps {
   customerName?: string;
   bookingStartTime: string;
-  serviceName: string;
-  employeeName: string;
-  businessPhysicalAddress: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
   ? `${process.env.NEXT_PUBLIC_HOST}`
   : "";
 
-export const EmailRdvBooked = ({
+export const EmailConfirmed = ({
   customerName,
   bookingStartTime,
-  serviceName,
-  employeeName,
-  businessPhysicalAddress,
 }: EmailRdvBookedProps) => {
   const bookingStartTimeFormatted = new Date(bookingStartTime);
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -65,17 +58,41 @@ export const EmailRdvBooked = ({
             alt="FinestLashStudio"
           />
           <Heading style={heading}>
-            🪄 Cher {customerName}, le rendez-vous {serviceName}
-            avec {employeeName} à l'adresse {businessPhysicalAddress}, prévu
-            pour le
-            {bookingStartTime && dateString} à{bookingStartTime && heureString},
-            est en attente de confirmation.
+            🪄 Bonjour {customerName} et merci pour votre réservation au sein du
+            FinestLash Studio le {bookingStartTime && dateString} à{" "}
+            {bookingStartTime && heureString} !
           </Heading>
           <Section style={body}>
             <Text style={paragraph}>
-              Nous vous remercions de nous avoir choisi,
+              Quelques petites instructions pour préparer au mieux votre
+              rendez-vous :
             </Text>
+            <Text style={paragraph}>
+              Il faudra venir avec les cils bien propres, sans avoir mis de
+              crème ou d’huile au niveau des yeux. Tout démaquillage sera
+              facturé 5€ de plus.
+            </Text>
+            <Text style={paragraph}>
+              Si vous avez choisi le paiement de l'acompte sur le site, il
+              faudra impérativement régler le solde en ESPÈCES le jour J.
+            </Text>
+            <Text style={paragraph}>
+              Le studio se trouve au 36 chemin des Huats, 93000 Bobigny.
+            </Text>
+            <Text style={paragraph}>
+              Une fois arrivé(e), vous pourrez m'envoyer un message ou m'appeler
+              au 0783639738 pour m'informer de votre arrivée. (attention, il ne
+              faut pas sonner !)
+            </Text>
+            <Text style={paragraph}>
+              Les accompagnateurs ne sont pas acceptés.
+            </Text>
+            <Text style={paragraph}>À bientôt !</Text>
           </Section>
+          <Text style={paragraph}>
+            Your Finest Lash Artist,
+            {/* TODO: replace with company website */}
+          </Text>
           <Hr style={hr} />
           <Img
             src={`${baseUrl}/vendorImages/fineststudiologo.png`}
@@ -90,15 +107,14 @@ export const EmailRdvBooked = ({
           <Text style={footer}>36 chemin des Huats</Text>
           <Text style={footer}>93000 Bobigny</Text>
           <Text style={footer}>+33783639738</Text>
-          <Text style={footer}>https://www.finestlash.studio</Text>
-          <Text style={footer}>https://www.quickreserve.app</Text>
+          <Text style={footer}>http://www.finestlash.studio</Text>
         </Container>
       </Body>
     </Html>
   );
 };
 
-export default EmailRdvBooked;
+export default EmailConfirmed;
 
 const main = {
   backgroundColor: "#ffffff",

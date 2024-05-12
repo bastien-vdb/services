@@ -1,6 +1,6 @@
 "use server";
 import { Resend } from "resend";
-import EmailRdvBooked from "./EmailBooked";
+import EmailConfirmed from "./EmailConfirmed";
 
 const resendApiKey = process.env.RESEND_API_KEY;
 
@@ -26,7 +26,7 @@ const actionSendConfirmationEmail = async ({
     from,
     to,
     subject,
-    react: EmailRdvBooked({
+    react: EmailConfirmed({
       customerName,
       bookingStartTime,
     }),

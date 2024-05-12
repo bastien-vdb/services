@@ -89,23 +89,34 @@ export default async function handler(
           },
         });
 
-        if (bookingCreated && customerDetails?.email) {
+        const serviceName = await prisma?.service.findFirst({
+          where: { id: serviceId },
+          select: { name: true },
+        });
+
+        if (bookingCreated && customerDetails?.email && serviceName) {
           await useSendEmail({
-            from: "Finest lash <no-answer@quickreserve.app>",
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [customerDetails.email],
-            subject: `${customerDetails.name} Votre créneau a bien été réservé`,
+            subject: `Rendez-vous ${serviceName} en attente.`,
             react: EmailRdvBooked({
               customerName: customerDetails.name ?? "",
               bookingStartTime: startTime,
+              serviceName: serviceName?.name ?? "",
+              employeeName: "Natacha S",
+              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
             }),
           });
         }
         if (!bookingCreated && customerDetails?.email) {
           await useSendEmail({
-            from: "QuickReserve <no-answer@quickreserve.app>",
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
-            react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
+            react: EmailNotBooked({
+              customerName: customerDetails.name ?? "",
+              bookingStartTime: session.startTime,
+            }),
           });
         }
         break;
@@ -120,12 +131,16 @@ export default async function handler(
           userId: string;
         };
         const customerDetails = webhookEvent.data.object.customer_details;
+
         if (customerDetails) {
           await useSendEmail({
-            from: "QuickReserve <no-answer@quickreserve.app>",
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
-            react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
+            react: EmailNotBooked({
+              customerName: customerDetails.name ?? "",
+              bookingStartTime: session.bookingStartTime,
+            }),
           });
         }
         break;
@@ -142,10 +157,13 @@ export default async function handler(
         const customerDetails = webhookEvent.data.object.customer_details;
         if (customerDetails) {
           await useSendEmail({
-            from: "QuickReserve <no-answer@quickreserve.app>",
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
-            react: EmailNotBooked({ magicLink: process.env.NEXTAUTH_URL }),
+            react: EmailNotBooked({
+              customerName: customerDetails.name ?? "",
+              bookingStartTime: session.bookingStartTime,
+            }),
           });
         }
         break;

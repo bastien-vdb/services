@@ -1,58 +1,77 @@
 import {
-    Body,
-    Container,
-    Head,
-    Heading,
-    Hr,
-    Html,
-    Img,
-    Link,
-    Preview,
-    Section,
-    Text,
-  } from "@react-email/components";
-  import * as React from "react";
-  
-  interface EmailNotBookedProps {
-    magicLink?: string;
-  }
-  
-  const baseUrl = process.env.NEXT_PUBLIC_HOST
-    ? `https://${process.env.NEXT_PUBLIC_HOST}`
-    : "";
-  
-  export const EmailNotBooked = ({
-    magicLink,
-  }: EmailNotBookedProps) => (
+  Body,
+  Container,
+  Head,
+  Heading,
+  Hr,
+  Html,
+  Img,
+  Preview,
+  Section,
+  Text,
+} from "@react-email/components";
+import * as React from "react";
+
+interface EmailRdvBookedProps {
+  customerName?: string;
+  bookingStartTime: string;
+}
+
+const baseUrl = process.env.NEXT_PUBLIC_HOST
+  ? `${process.env.NEXT_PUBLIC_HOST}`
+  : "";
+
+export const EmailRdvBooked = ({
+  customerName,
+  bookingStartTime,
+}: EmailRdvBookedProps) => {
+  const bookingStartTimeFormatted = new Date(bookingStartTime);
+  const optionsForDate: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  };
+  const optionsForTime: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  const dateString = bookingStartTimeFormatted.toLocaleDateString(
+    "fr-FR",
+    optionsForDate
+  );
+  const heureString = bookingStartTimeFormatted.toLocaleTimeString(
+    "fr-FR",
+    optionsForTime
+  );
+
+  return (
     <Html>
       <Head />
-      <Preview>Le rendez-vous n'a pas pu être booké car le créneau a déjà été réservé.</Preview>
+      <Preview>Le rendez-vous n'a pas pu être pris en compte</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
-            src={`${baseUrl}/static/raycast-logo.png`}
+            src={`${baseUrl}/vendorImages/fineststudiologo.png`}
             width={48}
             height={48}
-            alt="Raycast"
+            alt="FinestLashStudio"
           />
-          <Heading style={heading}>🪄 Your magic link</Heading>
+          <Heading style={heading}>
+            🪄 Cher {customerName}, le rendez-vous, prévu pour le
+            {bookingStartTime && dateString} à {bookingStartTime && heureString}
+            , n'a pas pu être confirmé.
+          </Heading>
           <Section style={body}>
             <Text style={paragraph}>
-              <Link style={link} href={magicLink}>
-                👉 Click here to sign in 👈
-              </Link>
+              Nous nous excusons pour la gêne occasionnée. Veuillez nous
+              contacter pour plus d'informations.
             </Text>
-            <Text style={paragraph}>
-              If you didn't request this, please ignore this email.
-            </Text>
+            Finest lash Studio
           </Section>
-          <Text style={paragraph}>
-            Best,
-            <br />- Raycast Team
-          </Text>
           <Hr style={hr} />
           <Img
-            src={`${baseUrl}/static/raycast-logo.png`}
+            src={`${baseUrl}/vendorImages/fineststudiologo.png`}
             width={32}
             height={32}
             style={{
@@ -61,62 +80,54 @@ import {
               margin: "20px 0",
             }}
           />
-          <Text style={footer}>Raycast Technologies Inc.</Text>
-          <Text style={footer}>
-            2093 Philadelphia Pike #3222, Claymont, DE 19703
-          </Text>
         </Container>
       </Body>
     </Html>
   );
-  
-  EmailNotBooked.PreviewProps = {
-    magicLink: "https://raycast.com",
-  } as EmailNotBookedProps;
-  
-  export default EmailNotBooked;
-  
-  const main = {
-    backgroundColor: "#ffffff",
-    fontFamily:
-      '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
-  };
-  
-  const container = {
-    margin: "0 auto",
-    padding: "20px 25px 48px",
-    backgroundImage: 'url("/assets/raycast-bg.png")',
-    backgroundPosition: "bottom",
-    backgroundRepeat: "no-repeat, no-repeat",
-  };
-  
-  const heading = {
-    fontSize: "28px",
-    fontWeight: "bold",
-    marginTop: "48px",
-  };
-  
-  const body = {
-    margin: "24px 0",
-  };
-  
-  const paragraph = {
-    fontSize: "16px",
-    lineHeight: "26px",
-  };
-  
-  const link = {
-    color: "#FF6363",
-  };
-  
-  const hr = {
-    borderColor: "#dddddd",
-    marginTop: "48px",
-  };
-  
-  const footer = {
-    color: "#8898aa",
-    fontSize: "12px",
-    marginLeft: "4px",
-  };
-  
+};
+
+export default EmailRdvBooked;
+
+const main = {
+  backgroundColor: "#ffffff",
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+};
+
+const container = {
+  margin: "0 auto",
+  padding: "20px 25px 48px",
+  backgroundImage: 'url("/assets/raycast-bg.png")',
+  backgroundPosition: "bottom",
+  backgroundRepeat: "no-repeat, no-repeat",
+};
+
+const heading = {
+  fontSize: "28px",
+  fontWeight: "bold",
+  marginTop: "48px",
+};
+
+const body = {
+  margin: "24px 0",
+};
+
+const paragraph = {
+  fontSize: "16px",
+  lineHeight: "26px",
+};
+
+const link = {
+  color: "#FF6363",
+};
+
+const hr = {
+  borderColor: "#dddddd",
+  marginTop: "48px",
+};
+
+const footer = {
+  color: "#8898aa",
+  fontSize: "12px",
+  marginLeft: "4px",
+};

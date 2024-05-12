@@ -1,18 +1,15 @@
 "use client";
+import AlertModal from "@/src/components/Modal/AlertModal";
 import { DataTable } from "@/src/components/bookings_data_table/data-table";
 import { toast } from "@/src/components/ui/use-toast";
-import moment from "moment";
-import useBookingsStore from "./useBookingsStore";
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { BookingColumns } from "./BookingColumns";
-import AlertModal from "@/src/components/Modal/AlertModal";
-import { Check, Trash2 } from "lucide-react";
-import { Booking, Customer, Service } from "@prisma/client";
-import actionSetBookingUser from "./action-setBookingUser";
-import useSendEmail from "@/src/emails/useSendEmail";
-import EmailRdvBooked from "@/src/emails/EmailBooked";
 import actionSendConfirmationEmail from "@/src/emails/action-send-confirmation-email";
+import { Booking, Customer, Service } from "@prisma/client";
+import { Check, Trash2 } from "lucide-react";
+import moment from "moment";
+import { useSession } from "next-auth/react";
+import { useEffect, useMemo } from "react";
+import { BookingColumns } from "./BookingColumns";
+import useBookingsStore from "./useBookingsStore";
 
 function Bookings() {
   const {
@@ -56,8 +53,11 @@ function Bookings() {
     });
   };
 
-  const formatDataToServiceTableBody = bookings.map(
-    (booking: Booking & { service: Service; customer: Customer }) => {
+  const toDay = useMemo(() => new Date(), []);
+
+  const formatDataToServiceTableBody = bookings
+    .filter((booking) => booking.endTime >= toDay)
+    .map((booking: Booking & { service: Service; customer: Customer }) => {
       return {
         id: booking.id,
         du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
@@ -136,8 +136,7 @@ function Bookings() {
           </AlertModal>
         ),
       };
-    }
-  );
+    });
 
   return (
     <DataTable columns={BookingColumns} data={formatDataToServiceTableBody} />
