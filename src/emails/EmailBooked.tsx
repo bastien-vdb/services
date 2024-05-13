@@ -73,7 +73,7 @@ export const EmailRdvBooked = ({
               {bookingStartTime && heureString}, est en attente de confirmation.
             </Text>
           </Heading>
-          <Section style={body}>
+          <Section style={heading}>
             <Text style={paragraph}>
               Nous vous remercions de nous avoir choisi,
             </Text>
