@@ -87,6 +87,7 @@ const SelectBooking = ({
             endTime: booking.endTime,
             userId,
             serviceId: serviceSelected?.id,
+            serviceName: serviceSelected?.name,
           }),
         }
       );

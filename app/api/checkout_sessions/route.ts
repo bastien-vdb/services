@@ -7,7 +7,8 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request, res: NextApiResponse) {
   const body: any = await req.json();
 
-  const { stripePriceId, startTime, endTime, userId, serviceId } = body;
+  const { stripePriceId, startTime, endTime, userId, serviceId, serviceName } =
+    body;
 
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
@@ -27,6 +28,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         serviceId,
         stripePriceId,
         userId,
+        serviceName,
       },
       line_items: [
         {

@@ -52,9 +52,10 @@ export default async function handler(
           stripePriceId: string;
           bookingId: string;
           userId: string;
+          serviceName: string;
         };
         const customerDetails = webhookEvent.data.object.customer_details;
-        const { startTime, endTime, serviceId, userId } = session;
+        const { startTime, endTime, serviceId, userId, serviceName } = session;
 
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
@@ -89,14 +90,7 @@ export default async function handler(
           },
         });
 
-        const serviceName = await prisma?.service.findFirst({
-          where: { id: serviceId },
-          select: { name: true },
-        });
-
-        console.log("serviceName", serviceName);
-
-        if (bookingCreated && customerDetails?.email && serviceName) {
+        if (bookingCreated && customerDetails?.email) {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [customerDetails.email],
@@ -104,7 +98,7 @@ export default async function handler(
             react: EmailRdvBooked({
               customerName: customerDetails.name ?? "",
               bookingStartTime: startTime,
-              serviceName: serviceName?.name ?? "",
+              serviceName,
               employeeName: "Natacha S",
               businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
             }),
