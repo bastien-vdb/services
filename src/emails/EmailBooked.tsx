@@ -65,11 +65,11 @@ export const EmailRdvBooked = ({
             alt="FinestLashStudio"
           />
           <Heading style={heading}>
-            🪄 Cher {customerName}, le rendez-vous {serviceName}
-            avec {employeeName} à l'adresse {businessPhysicalAddress}, prévu
-            pour le
-            {bookingStartTime && dateString} à{bookingStartTime && heureString},
-            est en attente de confirmation.
+            <Text style={paragraph}>🪄 Cher {customerName},</Text>
+            le rendez-vous {serviceName} avec {employeeName} à l'adresse{" "}
+            {businessPhysicalAddress}, prévu pour le{" "}
+            {bookingStartTime && dateString} à {bookingStartTime && heureString}
+            , est en attente de confirmation.
           </Heading>
           <Section style={body}>
             <Text style={paragraph}>

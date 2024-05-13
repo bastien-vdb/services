@@ -57,8 +57,6 @@ export default async function handler(
         const customerDetails = webhookEvent.data.object.customer_details;
         const { startTime, endTime, serviceId, userId, serviceName } = session;
 
-        console.log("session", session);
-
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),
