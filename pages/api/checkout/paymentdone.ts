@@ -94,6 +94,8 @@ export default async function handler(
           select: { name: true },
         });
 
+        console.log("serviceName", serviceName);
+
         if (bookingCreated && customerDetails?.email && serviceName) {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
