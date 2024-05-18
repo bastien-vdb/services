@@ -5,11 +5,22 @@ import EmailRdvBooked from "@/src/emails/EmailBooked";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
 import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
+import moment from "moment-timezone";
 
 export const config = {
   api: {
     bodyParser: false,
   },
+};
+
+type metadataType = {
+  startTime: string;
+  endTime: string;
+  serviceId: string;
+  stripePriceId: string;
+  bookingId: string;
+  userId: string;
+  serviceName: string;
 };
 
 async function buffer(readable: Readable) {
@@ -45,17 +56,14 @@ export default async function handler(
   try {
     switch (webhookEvent.type) {
       case "checkout.session.completed": {
-        const session = webhookEvent.data.object.metadata as {
-          startTime: string;
-          endTime: string;
-          serviceId: string;
-          stripePriceId: string;
-          bookingId: string;
-          userId: string;
-          serviceName: string;
-        };
+        const session = webhookEvent.data.object.metadata as metadataType;
         const customerDetails = webhookEvent.data.object.customer_details;
         const { startTime, endTime, serviceId, userId, serviceName } = session;
+
+        const startDateTmz = moment
+          .utc(startTime)
+          .tz("Europe/Paris")
+          .format("YYYY-MM-DD HH:mm:ss");
 
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
@@ -97,7 +105,7 @@ export default async function handler(
             subject: `Rendez-vous ${serviceName} en attente.`,
             react: EmailRdvBooked({
               customerName: customerDetails.name ?? "",
-              bookingStartTime: startTime,
+              bookingStartTime: startDateTmz,
               serviceName,
               employeeName: "Natacha S",
               businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
@@ -111,7 +119,7 @@ export default async function handler(
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
             react: EmailNotBooked({
               customerName: customerDetails.name ?? "",
-              bookingStartTime: session.startTime,
+              bookingStartTime: startDateTmz,
             }),
           });
         }
@@ -119,14 +127,14 @@ export default async function handler(
       }
 
       case "checkout.session.expired": {
-        const session = webhookEvent.data.object.metadata as {
-          bookingStartTime: string;
-          serviceId: string;
-          stripePriceId: string;
-          bookingId: string;
-          userId: string;
-        };
+        const session = webhookEvent.data.object.metadata as metadataType;
         const customerDetails = webhookEvent.data.object.customer_details;
+        const { startTime } = session;
+
+        const startDateTmz = moment
+          .utc(startTime)
+          .tz("Europe/Paris")
+          .format("YYYY-MM-DD HH:mm:ss");
 
         if (customerDetails) {
           await useSendEmail({
@@ -135,7 +143,7 @@ export default async function handler(
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
             react: EmailNotBooked({
               customerName: customerDetails.name ?? "",
-              bookingStartTime: session.bookingStartTime,
+              bookingStartTime: startDateTmz,
             }),
           });
         }
@@ -143,14 +151,15 @@ export default async function handler(
       }
 
       case "checkout.session.async_payment_failed": {
-        const session = webhookEvent.data.object.metadata as {
-          bookingStartTime: string;
-          serviceId: string;
-          stripePriceId: string;
-          bookingId: string;
-          userId: string;
-        };
+        const session = webhookEvent.data.object.metadata as metadataType;
         const customerDetails = webhookEvent.data.object.customer_details;
+        const { startTime } = session;
+
+        const startDateTmz = moment
+          .utc(startTime)
+          .tz("Europe/Paris")
+          .format("YYYY-MM-DD HH:mm:ss");
+
         if (customerDetails) {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
@@ -158,7 +167,7 @@ export default async function handler(
             subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
             react: EmailNotBooked({
               customerName: customerDetails.name ?? "",
-              bookingStartTime: session.bookingStartTime,
+              bookingStartTime: startDateTmz,
             }),
           });
         }
