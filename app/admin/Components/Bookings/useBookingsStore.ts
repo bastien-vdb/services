@@ -1,3 +1,4 @@
+import { set } from "date-fns";
 import { Booking, BookingStatus } from "@prisma/client";
 import { create } from "zustand";
 import actionDeleteBooking from "./action-deleteBooking";
@@ -7,6 +8,8 @@ import actionSetBookingUser from "./action-setBookingUser";
 type useBookingsStoreType = {
   bookings: Booking[];
   loadingBookings: boolean;
+  bookingSelected: Booking | undefined;
+  setBookingSelected: (booking: Booking) => void;
   initialiseBookings: (bookings: Booking[]) => void;
   changeStatusBooking: ({
     bookingId,
@@ -23,6 +26,8 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
   bookings: [],
   loadingBookings: false,
   initialiseBookings: (bookings) => set({ bookings }),
+  bookingSelected: undefined,
+  setBookingSelected: (booking) => set({ bookingSelected: booking }),
   changeStatusBooking: async ({ bookingId, status }) => {
     set({ loadingBookings: true });
     return actionSetBookingUser({ bookingId, status })

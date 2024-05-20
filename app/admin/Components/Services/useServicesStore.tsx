@@ -7,9 +7,13 @@ import actionDeleteService from "./action-deleteService";
 type ServiceStoreType = {
   services: Service[];
   serviceSelected: Service | null;
+  optionSelected: { name: string; price: number } | undefined;
   loadingService: boolean;
   initialiseServices: (services: Service[]) => void;
   changeServiceSelected: (service: Service | null) => void;
+  changeOptionSelected: (
+    option: { name: string; price: number } | undefined
+  ) => void;
   getServices: (userId: string) => void;
   addService: (service: {
     name: string;
@@ -22,9 +26,11 @@ type ServiceStoreType = {
 const useServiceStore = create<ServiceStoreType>((set) => ({
   services: [],
   serviceSelected: null,
+  optionSelected: undefined,
   loadingService: false,
   initialiseServices: (services) => set({ services }),
   changeServiceSelected: (service) => set({ serviceSelected: service }),
+  changeOptionSelected: (option) => set({ optionSelected: option }),
   getServices: async (userId) => {
     const services = await useServerData("service", { createdById: userId });
     set({ services });

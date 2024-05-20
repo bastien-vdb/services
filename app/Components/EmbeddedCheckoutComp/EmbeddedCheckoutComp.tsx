@@ -12,15 +12,6 @@ const EmbeddedCheckoutComp = ({
   stripePromise: Promise<Stripe | null>;
   clientSecret: string | null | undefined;
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => {
-    setIsMounted(true);
-
-    return () => {
-      setIsMounted(false);
-    };
-  }, [clientSecret]);
-
   return (
     <div id="checkout">
       <EmbeddedCheckoutProvider

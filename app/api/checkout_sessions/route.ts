@@ -5,10 +5,30 @@ import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request, res: NextApiResponse) {
-  const body: any = await req.json();
+  const body: {
+    stripePriceId: string;
+    startTime: string;
+    endTime: string;
+    userId: string;
+    serviceId: string;
+    serviceName: string;
+    addedOption:
+      | {
+          price: number;
+          name: string;
+        }
+      | undefined;
+  } = await req.json();
 
-  const { stripePriceId, startTime, endTime, userId, serviceId, serviceName } =
-    body;
+  const {
+    stripePriceId,
+    startTime,
+    endTime,
+    userId,
+    serviceId,
+    serviceName,
+    addedOption,
+  } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
@@ -37,6 +57,21 @@ export async function POST(req: Request, res: NextApiResponse) {
           price: stripePriceId,
           quantity: 1,
         },
+        ...(addedOption
+          ? [
+              {
+                // Add an option for 20 euros
+                price_data: {
+                  currency: "eur",
+                  product_data: {
+                    name: addedOption.name,
+                  },
+                  unit_amount: addedOption.price,
+                },
+                quantity: 1,
+              },
+            ]
+          : []),
       ],
       payment_intent_data: {
         application_fee_amount: 250,

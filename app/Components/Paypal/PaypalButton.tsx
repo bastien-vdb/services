@@ -31,6 +31,8 @@ export default function PayPalButton({
         style={{
           layout: "horizontal",
           tagline: false,
+          shape: "pill",
+          color: "gold",
         }} // il faut aussi ce bout de code css pour voir le bouton ... très étrange mais fonctionnel
         createOrder={(data, actions) => {
           return actions.order.create({

@@ -3,17 +3,20 @@ import { Calendar } from "@/src/components/ui/calendar";
 import SelectBooking from "../SelectBooking/SelectBooking";
 
 const ServiceCalendar = memo(({ userId }: { userId: string }) => {
-  const [daySelected, setDaySelected] = useState<Date | undefined>(undefined);
+  const daySelectedManager = useState<Date | undefined>(undefined);
+  const [daySelected, setDaySelected] = daySelectedManager;
   return (
     <>
-      <Calendar
-        fromDate={new Date()}
-        mode="single"
-        selected={undefined}
-        onSelect={setDaySelected}
-        className="p-10"
-      />
-      <SelectBooking userId={userId} daySelected={daySelected} />
+      {!daySelected && (
+        <Calendar
+          fromDate={new Date()}
+          mode="single"
+          selected={undefined}
+          onSelect={setDaySelected}
+          className="p-10"
+        />
+      )}
+      <SelectBooking userId={userId} daySelectedManager={daySelectedManager} />
     </>
   );
 });

@@ -23,6 +23,10 @@ import { v4 as uuidv4 } from "uuid";
 import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Label } from "@/src/components/ui/label";
+import { da } from "date-fns/locale";
+import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
+import next from "next";
+import { useStepper } from "@/src/components/stepper";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -30,81 +34,36 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un fichier settings
-
 const SelectBooking = ({
   userId,
-  daySelected,
+  daySelectedManager,
 }: {
   userId: string;
-  daySelected: Date | undefined;
+  daySelectedManager: [Date | undefined, (date: Date | undefined) => void];
 }) => {
   const { toast } = useToast();
+  const [daySelected, setDaySelected] = daySelectedManager;
 
   const [isOpened, setIsOpened] = useState(false);
 
   const { availabilities, getAvailabilities, loadingAvailability } =
     useAvailabilityStore();
-
   const { serviceSelected } = useServiceStore();
+  const { setBookingSelected } = useBookingsStore();
+
+  const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
+
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
-  const [slots, setSlots] = useState<Booking[]>([]);
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
+  const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
     daySelected && getAvailabilities(userId, daySelected);
-  }, [daySelected]);
-
-  useEffect(() => {
     if (daySelected) setIsOpened(true);
     if (clientSecret) setClientSecret("");
   }, [daySelected]);
-
-  const handleCreatePayment = async (
-    booking: Booking,
-    deposit: boolean = false
-  ) => {
-    if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
-    setLoading(true);
-    setIsOpened(false);
-    setBookingSelectedPaypal(booking);
-
-    try {
-      const paymentPage = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            stripePriceId: deposit
-              ? prixFixDeposit
-              : serviceSelected?.stripePriceId,
-            startTime: booking.startTime,
-            endTime: booking.endTime,
-            userId,
-            serviceId: serviceSelected?.id,
-            serviceName: serviceSelected?.name,
-          }),
-        }
-      );
-      const paymentPageJson = await paymentPage.json();
-      setClientSecret(paymentPageJson.clientSecret);
-    } catch (error) {
-      console.error("error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Le rendez-vous est déjà en cours de réservation",
-        description:
-          "Il serait préférable de sélectionner un autre créneau disponible",
-      });
-    }
-    setLoading(false);
-    if (!daySelected) throw new Error("No day selected");
-  };
 
   useEffect(() => {
     if (!serviceSelected) return;
@@ -115,92 +74,57 @@ const SelectBooking = ({
   }, [availabilities]);
 
   return (
-    <>
-      {fullOrDepotDisplayed && (
-        <RadioGroup defaultValue="option-one">
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              onClick={() => {
-                setClientSecret("");
-                bookingSelectedPaypal &&
-                  handleCreatePayment(bookingSelectedPaypal);
-              }}
-              value="option-one"
-              id="option-one"
-            />
-            <Label className="text-xl" htmlFor="option-one">
-              Paiement en 1 fois
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              onClick={() => {
-                setClientSecret("");
-                bookingSelectedPaypal &&
-                  handleCreatePayment(bookingSelectedPaypal, true);
-              }}
-              value="option-two"
-              id="option-two"
-            />
-            <Label htmlFor="option-two">Dépot</Label>
-          </div>
-        </RadioGroup>
-      )}
-
-      {clientSecret && bookingSelectedPaypal && (
-        <>
-          <EmbeddedCheckoutComp
-            stripePromise={stripePromise}
-            clientSecret={clientSecret}
-          />
-          <PayPalButton bookingSelectedPaypal={bookingSelectedPaypal} />
-        </>
-      )}
-
-      <Drawer
-        open={isOpened}
-        onClose={() => setIsOpened(false)}
-        onOpenChange={(state) => !state && setIsOpened(false)}
-      >
-        <DrawerContent className="flex justify-center items-center">
-          {loadingAvailability ? (
-            <LoadingSpinner className="w-20 h-20 animate-spin" />
-          ) : (
-            <>
-              <DrawerHeader>
-                <DrawerTitle>Rendez-vous</DrawerTitle>
-                <DrawerDescription>
-                  Selectionner un rendez-vous.
-                </DrawerDescription>
-              </DrawerHeader>
-              <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
-                {slots.length > 0 ? (
-                  slots
-                    ?.sort(
-                      (a, b) => a.startTime.getTime() - b.startTime.getTime()
-                    )
-                    ?.map((booking, key) => (
-                      <li key={key}>
-                        <Button onClick={() => handleCreatePayment(booking)}>
-                          {moment(booking.startTime).format("HH:mm").toString()}
-                          -{moment(booking.endTime).format("HH:mm").toString()}
-                        </Button>
-                      </li>
-                    ))
-                ) : (
-                  <Button variant="ghost">Pas de créneau disponible</Button>
-                )}
-              </ul>
-            </>
-          )}
-          <DrawerFooter>
-            <DrawerClose onClick={() => setIsOpened(false)}>
-              <Button variant="outline">Annuler</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
-    </>
+    <Drawer
+      open={isOpened}
+      onClose={() => {
+        setIsOpened(false);
+        setDaySelected(undefined);
+      }}
+      onOpenChange={(state) => !state && setIsOpened(false)}
+    >
+      <DrawerContent className="flex justify-center items-center">
+        {loadingAvailability ? (
+          <LoadingSpinner className="w-20 h-20 animate-spin" />
+        ) : (
+          <>
+            <DrawerHeader>
+              <DrawerTitle>Rendez-vous</DrawerTitle>
+              <DrawerDescription>
+                Selectionner un rendez-vous.
+              </DrawerDescription>
+            </DrawerHeader>
+            <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
+              {slots.length > 0 ? (
+                slots
+                  ?.sort(
+                    (a, b) => a.startTime.getTime() - b.startTime.getTime()
+                  )
+                  ?.map((booking, key) => (
+                    <li key={key}>
+                      <Button
+                        onClick={() => {
+                          setBookingSelected(booking);
+                          nextStep();
+                        }}
+                      >
+                        {moment(booking.startTime).format("HH:mm").toString()}-
+                        {moment(booking.endTime).format("HH:mm").toString()}
+                      </Button>
+                    </li>
+                  ))
+              ) : (
+                <Button variant="ghost">Pas de créneau disponible</Button>
+              )}
+            </ul>
+          </>
+        )}
+        <DrawerFooter>
+          <DrawerClose onClick={() => setIsOpened(false)}>
+            <Button variant="outline">Annuler</Button>
+          </DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
