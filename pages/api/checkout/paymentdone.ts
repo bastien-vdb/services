@@ -21,6 +21,7 @@ type metadataType = {
   bookingId: string;
   userId: string;
   serviceName: string;
+  addedOption: string;
 };
 
 async function buffer(readable: Readable) {
@@ -58,7 +59,14 @@ export default async function handler(
       case "checkout.session.completed": {
         const session = webhookEvent.data.object.metadata as metadataType;
         const customerDetails = webhookEvent.data.object.customer_details;
-        const { startTime, endTime, serviceId, userId, serviceName } = session;
+        const {
+          startTime,
+          endTime,
+          serviceId,
+          userId,
+          serviceName,
+          addedOption,
+        } = session;
 
         const startDateTmz = moment
           .utc(startTime)

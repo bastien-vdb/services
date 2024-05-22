@@ -49,6 +49,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         stripePriceId,
         userId,
         serviceName,
+        addedOption: addedOption?.name || null,
       },
       line_items: [
         {

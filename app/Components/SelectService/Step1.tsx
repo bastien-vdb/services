@@ -27,12 +27,6 @@ import { Service } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const FormSchema = z.object({
-  service: z.string({
-    required_error: "Merci de sélectionner une prestation.",
-  }),
-});
-
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
     <div className="flex items-center gap-4">
@@ -42,11 +36,20 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 };
 
 function SelectService({ services }: { services?: Service[] }) {
-  const { changeServiceSelected } = useServiceStore();
-  const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
+  const { changeServiceSelected, serviceSelected } = useServiceStore();
+  const { nextStep, prevStep } = useStepper();
+
+  const FormSchema = z.object({
+    service: z.string({
+      required_error: "Merci de sélectionner une prestation.",
+    }),
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      service: serviceSelected?.id || undefined,
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -113,7 +116,6 @@ function SelectService({ services }: { services?: Service[] }) {
                 </FormItem>
               )}
             />
-            {/* <Button type="submit">Valider</Button> */}
             <div className="flex gap-2 m-2">
               <Button
                 disabled={true}

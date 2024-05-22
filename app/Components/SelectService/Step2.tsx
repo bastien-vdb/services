@@ -39,20 +39,24 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 };
 
 function Step2() {
-  const { changeOptionSelected } = useServiceStore();
+  const { changeOptionSelected, optionSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      service: optionSelected ? "option-depose" : undefined,
+    },
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    if (data.service === "oui") {
+    if (data.service === "option-depose") {
       changeOptionSelected({
         name: data.service,
-        price: 20000,
+        price: 2000,
       });
-    }
+    } else changeOptionSelected(undefined);
+
     toast({
       title: "On passe à l'étape suivante !",
       description: "",

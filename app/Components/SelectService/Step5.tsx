@@ -34,6 +34,10 @@ const Step5 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
   const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
 
+  useEffect(() => {
+    console.log("optionSelected from step 5", optionSelected);
+  }, [optionSelected]);
+
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
