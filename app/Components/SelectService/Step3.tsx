@@ -18,29 +18,46 @@ import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { Button } from "@/src/components/ui/button";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { Checkbox } from "@/src/components/ui/checkbox";
+import useFormStore from "@/app/Components/SelectService/useFormStore";
 
-const FormSchema = z.object({
-  q1: z.optional(z.string()),
-  q2: z.optional(z.string()),
-  q3: z.optional(z.string()),
-  q4: z.optional(z.string()),
-  q5: z.optional(z.string()),
-  q6: z.optional(z.string()),
-  q7: z.optional(z.string()),
-  q8: z.boolean({
-    required_error: "Veuillez accepter le règlement",
-  }),
-});
+const OPTIONAL_SERVICE = "Fox eyes";
+
+const RadioButtonRuleForm = (obligatoire = true) => {
+  if (!obligatoire) {
+    return z.string().optional();
+  }
+  return z.string().refine((val) => val.length > 0, {
+    message: "*",
+  });
+};
 
 const Step3 = memo(({ userId }: { userId: string }) => {
   const { serviceSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
+  const { formData, setFormData } = useFormStore(); // Use Zustand store
+
+  // Définition du schéma du formulaire
+  const FormSchema = z.object({
+    q1: RadioButtonRuleForm(),
+    q2: RadioButtonRuleForm(),
+    q3: RadioButtonRuleForm(),
+    q4: RadioButtonRuleForm(),
+    q5: RadioButtonRuleForm(),
+    q6: RadioButtonRuleForm(),
+    q7: RadioButtonRuleForm(serviceSelected?.name === OPTIONAL_SERVICE),
+    q8: z.boolean().refine((val) => val === true, {
+      message: "Veuillez accepter le règlement",
+    }),
+  });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: formData, // Use data from the store
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    setFormData(data); // Update store with form data
+
     toast({
       title: "On passe à l'étape suivante !",
       description: "",
@@ -57,13 +74,13 @@ const Step3 = memo(({ userId }: { userId: string }) => {
     <FormItem>
       <FormLabel>{label}</FormLabel>
       <FormControl>
-        <RadioGroup defaultValue="option-no" {...field}>
+        <RadioGroup value={field.value} onValueChange={field.onChange}>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-yes" id={idYes} />
+            <RadioGroupItem value="yes" id={idYes} />
             <Label htmlFor={idYes}>Oui</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="option-no" id={idNo} />
+            <RadioGroupItem value="no" id={idNo} />
             <Label htmlFor={idNo}>Non</Label>
           </div>
         </RadioGroup>
@@ -155,7 +172,7 @@ const Step3 = memo(({ userId }: { userId: string }) => {
                   }
                 />
 
-                {serviceSelected?.name === "Fox eyes" && (
+                {serviceSelected?.name === OPTIONAL_SERVICE && (
                   <FormField
                     control={form.control}
                     name="q7"

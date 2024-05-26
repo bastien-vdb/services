@@ -1,14 +1,5 @@
 import { memo, useEffect, useState } from "react";
-import { Calendar } from "@/src/components/ui/calendar";
-import SelectBooking from "../SelectBooking/SelectBooking";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
+import { Card, CardContent } from "@/src/components/ui/card";
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import { LoadingSpinner } from "@/src/components/ui/loader";
 import { Booking } from "@prisma/client";
@@ -21,6 +12,7 @@ import PayPalButton from "../Paypal/PaypalButton";
 import { loadStripe } from "@stripe/stripe-js";
 import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
+import useFormStore from "./useFormStore";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -32,11 +24,12 @@ const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un f
 
 const Step5 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
+  const { formData } = useFormStore(); // Use Zustand store
   const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
 
   useEffect(() => {
-    console.log("optionSelected from step 5", optionSelected);
-  }, [optionSelected]);
+    console.log("formData", formData);
+  }, [formData]);
 
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
@@ -73,6 +66,7 @@ const Step5 = memo(({ userId }: { userId: string }) => {
             serviceId: serviceSelected?.id,
             serviceName: serviceSelected?.name,
             addedOption: optionSelected,
+            formData,
           }),
         }
       );

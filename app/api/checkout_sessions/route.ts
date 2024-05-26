@@ -18,6 +18,7 @@ export async function POST(req: Request, res: NextApiResponse) {
           name: string;
         }
       | undefined;
+    formData: any;
   } = await req.json();
 
   const {
@@ -28,6 +29,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     serviceId,
     serviceName,
     addedOption,
+    formData,
   } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
@@ -50,6 +52,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         userId,
         serviceName,
         addedOption: addedOption?.name || null,
+        formData,
       },
       line_items: [
         {
