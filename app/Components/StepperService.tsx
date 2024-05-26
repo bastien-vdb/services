@@ -48,7 +48,7 @@ export default function StepperService({
             </Step>
           );
         })}
-        <Footer />
+        {/* <Footer /> */}
       </Stepper>
     </div>
   );
