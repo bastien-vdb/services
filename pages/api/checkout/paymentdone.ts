@@ -22,6 +22,7 @@ type metadataType = {
   userId: string;
   serviceName: string;
   addedOption: string;
+  formData: string;
 };
 
 async function buffer(readable: Readable) {
@@ -66,6 +67,7 @@ export default async function handler(
           userId,
           serviceName,
           addedOption,
+          formData,
         } = session;
 
         const startDateTmz = moment
@@ -79,6 +81,7 @@ export default async function handler(
           serviceId,
           userId,
           amountPayed: webhookEvent.data.object.amount_total,
+          form: formData,
           customerInfo: {
             name: customerDetails?.name ? customerDetails.name : "NC",
             email: customerDetails?.email ? customerDetails.email : "NC",

@@ -72,6 +72,7 @@ model Booking {
   customer    Customer?     @relation(fields: [customerId], references: [id])
   customerId  String?       @db.ObjectId
   amountPayed Int?
+  form        Json?
 }
 
 model Customer {

@@ -10,6 +10,7 @@ async function actionCreateBooking({
   serviceId,
   userId,
   amountPayed,
+  form,
   customerInfo,
 }: {
   startTime: Date;
@@ -17,6 +18,7 @@ async function actionCreateBooking({
   serviceId: string;
   userId: string;
   amountPayed;
+  form: string;
   customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
 }) {
   try {
@@ -104,6 +106,7 @@ async function actionCreateBooking({
           status: "PENDING",
           payedBy: customerInfo.email ?? "",
           amountPayed,
+          form,
           customerId: customer.id,
         },
       });

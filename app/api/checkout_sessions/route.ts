@@ -52,7 +52,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         userId,
         serviceName,
         addedOption: addedOption?.name || null,
-        formData,
+        formData: JSON.stringify(formData),
       },
       line_items: [
         {
@@ -61,21 +61,6 @@ export async function POST(req: Request, res: NextApiResponse) {
           price: stripePriceId,
           quantity: 1,
         },
-        ...(addedOption
-          ? [
-              {
-                // Add an option for 20 euros
-                price_data: {
-                  currency: "eur",
-                  product_data: {
-                    name: addedOption.name,
-                  },
-                  unit_amount: addedOption.price,
-                },
-                quantity: 1,
-              },
-            ]
-          : []),
       ],
       payment_intent_data: {
         application_fee_amount: 250,
