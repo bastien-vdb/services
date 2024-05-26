@@ -237,6 +237,7 @@ function splitBookingIntoServiceDuration(
         updatedAt: new Date(),
         customerId: "",
         amountPayed: 0,
+        form: "",
       });
     }
 
