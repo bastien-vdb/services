@@ -88,64 +88,65 @@ const Step5 = memo(({ userId }: { userId: string }) => {
   }, []);
 
   return (
-    <Card>
-      <CardContent>
-        <div className="flex justify-center items-start gap-10">
-          {fullOrDepotDisplayed && (
-            <RadioGroup defaultValue="option-one">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  onClick={() => {
-                    setClientSecret("");
-                    bookingSelectedPaypal &&
-                      handleCreatePayment(bookingSelectedPaypal);
-                  }}
-                  value="option-one"
-                  id="option-one"
-                />
-                <Label className="text-xl" htmlFor="option-one">
-                  Paiement en 1 fois
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem
-                  onClick={() => {
-                    setClientSecret("");
-                    bookingSelectedPaypal &&
-                      handleCreatePayment(bookingSelectedPaypal, true);
-                  }}
-                  value="option-two"
-                  id="option-two"
-                />
-                <Label htmlFor="option-two">Dépot</Label>
-              </div>
-            </RadioGroup>
-          )}
-
-          {clientSecret && bookingSelectedPaypal ? (
-            <>
-              <EmbeddedCheckoutComp
-                stripePromise={stripePromise}
-                clientSecret={clientSecret}
+    <>
+      <div className="flex justify-center items-center flex-wrap gap-2">
+        {fullOrDepotDisplayed && (
+          <RadioGroup defaultValue="option-one">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                onClick={() => {
+                  setClientSecret("");
+                  bookingSelectedPaypal &&
+                    handleCreatePayment(bookingSelectedPaypal);
+                }}
+                value="option-one"
+                id="option-one"
               />
+              <Label className="text-xl" htmlFor="option-one">
+                Paiement en 1 fois
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                onClick={() => {
+                  setClientSecret("");
+                  bookingSelectedPaypal &&
+                    handleCreatePayment(bookingSelectedPaypal, true);
+                }}
+                value="option-two"
+                id="option-two"
+              />
+              <Label htmlFor="option-two">Dépot</Label>
+            </div>
+
+            {clientSecret && bookingSelectedPaypal && (
               <PayPalButton bookingSelectedPaypal={bookingSelectedPaypal} />
-            </>
-          ) : (
-            <LoadingSpinner className="w-20 h-20 animate-spin" />
-          )}
-        </div>
-        <div className="flex justify-center gap-2 m-2">
-          <Button
-            disabled={false}
-            onClick={prevStep}
-            size="sm"
-            variant="secondary"
-          >
-            Prev
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+            )}
+          </RadioGroup>
+        )}
+
+        {clientSecret && bookingSelectedPaypal ? (
+          <>
+            <EmbeddedCheckoutComp
+              stripePromise={stripePromise}
+              clientSecret={clientSecret}
+            />
+          </>
+        ) : (
+          <LoadingSpinner className="w-20 h-20 animate-spin" />
+        )}
+      </div>
+      <div className="flex justify-center gap-2 m-2 gap-10">
+        <Button
+          disabled={false}
+          onClick={prevStep}
+          size="sm"
+          variant="secondary"
+        >
+          Prev
+        </Button>
+      </div>
+    </>
   );
 });
 
