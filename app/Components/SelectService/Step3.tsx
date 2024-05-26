@@ -38,12 +38,12 @@ const Step3 = memo(({ userId }: { userId: string }) => {
 
   // Définition du schéma du formulaire
   const FormSchema = z.object({
-    q1: RadioButtonRuleForm(),
-    q2: RadioButtonRuleForm(),
-    q3: RadioButtonRuleForm(),
-    q4: RadioButtonRuleForm(),
-    q5: RadioButtonRuleForm(),
-    q6: RadioButtonRuleForm(),
+    q1: RadioButtonRuleForm(false),
+    q2: RadioButtonRuleForm(false),
+    q3: RadioButtonRuleForm(false),
+    q4: RadioButtonRuleForm(false),
+    q5: RadioButtonRuleForm(false),
+    q6: RadioButtonRuleForm(false),
     q7: RadioButtonRuleForm(serviceSelected?.name === OPTIONAL_SERVICE),
     q8: z.boolean().refine((val) => val === true, {
       message: "Veuillez accepter le règlement",

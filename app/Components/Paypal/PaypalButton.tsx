@@ -42,11 +42,11 @@ export default function PayPalButton({
                 custom_id: bookingSelectedPaypal.id,
                 amount: {
                   value: String(serviceSelected.price / 100), // Montant du paiement
-                  currency_code: "USD",
+                  currency_code: "EUR",
                   breakdown: {
                     item_total: {
                       // Total des articles, doit correspondre à la somme des prix des articles * quantité
-                      currency_code: "USD",
+                      currency_code: "EUR",
                       value: String(serviceSelected.price / 100),
                     },
                   },

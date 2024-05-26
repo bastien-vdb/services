@@ -14,6 +14,7 @@ import {
 import { CalendarSearch, Gem } from "lucide-react";
 import Calendar from "./Components/Calendar/Calendar";
 import actionGetBooking from "./Components/Bookings/action-getBooking";
+import BookingsHistory from "./Components/Bookings/BookingsHistory";
 
 async function Admin() {
   const session = await getServerSession(authOptions);
@@ -37,6 +38,18 @@ async function Admin() {
           </AccordionTrigger>
           <AccordionContent>
             <Bookings />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value={"BookingsHistory"}>
+          <AccordionTrigger>
+            <div className="flex items-center gap-4">
+              <CalendarSearch />
+              <span>{"Rendez-vous passés"}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <BookingsHistory />
           </AccordionContent>
         </AccordionItem>
 
