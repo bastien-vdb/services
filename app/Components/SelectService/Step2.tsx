@@ -65,78 +65,73 @@ function Step2() {
   }
 
   return (
-    <Card className="border-none">
-      <CardContent className="border-none">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex justify-center items-center flex-col"
-          >
-            <FormField
-              control={form.control}
-              name="service"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Option</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value);
-                      // form.handleSubmit(onSubmit)(); // Trigger the form submission
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-[300px]">
-                        <SelectValue placeholder="Avec dépose ?" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem
-                          value={"no"}
-                          className="w-auto cursor-pointer"
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          Non
-                        </SelectItem>
-                        <SelectItem
-                          value={"option-depose"}
-                          className="w-auto cursor-pointer"
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          Oui (
-                          <span className="ml-2 text-[#1246d6]">+ 20 € </span>)
-                        </SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-2 m-2">
-              <Button
-                disabled={false}
-                onClick={prevStep}
-                size="sm"
-                variant="secondary"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex justify-center items-center flex-col"
+      >
+        <FormField
+          control={form.control}
+          name="service"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Option</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  // form.handleSubmit(onSubmit)(); // Trigger the form submission
+                }}
+                defaultValue={field.value}
               >
-                Prev
-              </Button>
-              <Button size="sm" type="submit">
-                Suivant
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <FormControl>
+                  <SelectTrigger className="sm:w-[300px]">
+                    <SelectValue placeholder="Avec dépose ?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      value={"no"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Non
+                    </SelectItem>
+                    <SelectItem
+                      value={"option-depose"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Oui (<span className="ml-2 text-[#1246d6]">+ 20 € </span>)
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex gap-2 m-2">
+          <Button
+            disabled={false}
+            onClick={prevStep}
+            size="sm"
+            variant="secondary"
+          >
+            Prev
+          </Button>
+          <Button size="sm" type="submit">
+            Suivant
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
 
