@@ -44,11 +44,11 @@ export default function StepperService({
         {steps.map((stepProps, index) => {
           return (
             <Step key={stepProps.label} {...stepProps}>
-              <div className="p-4 my-16">{stepContent[index]}</div>
+              <div className="">{stepContent[index]}</div>
             </Step>
           );
         })}
-        <Footer />
+        {/* <Footer /> */}
       </Stepper>
     </div>
   );
