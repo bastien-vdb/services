@@ -1,5 +1,6 @@
 "use server";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
+import { prisma } from "@/src/db/prisma";
 
 const useNewStripeAccount = async ({ userId }: { userId: string }) => {
   const stripe = useCheckStripe();
