@@ -27,6 +27,7 @@ import { da } from "date-fns/locale";
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import next from "next";
 import { useStepper } from "@/src/components/stepper";
+import { useCarousel } from "@/src/components/ui/carousel";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -52,6 +53,7 @@ const SelectBooking = ({
   const { setBookingSelected } = useBookingsStore();
 
   const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
+  const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   const { setLoading } = useLoad();
   const [clientSecret, setClientSecret] = useState("");
@@ -104,7 +106,8 @@ const SelectBooking = ({
                       <Button
                         onClick={() => {
                           setBookingSelected(booking);
-                          nextStep();
+                          // nextStep();
+                          scrollNext();
                         }}
                       >
                         {moment(booking.startTime).format("HH:mm").toString()}-

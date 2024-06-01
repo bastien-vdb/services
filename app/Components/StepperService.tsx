@@ -12,6 +12,13 @@ import Step2 from "./SelectService/Step2";
 import Step4 from "./SelectService/Step4";
 import Step3 from "./SelectService/Step3";
 import Step5 from "./SelectService/Step5";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/src/components/ui/carousel";
 
 const steps = [
   {
@@ -40,16 +47,15 @@ export default function StepperService({
   ];
   return (
     <div className="flex w-full flex-col gap-4 p-2">
-      <Stepper initialStep={0} steps={steps}>
-        {steps.map((stepProps, index) => {
-          return (
-            <Step key={stepProps.label} {...stepProps}>
-              <div className="">{stepContent[index]}</div>
-            </Step>
-          );
-        })}
-        {/* <Footer /> */}
-      </Stepper>
+      <Carousel>
+        <CarouselContent>
+          {stepContent.map((f) => (
+            <CarouselItem>{f}</CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 }

@@ -19,6 +19,7 @@ import { Button } from "@/src/components/ui/button";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import useFormStore from "@/app/Components/SelectService/useFormStore";
+import { useCarousel } from "@/src/components/ui/carousel";
 
 const OPTIONAL_SERVICE = "Fox eyes";
 
@@ -35,6 +36,7 @@ const Step3 = memo(({ userId }: { userId: string }) => {
   const { serviceSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
   const { formData, setFormData } = useFormStore(); // Use Zustand store
+  const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   // Définition du schéma du formulaire
   const FormSchema = z.object({
@@ -62,7 +64,8 @@ const Step3 = memo(({ userId }: { userId: string }) => {
       title: "On passe à l'étape suivante !",
       description: "",
     });
-    nextStep();
+    // nextStep();
+    scrollNext();
   }
 
   const renderRadioGroup = (

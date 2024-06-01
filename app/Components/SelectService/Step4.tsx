@@ -11,6 +11,7 @@ import {
 } from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
 import { useStepper } from "@/src/components/stepper";
+import { useCarousel } from "@/src/components/ui/carousel";
 
 const Step4 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);

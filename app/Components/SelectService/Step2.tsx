@@ -3,6 +3,7 @@ import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
+import { useCarousel } from "@/src/components/ui/carousel";
 import {
   Form,
   FormControl,
@@ -41,6 +42,7 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 function Step2() {
   const { changeOptionSelected, optionSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
+  const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -61,7 +63,8 @@ function Step2() {
       title: "On passe à l'étape suivante !",
       description: "",
     });
-    nextStep();
+    // nextStep();
+    scrollNext();
   }
 
   return (
