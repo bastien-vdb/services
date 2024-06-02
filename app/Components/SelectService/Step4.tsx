@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { Calendar } from "@/src/components/ui/calendar";
 import SelectBooking from "../SelectBooking/SelectBooking";
 import {
@@ -16,8 +16,8 @@ import { useCarousel } from "@/src/components/ui/carousel";
 const Step4 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
+  const { orientation, scrollNext, scrollPrev } = useCarousel();
 
-  const { prevStep } = useStepper();
   return (
     <>
       <div className="flex justify-center">
@@ -33,7 +33,7 @@ const Step4 = memo(({ userId }: { userId: string }) => {
       <div className="flex gap-2 m-2 justify-center">
         <Button
           disabled={false}
-          onClick={prevStep}
+          onClick={scrollPrev}
           size="sm"
           variant="secondary"
         >

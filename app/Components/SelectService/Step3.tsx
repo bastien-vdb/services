@@ -19,7 +19,7 @@ import { Button } from "@/src/components/ui/button";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { Checkbox } from "@/src/components/ui/checkbox";
 import useFormStore from "@/app/Components/SelectService/useFormStore";
-import { useCarousel } from "@/src/components/ui/carousel";
+import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
 
 const OPTIONAL_SERVICE = "Fox eyes";
 
@@ -32,11 +32,12 @@ const RadioButtonRuleForm = (obligatoire = true) => {
   });
 };
 
-const Step3 = memo(({ userId }: { userId: string }) => {
+const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
   const { serviceSelected } = useServiceStore();
-  const { nextStep, prevStep } = useStepper();
   const { formData, setFormData } = useFormStore(); // Use Zustand store
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const { scrollNext, scrollPrev } = useCarousel();
+
+  console.log("api", api?.selectedScrollSnap());
 
   // Définition du schéma du formulaire
   const FormSchema = z.object({
@@ -59,12 +60,8 @@ const Step3 = memo(({ userId }: { userId: string }) => {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setFormData(data); // Update store with form data
-
-    toast({
-      title: "On passe à l'étape suivante !",
-      description: "",
-    });
     // nextStep();
+
     scrollNext();
   }
 
@@ -77,12 +74,16 @@ const Step3 = memo(({ userId }: { userId: string }) => {
     <FormItem>
       <FormLabel>{label}</FormLabel>
       <FormControl>
-        <RadioGroup value={field.value} onValueChange={field.onChange}>
-          <div className="flex items-center space-x-2">
+        <RadioGroup
+          className="flex gap-8"
+          value={field.value}
+          onValueChange={field.onChange}
+        >
+          <div className="flex items-center space-x-1">
             <RadioGroupItem value="yes" id={idYes} />
             <Label htmlFor={idYes}>Oui</Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             <RadioGroupItem value="no" id={idNo} />
             <Label htmlFor={idNo}>Non</Label>
           </div>
@@ -94,140 +95,144 @@ const Step3 = memo(({ userId }: { userId: string }) => {
 
   return (
     <div className="flex justify-center">
-      <Card>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex justify-center items-center gap-12 flex-col"
-            >
-              <div className="flex flex-col gap-8">
-                <FormField
-                  control={form.control}
-                  name="q1"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Avez-vous déjà porté des extensions de cil ?",
-                      "option-yes-1",
-                      "option-no-1"
-                    )
-                  }
-                />
-                <FormField
-                  control={form.control}
-                  name="q2"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Avez-vous déjà eu une réaction allergique due à des extensions de cils ?",
-                      "option-yes-2",
-                      "option-no-2"
-                    )
-                  }
-                />
-                <FormField
-                  control={form.control}
-                  name="q3"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Êtes-vous enceinte?",
-                      "option-yes-3",
-                      "option-no-3"
-                    )
-                  }
-                />
-                <FormField
-                  control={form.control}
-                  name="q4"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Êtes-vous majeure? (si non, une autorisation écrite du ou des parent(s) / tuteur(s) légal/légaux, datée et signée avec la photocopie de sa/leur pièce d'identité est requise)",
-                      "option-yes-4",
-                      "option-no-4"
-                    )
-                  }
-                />
-                <FormField
-                  control={form.control}
-                  name="q5"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)",
-                      "option-yes-5",
-                      "option-no-5"
-                    )
-                  }
-                />
-                <FormField
-                  control={form.control}
-                  name="q6"
-                  render={({ field }) =>
-                    renderRadioGroup(
-                      field,
-                      "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?",
-                      "option-yes-6",
-                      "option-no-6"
-                    )
-                  }
-                />
-
-                {serviceSelected?.name === OPTIONAL_SERVICE && (
+      {api?.selectedScrollSnap() === 2 && ( //TODO: very important to make it reusable PLEASE ! because we can change the order of the steps
+        //it's not chatGPT code :)
+        //Moreover, i'm using this to avoid mount a big form that allow to scroll down even on the other steps because of this form that is long
+        <Card>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex justify-center items-center gap-12 flex-col"
+              >
+                <div className="flex flex-col gap-8">
                   <FormField
                     control={form.control}
-                    name="q7"
+                    name="q1"
                     render={({ field }) =>
                       renderRadioGroup(
                         field,
-                        "Vous venez de sélectionner la pose Fox eyes, pour précision : Ce set va à la perfection à celles ayant des yeux en amande, avec une base ciliaire assez fournie et régulière. Pour celles ayant les yeux plus ronds / les yeux tombants / les yeux avec paupières tombantes, il est important de préciser que l'effet ne sera pas du tout le même ! Cela aura tendance à alourdir le regard au lieu de le relever, donc tout l'inverse. Etes-vous sûr(e) de convenir à la description et sélectionner cette pose ? Note : En cas de doute, vous pouvez directement contacter votre Finest Lash Artist via DM sur instagram, par mail à contact@finestlashstudio.fr ou par SMS / Whatsapp au 07 83 63 97 38 si vous voulez être conseillée au mieux avant de réserver votre créneau.",
-                        "option-yes-7",
-                        "option-no-7"
+                        "Avez-vous déjà porté des extensions de cil ?",
+                        "option-yes-1",
+                        "option-no-1"
                       )
                     }
                   />
-                )}
+                  <FormField
+                    control={form.control}
+                    name="q2"
+                    render={({ field }) =>
+                      renderRadioGroup(
+                        field,
+                        "Avez-vous déjà eu une réaction allergique due à des extensions de cils ?",
+                        "option-yes-2",
+                        "option-no-2"
+                      )
+                    }
+                  />
+                  <FormField
+                    control={form.control}
+                    name="q3"
+                    render={({ field }) =>
+                      renderRadioGroup(
+                        field,
+                        "Êtes-vous enceinte?",
+                        "option-yes-3",
+                        "option-no-3"
+                      )
+                    }
+                  />
+                  <FormField
+                    control={form.control}
+                    name="q4"
+                    render={({ field }) =>
+                      renderRadioGroup(
+                        field,
+                        "Êtes-vous majeure? (si non, une autorisation écrite du ou des parent(s) / tuteur(s) légal/légaux, datée et signée avec la photocopie de sa/leur pièce d'identité est requise)",
+                        "option-yes-4",
+                        "option-no-4"
+                      )
+                    }
+                  />
+                  <FormField
+                    control={form.control}
+                    name="q5"
+                    render={({ field }) =>
+                      renderRadioGroup(
+                        field,
+                        "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)",
+                        "option-yes-5",
+                        "option-no-5"
+                      )
+                    }
+                  />
+                  <FormField
+                    control={form.control}
+                    name="q6"
+                    render={({ field }) =>
+                      renderRadioGroup(
+                        field,
+                        "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?",
+                        "option-yes-6",
+                        "option-no-6"
+                      )
+                    }
+                  />
 
-                <FormField
-                  control={form.control}
-                  name="q8"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Acceptez-vous de suivre le règlement intérieur ?
-                      </FormLabel>
-                      <FormControl>
-                        <Checkbox
-                          className="ml-8 w-6 h-6"
-                          id="acceptRules"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  {serviceSelected?.name === OPTIONAL_SERVICE && (
+                    <FormField
+                      control={form.control}
+                      name="q7"
+                      render={({ field }) =>
+                        renderRadioGroup(
+                          field,
+                          "Vous venez de sélectionner la pose Fox eyes, pour précision : Ce set va à la perfection à celles ayant des yeux en amande, avec une base ciliaire assez fournie et régulière. Pour celles ayant les yeux plus ronds / les yeux tombants / les yeux avec paupières tombantes, il est important de préciser que l'effet ne sera pas du tout le même ! Cela aura tendance à alourdir le regard au lieu de le relever, donc tout l'inverse. Etes-vous sûr(e) de convenir à la description et sélectionner cette pose ? Note : En cas de doute, vous pouvez directement contacter votre Finest Lash Artist via DM sur instagram, par mail à contact@finestlashstudio.fr ou par SMS / Whatsapp au 07 83 63 97 38 si vous voulez être conseillée au mieux avant de réserver votre créneau.",
+                          "option-yes-7",
+                          "option-no-7"
+                        )
+                      }
+                    />
                   )}
-                />
-              </div>
-              <div className="flex gap-2 m-2">
-                <Button
-                  disabled={false}
-                  onClick={prevStep}
-                  size="sm"
-                  variant="secondary"
-                >
-                  Prev
-                </Button>
-                <Button size="sm" type="submit">
-                  Suivant
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+
+                  <FormField
+                    control={form.control}
+                    name="q8"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Acceptez-vous de suivre le règlement intérieur ?
+                        </FormLabel>
+                        <FormControl>
+                          <Checkbox
+                            className="ml-8 w-6 h-6"
+                            id="acceptRules"
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="flex gap-2 m-2">
+                  <Button
+                    disabled={false}
+                    onClick={scrollPrev}
+                    size="sm"
+                    variant="secondary"
+                  >
+                    Prev
+                  </Button>
+                  <Button size="sm" type="submit">
+                    Suivant
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 });

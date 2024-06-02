@@ -42,7 +42,6 @@ const SelectBooking = ({
   userId: string;
   daySelectedManager: [Date | undefined, (date: Date | undefined) => void];
 }) => {
-  const { toast } = useToast();
   const [daySelected, setDaySelected] = daySelectedManager;
 
   const [isOpened, setIsOpened] = useState(false);
@@ -52,7 +51,6 @@ const SelectBooking = ({
   const { serviceSelected } = useServiceStore();
   const { setBookingSelected } = useBookingsStore();
 
-  const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   const { setLoading } = useLoad();
@@ -106,7 +104,8 @@ const SelectBooking = ({
                       <Button
                         onClick={() => {
                           setBookingSelected(booking);
-                          // nextStep();
+                          console.log("booking", booking);
+                          setIsOpened(false);
                           scrollNext();
                         }}
                       >

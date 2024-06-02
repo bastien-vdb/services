@@ -14,11 +14,14 @@ import Step3 from "./SelectService/Step3";
 import Step5 from "./SelectService/Step5";
 import {
   Carousel,
+  CarouselApi,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/src/components/ui/carousel";
+import { useEffect, useState } from "react";
+import { Badge } from "@/src/components/ui/badge";
 
 const steps = [
   {
@@ -38,23 +41,53 @@ export default function StepperService({
   services: Service[];
   userId: string;
 }) {
-  const stepContent = [
-    <Step1 services={services} />,
-    <Step2 />,
-    <Step3 userId={userId} />,
-    <Step4 userId={userId} />,
-    <Step5 userId={userId} />,
-  ];
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
+
   return (
     <div className="flex w-full flex-col gap-4 p-2">
-      <Carousel>
+      <Carousel
+        setApi={setApi}
+        opts={{
+          watchDrag: false,
+        }}
+      >
+        <div className="flex justify-center mb-6 sm:mb-20">
+          <Badge variant="outline" className="text-sm">
+            Etape:{current}/{count}
+          </Badge>
+        </div>
         <CarouselContent>
-          {stepContent.map((f) => (
-            <CarouselItem>{f}</CarouselItem>
-          ))}
+          <CarouselItem>
+            <Step1 services={services} />
+          </CarouselItem>
+          <CarouselItem>
+            <Step2 />
+          </CarouselItem>
+          <CarouselItem>
+            <Step3 userId={userId} api={api} />
+          </CarouselItem>
+          <CarouselItem>
+            <Step4 userId={userId} />
+          </CarouselItem>
+          <CarouselItem>
+            <Step5 userId={userId} />
+          </CarouselItem>
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
       </Carousel>
     </div>
   );

@@ -25,6 +25,7 @@ import {
 import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -40,6 +41,10 @@ function SelectService({ services }: { services?: Service[] }) {
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
   const { orientation, scrollNext, canScrollNext } = useCarousel();
+
+  useEffect(() => {
+    console.log("orientation", orientation);
+  }, [orientation]);
 
   const FormSchema = z.object({
     service: z.string({
@@ -60,82 +65,65 @@ function SelectService({ services }: { services?: Service[] }) {
     );
 
     serviceSelected && changeServiceSelected(serviceSelected);
-
-    toast({
-      title: "Vous avez sélectionné",
-      description: serviceSelected?.name,
-    });
     scrollNext();
     // nextStep();
   }
 
   return (
-    <Card className="border-none">
-      <CardContent className="border-none">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex justify-center items-center flex-col"
-          >
-            <FormField
-              control={form.control}
-              name="service"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Choisir sa prestation</FormLabel>
-                  <Select
-                    onValueChange={(value) => field.onChange(value)}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="sm:w-[800px]">
-                        <SelectValue placeholder="Que souhaitez vous faire ?" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectLabel>Prestations</SelectLabel>
-                        {services?.map((service) => (
-                          <SelectItem
-                            key={service.id} // Added key here
-                            value={service.id}
-                            className="w-auto cursor-pointer"
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            {service.name}
-                            <span className="ml-2 text-[#1246d6]">
-                              - {service.price / 100} €
-                            </span>
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Plus qu'une étape ! </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className="flex gap-2 m-2">
-              <Button
-                disabled={true}
-                onClick={prevStep}
-                size="sm"
-                variant="secondary"
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex justify-center items-center flex-col"
+      >
+        <FormField
+          control={form.control}
+          name="service"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Choisir sa prestation</FormLabel>
+              <Select
+                onValueChange={(value) => field.onChange(value)}
+                defaultValue={field.value}
               >
-                Prev
-              </Button>
-              <Button size="sm" type="submit">
-                Suivant
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <FormControl>
+                  <SelectTrigger className="sm:w-[800px]">
+                    <SelectValue placeholder="Que souhaitez vous faire ?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Prestations</SelectLabel>
+                    {services?.map((service) => (
+                      <SelectItem
+                        key={service.id} // Added key here
+                        value={service.id}
+                        className="w-auto cursor-pointer"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {service.name}
+                        <span className="ml-2 text-[#1246d6]">
+                          - {service.price / 100} €
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormDescription>Plus qu'une étape ! </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div className="flex gap-2 m-2">
+          <Button size="sm" type="submit">
+            Suivant
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }
 

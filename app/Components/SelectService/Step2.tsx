@@ -42,7 +42,7 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 function Step2() {
   const { changeOptionSelected, optionSelected } = useServiceStore();
   const { nextStep, prevStep } = useStepper();
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const { orientation, scrollNext, scrollPrev } = useCarousel();
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -59,10 +59,6 @@ function Step2() {
       });
     } else changeOptionSelected(undefined);
 
-    toast({
-      title: "On passe à l'étape suivante !",
-      description: "",
-    });
     // nextStep();
     scrollNext();
   }
@@ -120,20 +116,20 @@ function Step2() {
             </FormItem>
           )}
         />
-        <div className="flex gap-2 m-2">
-          <Button
-            disabled={false}
-            onClick={prevStep}
-            size="sm"
-            variant="secondary"
-          >
-            Prev
-          </Button>
-          <Button size="sm" type="submit">
-            Suivant
-          </Button>
-        </div>
       </form>
+      <div className="flex justify-center gap-2 m-2">
+        <Button
+          onClick={scrollPrev}
+          disabled={false}
+          size="sm"
+          variant="secondary"
+        >
+          Prev
+        </Button>
+        <Button size="sm" onClick={form.handleSubmit(onSubmit)}>
+          Suivant
+        </Button>
+      </div>
     </Form>
   );
 }

@@ -13,6 +13,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
 import useFormStore from "./useFormStore";
+import { useCarousel } from "@/src/components/ui/carousel";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -38,8 +39,7 @@ const Step5 = memo(({ userId }: { userId: string }) => {
   const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
 
-  if (!bookingSelected)
-    return <LoadingSpinner className="w-20 h-20 animate-spin" />;
+  const { scrollPrev } = useCarousel();
 
   const handleCreatePayment = async (
     booking: Booking,
@@ -84,8 +84,11 @@ const Step5 = memo(({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
-    handleCreatePayment(bookingSelected);
-  }, []);
+    bookingSelected && handleCreatePayment(bookingSelected);
+  }, [bookingSelected]);
+
+  if (!bookingSelected)
+    return <LoadingSpinner className="w-20 h-20 animate-spin" />;
 
   return (
     <>
@@ -139,7 +142,7 @@ const Step5 = memo(({ userId }: { userId: string }) => {
       <div className="flex justify-center gap-2 m-2 gap-10">
         <Button
           disabled={false}
-          onClick={prevStep}
+          onClick={scrollPrev}
           size="sm"
           variant="secondary"
         >
