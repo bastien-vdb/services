@@ -44,13 +44,6 @@ const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
     q1: RadioButtonRuleForm(false),
     q2: RadioButtonRuleForm(false),
     q3: RadioButtonRuleForm(false),
-    q4: RadioButtonRuleForm(false),
-    q5: RadioButtonRuleForm(false),
-    q6: RadioButtonRuleForm(false),
-    q7: RadioButtonRuleForm(serviceSelected?.name === OPTIONAL_SERVICE),
-    q8: z.boolean().refine((val) => val === true, {
-      message: "Veuillez accepter le règlement",
-    }),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -141,78 +134,6 @@ const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                         "option-no-3"
                       )
                     }
-                  />
-                  <FormField
-                    control={form.control}
-                    name="q4"
-                    render={({ field }) =>
-                      renderRadioGroup(
-                        field,
-                        "Êtes-vous majeure? (si non, une autorisation écrite du ou des parent(s) / tuteur(s) légal/légaux, datée et signée avec la photocopie de sa/leur pièce d'identité est requise)",
-                        "option-yes-4",
-                        "option-no-4"
-                      )
-                    }
-                  />
-                  <FormField
-                    control={form.control}
-                    name="q5"
-                    render={({ field }) =>
-                      renderRadioGroup(
-                        field,
-                        "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)",
-                        "option-yes-5",
-                        "option-no-5"
-                      )
-                    }
-                  />
-                  <FormField
-                    control={form.control}
-                    name="q6"
-                    render={({ field }) =>
-                      renderRadioGroup(
-                        field,
-                        "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?",
-                        "option-yes-6",
-                        "option-no-6"
-                      )
-                    }
-                  />
-
-                  {serviceSelected?.name === OPTIONAL_SERVICE && (
-                    <FormField
-                      control={form.control}
-                      name="q7"
-                      render={({ field }) =>
-                        renderRadioGroup(
-                          field,
-                          "Vous venez de sélectionner la pose Fox eyes, pour précision : Ce set va à la perfection à celles ayant des yeux en amande, avec une base ciliaire assez fournie et régulière. Pour celles ayant les yeux plus ronds / les yeux tombants / les yeux avec paupières tombantes, il est important de préciser que l'effet ne sera pas du tout le même ! Cela aura tendance à alourdir le regard au lieu de le relever, donc tout l'inverse. Etes-vous sûr(e) de convenir à la description et sélectionner cette pose ? Note : En cas de doute, vous pouvez directement contacter votre Finest Lash Artist via DM sur instagram, par mail à contact@finestlashstudio.fr ou par SMS / Whatsapp au 07 83 63 97 38 si vous voulez être conseillée au mieux avant de réserver votre créneau.",
-                          "option-yes-7",
-                          "option-no-7"
-                        )
-                      }
-                    />
-                  )}
-
-                  <FormField
-                    control={form.control}
-                    name="q8"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Acceptez-vous de suivre le règlement intérieur ?
-                        </FormLabel>
-                        <FormControl>
-                          <Checkbox
-                            className="ml-8 w-6 h-6"
-                            id="acceptRules"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
                   />
                 </div>
                 <div className="flex gap-2 m-2">
