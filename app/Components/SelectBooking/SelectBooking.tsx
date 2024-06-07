@@ -93,7 +93,7 @@ const SelectBooking = ({
                 Selectionner un rendez-vous.
               </DrawerDescription>
             </DrawerHeader>
-            <ul className="h-96 flex gap-4 justify-center flex-wrap items-top">
+            <ul className="h-96 flex gap-4 justify-center flex-wrap">
               {slots.length > 0 ? (
                 slots
                   ?.sort(

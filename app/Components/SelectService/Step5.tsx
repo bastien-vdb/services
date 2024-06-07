@@ -13,7 +13,7 @@ import { Button } from "@/src/components/ui/button";
 import { useStepper } from "@/src/components/stepper";
 import { useCarousel } from "@/src/components/ui/carousel";
 
-const Step4 = memo(({ userId }: { userId: string }) => {
+const Step5 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
   const { orientation, scrollNext, scrollPrev } = useCarousel();
@@ -25,7 +25,10 @@ const Step4 = memo(({ userId }: { userId: string }) => {
           fromDate={new Date()}
           mode="single"
           selected={undefined}
-          onSelect={setDaySelected}
+          onSelect={(d) => {
+            setDaySelected(d);
+            window.scrollTo(0, 0);
+          }}
           className="p-10"
         />
       </div>
@@ -45,4 +48,4 @@ const Step4 = memo(({ userId }: { userId: string }) => {
   );
 });
 
-export default Step4;
+export default Step5;

@@ -23,7 +23,7 @@ const stripePromise = loadStripe(
 
 const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un fichier settings
 
-const Step5 = memo(({ userId }: { userId: string }) => {
+const Step6 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
   const { formData } = useFormStore(); // Use Zustand store
   const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
@@ -142,7 +142,10 @@ const Step5 = memo(({ userId }: { userId: string }) => {
       <div className="flex justify-center gap-2 m-2 gap-10">
         <Button
           disabled={false}
-          onClick={scrollPrev}
+          onClick={(d) => {
+            scrollPrev();
+            window.scrollTo(0, 0);
+          }}
           size="sm"
           variant="secondary"
         >
@@ -153,4 +156,4 @@ const Step5 = memo(({ userId }: { userId: string }) => {
   );
 });
 
-export default Step5;
+export default Step6;
