@@ -126,7 +126,11 @@ function Step2() {
         >
           Prev
         </Button>
-        <Button size="sm" onClick={form.handleSubmit(onSubmit)}>
+        <Button
+          className="bg-[#CCB3AE] text-black"
+          size="sm"
+          onClick={form.handleSubmit(onSubmit)}
+        >
           Suivant
         </Button>
       </div>

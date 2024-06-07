@@ -93,7 +93,7 @@ const SelectBooking = ({
                 Selectionner un rendez-vous.
               </DrawerDescription>
             </DrawerHeader>
-            <ul className="h-96 flex gap-4 justify-center flex-wrap">
+            <ul className="p-10 flex gap-4 justify-center flex-wrap">
               {slots.length > 0 ? (
                 slots
                   ?.sort(
@@ -102,9 +102,9 @@ const SelectBooking = ({
                   ?.map((booking, key) => (
                     <li key={key}>
                       <Button
+                        className="bg-[#CCB3AE] text-black"
                         onClick={() => {
                           setBookingSelected(booking);
-                          console.log("booking", booking);
                           setIsOpened(false);
                           scrollNext();
                         }}
@@ -122,7 +122,9 @@ const SelectBooking = ({
         )}
         <DrawerFooter>
           <DrawerClose onClick={() => setIsOpened(false)}>
-            <Button variant="outline">Annuler</Button>
+            <Button className="mb-10" variant="outline">
+              Annuler
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

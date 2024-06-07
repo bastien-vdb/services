@@ -118,7 +118,7 @@ function SelectService({ services }: { services?: Service[] }) {
           )}
         />
         <div className="flex gap-2 m-2">
-          <Button size="sm" type="submit">
+          <Button className="bg-[#CCB3AE] text-black" size="sm" type="submit">
             Suivant
           </Button>
         </div>

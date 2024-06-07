@@ -145,7 +145,11 @@ const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                   >
                     Prev
                   </Button>
-                  <Button size="sm" type="submit">
+                  <Button
+                    className="bg-[#CCB3AE] text-black"
+                    size="sm"
+                    type="submit"
+                  >
                     Suivant
                   </Button>
                 </div>
