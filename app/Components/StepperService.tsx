@@ -52,7 +52,7 @@ export default function StepperService({
       return;
     }
 
-    setCount(api.scrollSnapList().length);
+    setCount(6);
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
