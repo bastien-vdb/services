@@ -75,7 +75,6 @@ const SelectBooking = ({
 
   return (
     <Drawer
-      direction="top"
       open={isOpened}
       onClose={() => {
         setIsOpened(false);
