@@ -102,7 +102,7 @@ const SelectBooking = ({
                   ?.map((booking, key) => (
                     <li key={key}>
                       <Button
-                        className="bg-[#CCB3AE] text-black text-xs sm:text-sm"
+                        className="bg-[#CCB3AE] p-2 sm:p-4 text-black text-xs sm:text-sm"
                         onClick={() => {
                           setBookingSelected(booking);
                           setIsOpened(false);
@@ -122,9 +122,7 @@ const SelectBooking = ({
         )}
         <DrawerFooter>
           <DrawerClose onClick={() => setIsOpened(false)}>
-            <Button className="mb-10" variant="outline">
-              Annuler
-            </Button>
+            <Button variant="outline">Annuler</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
