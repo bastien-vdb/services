@@ -93,7 +93,7 @@ const SelectBooking = ({
                 Selectionner un rendez-vous.
               </DrawerDescription>
             </DrawerHeader>
-            <ul className="p-10 flex gap-4 justify-center flex-wrap">
+            <ul className="sm:p-10 flex gap-4 justify-center flex-wrap">
               {slots.length > 0 ? (
                 slots
                   ?.sort(
@@ -102,7 +102,7 @@ const SelectBooking = ({
                   ?.map((booking, key) => (
                     <li key={key}>
                       <Button
-                        className="bg-[#CCB3AE] text-black"
+                        className="bg-[#CCB3AE] text-black text-xs sm:text-sm"
                         onClick={() => {
                           setBookingSelected(booking);
                           setIsOpened(false);
