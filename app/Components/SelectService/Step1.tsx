@@ -1,13 +1,10 @@
 "use client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
-import { Card, CardContent } from "@/src/components/ui/card";
 import { useCarousel } from "@/src/components/ui/carousel";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -22,7 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
 import { useEffect } from "react";
@@ -39,8 +35,8 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 
 function SelectService({ services }: { services?: Service[] }) {
   const { changeServiceSelected, serviceSelected } = useServiceStore();
-  const { nextStep, prevStep } = useStepper();
-  const { orientation, scrollNext, canScrollNext } = useCarousel();
+  const { changeOptionSelected } = useServiceStore();
+  const { orientation, scrollNext } = useCarousel();
 
   useEffect(() => {
     console.log("orientation", orientation);
@@ -50,12 +46,16 @@ function SelectService({ services }: { services?: Service[] }) {
     service: z.string({
       required_error: "Merci de sélectionner une prestation.",
     }),
+    option: z.string({
+      required_error: "Champ obligatoire.",
+    }),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       service: serviceSelected?.id || undefined,
+      option: undefined,
     },
   });
 
@@ -65,15 +65,22 @@ function SelectService({ services }: { services?: Service[] }) {
     );
 
     serviceSelected && changeServiceSelected(serviceSelected);
+
+    if (data.service === "option-depose") {
+      changeOptionSelected({
+        name: data.service,
+        price: 2000,
+      });
+    } else changeOptionSelected(undefined);
+
     scrollNext();
-    // nextStep();
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex justify-center items-center flex-col"
+        className="flex justify-center items-center flex-col gap-10"
       >
         <FormField
           control={form.control}
@@ -104,7 +111,7 @@ function SelectService({ services }: { services?: Service[] }) {
                         }}
                       >
                         {service.name}
-                        <span className="ml-2 text-[#1246d6]">
+                        <span className="ml-2 text-green-600">
                           - {service.price / 100} €
                         </span>
                       </SelectItem>
@@ -112,13 +119,72 @@ function SelectService({ services }: { services?: Service[] }) {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <FormDescription>Plus qu'une étape ! </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="option"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Option: Dépose</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                  // form.handleSubmit(onSubmit)(); // Trigger the form submission
+                }}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger className="sm:w-[800px]">
+                    <SelectValue placeholder="Avec dépose ?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      value={"option-sans-depose"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Sans dépose{" "}
+                      <span className="ml-2 text-green-600">+ 0 € </span>
+                    </SelectItem>
+                    <SelectItem
+                      value={"option-avec-depose"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Oui <span className="ml-2 text-green-600">+ 20 € </span>
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex gap-2 m-2">
-          <Button className="bg-[#CCB3AE] text-black" size="sm" type="submit">
+          <Button
+            className="sm:w-[250px]"
+            disabled
+            size="sm"
+            variant="secondary"
+          >
+            Retour
+          </Button>
+          <Button
+            className="bg-[#CCB3AE] text-black sm:w-[250px]"
+            size="sm"
+            type="submit"
+          >
             Suivant
           </Button>
         </div>

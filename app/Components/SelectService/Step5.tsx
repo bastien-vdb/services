@@ -20,7 +20,7 @@ const Step5 = memo(({ userId }: { userId: string }) => {
 
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex justify-center flex-col justify-center items-center">
         <Calendar
           fromDate={new Date()}
           mode="single"
@@ -31,17 +31,18 @@ const Step5 = memo(({ userId }: { userId: string }) => {
           }}
           className="p-10"
         />
-      </div>
 
-      <div className="flex gap-2 m-2 justify-center">
-        <Button
-          disabled={false}
-          onClick={scrollPrev}
-          size="sm"
-          variant="secondary"
-        >
-          Prev
-        </Button>
+        <div className="flex gap-2 m-2">
+          <Button
+            className="sm:w-[250px]"
+            disabled={false}
+            onClick={scrollPrev}
+            size="sm"
+            variant="secondary"
+          >
+            Retour
+          </Button>
+        </div>
       </div>
       <SelectBooking userId={userId} daySelectedManager={daySelectedManager} />
     </>

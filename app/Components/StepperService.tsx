@@ -1,40 +1,21 @@
-import {
-  Step,
-  type StepItem,
-  Stepper,
-  useStepper,
-} from "@/src/components/stepper";
+import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
 import { Service } from "@prisma/client";
 import Step1 from "./SelectService/Step1";
-import ServiceCalendar from "./Calendar/ServiceCalendar";
 import Step2 from "./SelectService/Step2";
 
+import { Badge } from "@/src/components/ui/badge";
 import {
   Carousel,
   CarouselApi,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/src/components/ui/carousel";
 import { useEffect, useState } from "react";
-import { Badge } from "@/src/components/ui/badge";
 import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
 import Step5 from "./SelectService/Step5";
 import Step6 from "./SelectService/Step6";
-
-const steps = [
-  {
-    label: "Choisir sa prestation",
-    description: "Choisissez votre prestation",
-  },
-  { label: "Option" },
-  { label: "Informations" },
-  { label: "Choisir son créneau" },
-  { label: "Paiement" },
-] satisfies StepItem[];
 
 export default function StepperService({
   services,
@@ -52,7 +33,7 @@ export default function StepperService({
       return;
     }
 
-    setCount(6);
+    setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
@@ -76,9 +57,6 @@ export default function StepperService({
         <CarouselContent>
           <CarouselItem>
             <Step1 services={services} />
-          </CarouselItem>
-          <CarouselItem>
-            <Step2 />
           </CarouselItem>
           <CarouselItem>
             <Step3 userId={userId} api={api} />

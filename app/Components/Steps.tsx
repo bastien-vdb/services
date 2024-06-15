@@ -1,20 +1,7 @@
 "use client";
-import ServiceCalendar from "@/app/Components/Calendar/ServiceCalendar";
-import SelectService from "./SelectService/SelectService";
-import { Button } from "@/src/components/ui/button";
-import { useCallback } from "react";
+import { Card, CardContent } from "@/src/components/ui/card";
 import { Service } from "@prisma/client";
-import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import StepperService from "./StepperService";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
-import Step2 from "./SelectService/Step2";
 
 const Steps = ({
   services,

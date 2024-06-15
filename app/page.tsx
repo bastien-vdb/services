@@ -1,14 +1,12 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import Steps from "@/app/Components/Steps";
+import Header from "@/src/components/Header/Header";
+import useCheckStripe from "@/src/hooks/useCheckStripe";
 import useServerData from "@/src/hooks/useServerData";
 import { Service, User } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import { Hero } from "./Components/Hero/Hero";
 import Subscribe from "./Components/Subscribe/Subscribe";
-import useCheckStripe from "@/src/hooks/useCheckStripe";
-import Header from "@/src/components/Header/Header";
-import useSubscribe from "./Components/Subscribe/useSubscribe";
-import { Button } from "@/src/components/ui/button";
+import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 
 async function Home() {
   const session = await getServerSession(authOptions);
@@ -29,13 +27,12 @@ async function Home() {
   const user: User[] = await useServerData("user", { id: userId });
 
   const { stripeAccount } = user[0];
-  let statusAccount: boolean = false;
-  if (stripeAccount) {
-    const account = await stripe.accounts.retrieve(stripeAccount);
-    statusAccount = account.details_submitted;
-  }
 
-  if (!statusAccount || !stripeAccount)
+  const statusAccount = stripeAccount
+    ? (await stripe.accounts.retrieve(stripeAccount)).details_submitted
+    : null;
+
+  if (!statusAccount)
     return <Subscribe userId={userId} stripeAccount={stripeAccount} />;
 
   //**** Si l'utilisateur est connecté et a finalisé son inscription à Stripe ****

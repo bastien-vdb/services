@@ -91,7 +91,7 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
 
   return (
     <div className="flex justify-center">
-      {api?.selectedScrollSnap() === 3 && ( //TODO: very important to make it reusable PLEASE ! because we can change the order of the steps
+      {api?.selectedScrollSnap() === 2 && ( //TODO: very important to make it reusable PLEASE ! because we can change the order of the steps
         //it's not chatGPT code :)
         //Moreover, i'm using this to avoid mount a big form that allow to scroll down even on the other steps because of this form that is long
         <Card>
@@ -165,15 +165,16 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                 </div>
                 <div className="flex gap-2 m-2">
                   <Button
+                    className="sm:w-[250px]"
                     disabled={false}
                     onClick={scrollPrev}
                     size="sm"
                     variant="secondary"
                   >
-                    Prev
+                    Retour
                   </Button>
                   <Button
-                    className="bg-[#CCB3AE] text-black"
+                    className="bg-[#CCB3AE] text-black sm:w-[250px]"
                     size="sm"
                     type="submit"
                   >
