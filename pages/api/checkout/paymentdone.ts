@@ -82,7 +82,6 @@ export default async function handler(
           .tz("Europe/Paris")
           .format("YYYY-MM-DD HH:mm:ss");
 
-        // Note: customer_details may not be available in payment_intent events
         const customerDetails = {
           name: paymentIntent.shipping?.name ?? "NC",
           email: paymentIntent.receipt_email ?? "NC",
