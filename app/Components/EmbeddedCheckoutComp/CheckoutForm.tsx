@@ -78,15 +78,7 @@ export default function CheckoutForm({ clientSecret }) {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement
-        id="payment-element"
-        options={{
-          type: "accordions",
-          defaultCollapsed: false,
-          radios: true,
-          spacedAccordionItems: false,
-        }}
-      />
+      <PaymentElement id="payment-element" />
       <Button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? (

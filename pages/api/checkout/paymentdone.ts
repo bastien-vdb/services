@@ -49,17 +49,24 @@ export default async function handler(
   if (signature === undefined)
     throw new Error("Stripe signature is not defined");
 
-  const webhookEvent = stripe.webhooks.constructEvent(
-    buf,
-    signature,
-    process.env.STRIPE_WEBHOOK_SECRET
-  );
+  let webhookEvent;
+  try {
+    webhookEvent = stripe.webhooks.constructEvent(
+      buf,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error("Webhook signature verification failed.", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
 
   try {
     switch (webhookEvent.type) {
       case "payment_intent.succeeded": {
-        const session = webhookEvent.data.object.metadata as metadataType;
-        const customerDetails = webhookEvent.data.object.customer_details;
+        const paymentIntent = webhookEvent.data.object;
+        const metadata = paymentIntent.metadata as metadataType;
+
         const {
           startTime,
           endTime,
@@ -68,54 +75,45 @@ export default async function handler(
           serviceName,
           addedOption,
           formData,
-        } = session;
+        } = metadata;
 
         const startDateTmz = moment
           .utc(startTime)
           .tz("Europe/Paris")
           .format("YYYY-MM-DD HH:mm:ss");
 
+        // Note: customer_details may not be available in payment_intent events
+        const customerDetails = {
+          name: paymentIntent.shipping?.name ?? "NC",
+          email: paymentIntent.receipt_email ?? "NC",
+          phone: paymentIntent.shipping?.phone ?? "NC",
+          address: paymentIntent.shipping?.address ?? {
+            city: "NC",
+            country: "NC",
+            state: "NC",
+            zip: "NC",
+            line1: "NC",
+            line2: "NC",
+          },
+        };
+
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),
           serviceId,
           userId,
-          amountPayed: webhookEvent.data.object.amount_total,
+          amountPayed: paymentIntent.amount,
           form: formData,
-          customerInfo: {
-            name: customerDetails?.name ? customerDetails.name : "NC",
-            email: customerDetails?.email ? customerDetails.email : "NC",
-            phone: customerDetails?.phone ? customerDetails.phone : "NC",
-            address: {
-              city: customerDetails?.address?.city
-                ? customerDetails.address.city
-                : "NC",
-              country: customerDetails?.address?.country
-                ? customerDetails.address.country
-                : "NC",
-              state: customerDetails?.address?.state
-                ? customerDetails.address.state
-                : "NC",
-              zip: customerDetails?.address?.postal_code
-                ? customerDetails.address.postal_code
-                : "NC",
-              line1: customerDetails?.address?.line1
-                ? customerDetails.address.line1
-                : "NC",
-              line2: customerDetails?.address?.line2
-                ? customerDetails.address.line2
-                : "NC",
-            },
-          },
+          customerInfo: customerDetails,
         });
 
-        if (bookingCreated && customerDetails?.email) {
+        if (bookingCreated && customerDetails.email !== "NC") {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [customerDetails.email],
             subject: `Rendez-vous ${serviceName} en attente.`,
             react: EmailRdvBooked({
-              customerName: customerDetails.name ?? "",
+              customerName: customerDetails.name,
               bookingStartTime: startDateTmz,
               serviceName,
               employeeName: "Natacha S",
@@ -123,13 +121,13 @@ export default async function handler(
             }),
           });
         }
-        if (!bookingCreated && customerDetails?.email) {
+        if (!bookingCreated && customerDetails.email !== "NC") {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [String(customerDetails.email)],
-            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
+            to: [customerDetails.email],
+            subject: `${customerDetails.name} Votre rendez-vous n'a pas pu être réservé`,
             react: EmailNotBooked({
-              customerName: customerDetails.name ?? "",
+              customerName: customerDetails.name,
               bookingStartTime: startDateTmz,
             }),
           });
@@ -137,23 +135,26 @@ export default async function handler(
         break;
       }
 
-      case "checkout.session.expired": {
-        const session = webhookEvent.data.object.metadata as metadataType;
-        const customerDetails = webhookEvent.data.object.customer_details;
-        const { startTime } = session;
+      case "payment_intent.payment_failed": {
+        const paymentIntent = webhookEvent.data.object;
+        const metadata = paymentIntent.metadata as metadataType;
+
+        const { startTime } = metadata;
 
         const startDateTmz = moment
           .utc(startTime)
           .tz("Europe/Paris")
           .format("YYYY-MM-DD HH:mm:ss");
 
-        if (customerDetails) {
+        const customerEmail = paymentIntent.receipt_email ?? "NC";
+
+        if (customerEmail !== "NC") {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [String(customerDetails.email)],
-            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
+            to: [customerEmail],
+            subject: `Votre rendez-vous n'a pas pu être réservé`,
             react: EmailNotBooked({
-              customerName: customerDetails.name ?? "",
+              customerName: paymentIntent.shipping?.name ?? "Client",
               bookingStartTime: startDateTmz,
             }),
           });
@@ -161,30 +162,8 @@ export default async function handler(
         break;
       }
 
-      case "checkout.session.async_payment_failed": {
-        const session = webhookEvent.data.object.metadata as metadataType;
-        const customerDetails = webhookEvent.data.object.customer_details;
-        const { startTime } = session;
-
-        const startDateTmz = moment
-          .utc(startTime)
-          .tz("Europe/Paris")
-          .format("YYYY-MM-DD HH:mm:ss");
-
-        if (customerDetails) {
-          await useSendEmail({
-            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [String(customerDetails.email)],
-            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
-            react: EmailNotBooked({
-              customerName: customerDetails.name ?? "",
-              bookingStartTime: startDateTmz,
-            }),
-          });
-        }
-        break;
-      }
       default:
+        console.log(`Unhandled event type ${webhookEvent.type}`);
     }
     res.status(200).send("Webhook received");
   } catch (error) {
