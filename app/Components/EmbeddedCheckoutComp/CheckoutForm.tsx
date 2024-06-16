@@ -3,6 +3,7 @@ import {
   PaymentElement,
   useStripe,
   useElements,
+  AddressElement,
 } from "@stripe/react-stripe-js";
 import { Button } from "@/src/components/ui/button";
 
@@ -57,6 +58,11 @@ export default function CheckoutForm({ clientSecret }) {
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
+        payment_method_data: {
+          billing_details: {
+            email: "bastien.deboisrolin@gmail.com",
+          },
+        },
         // Make sure to change this to your payment completion page
         return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
       },
@@ -79,6 +85,7 @@ export default function CheckoutForm({ clientSecret }) {
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement id="payment-element" />
+      <AddressElement options={{ mode: "billing" }} />
       <Button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? (
