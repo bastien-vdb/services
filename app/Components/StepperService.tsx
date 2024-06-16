@@ -2,7 +2,6 @@ import { useStepper } from "@/src/components/stepper";
 import { Button } from "@/src/components/ui/button";
 import { Service } from "@prisma/client";
 import Step1 from "./SelectService/Step1";
-import Step2 from "./SelectService/Step2";
 
 import { Badge } from "@/src/components/ui/badge";
 import {

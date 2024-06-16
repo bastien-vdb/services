@@ -1,22 +1,13 @@
-import { memo, useEffect, useState } from "react";
-import { Calendar } from "@/src/components/ui/calendar";
-import SelectBooking from "../SelectBooking/SelectBooking";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/src/components/ui/card";
 import { Button } from "@/src/components/ui/button";
-import { useStepper } from "@/src/components/stepper";
+import { Calendar } from "@/src/components/ui/calendar";
 import { useCarousel } from "@/src/components/ui/carousel";
+import { memo, useState } from "react";
+import SelectBooking from "../SelectBooking/SelectBooking";
 
 const Step5 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
-  const { orientation, scrollNext, scrollPrev } = useCarousel();
+  const { orientation, scrollPrev } = useCarousel();
 
   return (
     <>

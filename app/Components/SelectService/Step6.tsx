@@ -25,12 +25,7 @@ const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un f
 
 const Step6 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
-  const { formData } = useFormStore(); // Use Zustand store
-  const { nextStep, prevStep, resetSteps, hasCompletedAllSteps } = useStepper();
-
-  useEffect(() => {
-    console.log("formData", formData);
-  }, [formData]);
+  const { formData } = useFormStore();
 
   const [clientSecret, setClientSecret] = useState("");
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
@@ -50,7 +45,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
 
     try {
       const paymentPage = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/checkout_sessions`,
+        `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
         {
           method: "POST",
           headers: {
@@ -70,6 +65,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
           }),
         }
       );
+      console.log("paymentPage", paymentPage);
       const paymentPageJson = await paymentPage.json();
       setClientSecret(paymentPageJson.clientSecret);
     } catch (error) {
@@ -86,9 +82,6 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   useEffect(() => {
     bookingSelected && handleCreatePayment(bookingSelected);
   }, [bookingSelected]);
-
-  if (!bookingSelected)
-    return <LoadingSpinner className="w-20 h-20 animate-spin" />;
 
   return (
     <>
@@ -140,17 +133,20 @@ const Step6 = memo(({ userId }: { userId: string }) => {
         )}
       </div>
       <div className="flex justify-center gap-2 m-2 gap-10">
-        <Button
-          disabled={false}
-          onClick={(d) => {
-            scrollPrev();
-            window.scrollTo(0, 0);
-          }}
-          size="sm"
-          variant="secondary"
-        >
-          Prev
-        </Button>
+        <div className="flex gap-2 m-2">
+          <Button
+            className="sm:w-[250px]"
+            disabled={false}
+            onClick={() => {
+              scrollPrev();
+              window.scrollTo(0, 0);
+            }}
+            size="sm"
+            variant="secondary"
+          >
+            Retour
+          </Button>
+        </div>
       </div>
     </>
   );

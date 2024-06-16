@@ -1,8 +1,8 @@
-import moment from "moment";
-import { Button } from "@/src/components/ui/button";
-import { useEffect, useState } from "react";
-import { Availability, Booking, Service } from "@prisma/client";
+import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
+import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import { Button } from "@/src/components/ui/button";
+import { useCarousel } from "@/src/components/ui/carousel";
 import {
   Drawer,
   DrawerClose,
@@ -13,27 +13,11 @@ import {
   DrawerTitle,
 } from "@/src/components/ui/drawer";
 import { LoadingSpinner } from "@/src/components/ui/loader";
-import { useToast } from "@/src/components/ui/use-toast";
-import useLoad from "@/src/hooks/useLoad";
-import { loadStripe } from "@stripe/stripe-js";
-import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
-import PayPalButton from "../Paypal/PaypalButton";
+import { Availability, Booking, Service } from "@prisma/client";
 import { addMinutes, isAfter } from "date-fns";
+import moment from "moment";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
-import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
-import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
-import { Label } from "@/src/components/ui/label";
-import { da } from "date-fns/locale";
-import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
-import next from "next";
-import { useStepper } from "@/src/components/stepper";
-import { useCarousel } from "@/src/components/ui/carousel";
-
-if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
-  throw new Error("stripe PK missing");
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
 
 const SelectBooking = ({
   userId,
@@ -53,16 +37,11 @@ const SelectBooking = ({
 
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
-  const { setLoading } = useLoad();
-  const [clientSecret, setClientSecret] = useState("");
-  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
-  const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
   const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
     daySelected && getAvailabilities(userId, daySelected);
     if (daySelected) setIsOpened(true);
-    if (clientSecret) setClientSecret("");
   }, [daySelected]);
 
   useEffect(() => {

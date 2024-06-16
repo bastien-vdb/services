@@ -1,5 +1,9 @@
-import { memo } from "react";
+import useFormStore from "@/app/Components/SelectService/useFormStore";
+import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
+import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
+import { Checkbox } from "@/src/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -8,18 +12,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
-import { useStepper } from "@/src/components/stepper";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "@/src/components/ui/use-toast";
-import { z } from "zod";
 import { Label } from "@/src/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
-import { Button } from "@/src/components/ui/button";
-import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import { Checkbox } from "@/src/components/ui/checkbox";
-import useFormStore from "@/app/Components/SelectService/useFormStore";
-import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { memo } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const OPTIONAL_SERVICE = "Fox eyes";
 
@@ -165,7 +163,7 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                 </div>
                 <div className="flex gap-2 m-2">
                   <Button
-                    className="sm:w-[250px]"
+                    className="sm:w-[100px]"
                     disabled={false}
                     onClick={scrollPrev}
                     size="sm"
@@ -174,7 +172,7 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                     Retour
                   </Button>
                   <Button
-                    className="bg-[#CCB3AE] text-black sm:w-[250px]"
+                    className="bg-[#CCB3AE] text-black sm:w-[400px]"
                     size="sm"
                     type="submit"
                   >

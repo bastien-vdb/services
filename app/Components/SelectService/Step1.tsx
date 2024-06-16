@@ -173,7 +173,7 @@ function SelectService({ services }: { services?: Service[] }) {
         />
         <div className="flex gap-2 m-2">
           <Button
-            className="sm:w-[250px]"
+            className="sm:w-[100px]"
             disabled
             size="sm"
             variant="secondary"
@@ -181,7 +181,7 @@ function SelectService({ services }: { services?: Service[] }) {
             Retour
           </Button>
           <Button
-            className="bg-[#CCB3AE] text-black sm:w-[250px]"
+            className="bg-[#CCB3AE] text-black sm:w-[400px]"
             size="sm"
             type="submit"
           >
