@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Readable } from "stream";
 import getRawBody from "raw-body";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
@@ -34,15 +33,18 @@ export default async function handler(
 
   let rawBody;
   try {
+    const encoding = req.headers["content-type"]?.includes("charset=utf-8")
+      ? "utf-8"
+      : undefined;
     rawBody = await getRawBody(req, {
       length: req.headers["content-length"]
         ? parseInt(req.headers["content-length"], 10)
         : undefined,
-      encoding: req.headers["content-type"] || "utf-8",
+      encoding: encoding,
     });
   } catch (err) {
     console.error("Error reading raw body:", err);
-    return res.status(500).send("Error reading raw body");
+    return res.status(500).send(`Error reading raw body: ${err.message}`);
   }
 
   const rawBodyString = rawBody.toString("utf8");
