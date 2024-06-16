@@ -40,11 +40,13 @@ export default async function handler(
   const stripe = useCheckStripe();
 
   const buf = await buffer(req);
+  console.log("buf", buf);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET)
     throw new Error("Stripe webhook secret key is not defined");
 
   const signature = req.headers["stripe-signature"];
+  console.log("signature", signature);
 
   if (signature === undefined)
     throw new Error("Stripe signature is not defined");
@@ -54,6 +56,8 @@ export default async function handler(
     signature,
     process.env.STRIPE_WEBHOOK_SECRET
   );
+
+  console.log("webhookEvent", webhookEvent);
 
   try {
     switch (webhookEvent.type) {
