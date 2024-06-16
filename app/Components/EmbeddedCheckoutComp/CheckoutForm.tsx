@@ -4,6 +4,7 @@ import {
   useStripe,
   useElements,
 } from "@stripe/react-stripe-js";
+import { Button } from "@/src/components/ui/button";
 
 export default function CheckoutForm({ clientSecret }) {
   const stripe = useStripe();
@@ -57,7 +58,7 @@ export default function CheckoutForm({ clientSecret }) {
       elements,
       confirmParams: {
         // Make sure to change this to your payment completion page
-        return_url: "https://www.quickreserve.app/",
+        return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
       },
     });
 
@@ -75,18 +76,26 @@ export default function CheckoutForm({ clientSecret }) {
     setIsLoading(false);
   };
 
-  const paymentElementOptions = {
-    layout: "tabs",
-  };
-
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" options={paymentElementOptions} />
-      <button disabled={isLoading || !stripe || !elements} id="submit">
+      <PaymentElement
+        id="payment-element"
+        options={{
+          type: "accordions",
+          defaultCollapsed: false,
+          radios: true,
+          spacedAccordionItems: false,
+        }}
+      />
+      <Button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
-          {isLoading ? <div className="spinner" id="spinner"></div> : "Pay now"}
+          {isLoading ? (
+            <div className="spinner" id="spinner"></div>
+          ) : (
+            "Payer maintenant"
+          )}
         </span>
-      </button>
+      </Button>
       {/* Show any error or success messages */}
       {message && <div id="payment-message">{message}</div>}
     </form>

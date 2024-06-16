@@ -57,7 +57,7 @@ export default async function handler(
 
   try {
     switch (webhookEvent.type) {
-      case "checkout.session.completed": {
+      case "payment_intent.succeeded": {
         const session = webhookEvent.data.object.metadata as metadataType;
         const customerDetails = webhookEvent.data.object.customer_details;
         const {

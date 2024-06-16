@@ -1,19 +1,17 @@
-import { memo, useEffect, useState } from "react";
-import { Card, CardContent } from "@/src/components/ui/card";
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
-import { LoadingSpinner } from "@/src/components/ui/loader";
-import { Booking } from "@prisma/client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import { toast } from "@/src/components/ui/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
+import { Button } from "@/src/components/ui/button";
+import { useCarousel } from "@/src/components/ui/carousel";
 import { Label } from "@/src/components/ui/label";
+import { LoadingSpinner } from "@/src/components/ui/loader";
+import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
+import { toast } from "@/src/components/ui/use-toast";
+import { Booking } from "@prisma/client";
+import { loadStripe } from "@stripe/stripe-js";
+import { memo, useEffect, useState } from "react";
 import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
-import { loadStripe } from "@stripe/stripe-js";
-import { useStepper } from "@/src/components/stepper";
-import { Button } from "@/src/components/ui/button";
 import useFormStore from "./useFormStore";
-import { useCarousel } from "@/src/components/ui/carousel";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -85,36 +83,35 @@ const Step6 = memo(({ userId }: { userId: string }) => {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-wrap gap-2">
+      <div className="flex justify-center items-center flex-col gap-2">
         {fullOrDepotDisplayed && (
-          <RadioGroup defaultValue="option-one">
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                onClick={() => {
-                  setClientSecret("");
-                  bookingSelectedPaypal &&
-                    handleCreatePayment(bookingSelectedPaypal);
-                }}
-                value="option-one"
-                id="option-one"
-              />
-              <Label className="text-xl" htmlFor="option-one">
-                Paiement en 1 fois
-              </Label>
+          <RadioGroup className="flex" defaultValue="option-one">
+            <div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  onClick={() => {
+                    setClientSecret("");
+                    bookingSelectedPaypal &&
+                      handleCreatePayment(bookingSelectedPaypal);
+                  }}
+                  value="option-one"
+                  id="option-one"
+                />
+                <Label htmlFor="option-one">Paiement en 1 fois</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  onClick={() => {
+                    setClientSecret("");
+                    bookingSelectedPaypal &&
+                      handleCreatePayment(bookingSelectedPaypal, true);
+                  }}
+                  value="option-two"
+                  id="option-two"
+                />
+                <Label htmlFor="option-two">Dépot</Label>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem
-                onClick={() => {
-                  setClientSecret("");
-                  bookingSelectedPaypal &&
-                    handleCreatePayment(bookingSelectedPaypal, true);
-                }}
-                value="option-two"
-                id="option-two"
-              />
-              <Label htmlFor="option-two">Dépot</Label>
-            </div>
-
             {clientSecret && bookingSelectedPaypal && (
               <PayPalButton bookingSelectedPaypal={bookingSelectedPaypal} />
             )}
@@ -122,14 +119,12 @@ const Step6 = memo(({ userId }: { userId: string }) => {
         )}
 
         {clientSecret && bookingSelectedPaypal ? (
-          <>
-            <EmbeddedCheckoutComp
-              stripePromise={stripePromise}
-              clientSecret={clientSecret}
-            />
-          </>
+          <EmbeddedCheckoutComp
+            stripePromise={stripePromise}
+            clientSecret={clientSecret}
+          />
         ) : (
-          <LoadingSpinner className="w-20 h-20 animate-spin" />
+          <LoadingSpinner className="w-12 h-12 animate-spin" />
         )}
       </div>
       <div className="flex justify-center gap-2 m-2 gap-10">

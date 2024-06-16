@@ -1,4 +1,5 @@
 import { NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
 // This is your test secret API key.
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -52,7 +53,8 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   console.log("paymentIntent", paymentIntent);
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+  // res.send({
+  //   clientSecret: paymentIntent.client_secret,
+  // });
+  return NextResponse.json({ clientSecret: paymentIntent.client_secret });
 }
