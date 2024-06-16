@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Readable } from "stream";
+import getRawBody from "raw-body";
 import useSendEmail from "@/src/emails/useSendEmail";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
@@ -25,23 +26,27 @@ type metadataType = {
   formData: string;
 };
 
-async function buffer(readable: Readable) {
-  const chunks: any = [];
-  for await (const chunk of readable) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const stripe = useCheckStripe();
 
-  const buf = await buffer(req);
-  const rawBody = buf.toString("utf8");
-  console.log("rawBody", rawBody);
+  let rawBody;
+  try {
+    rawBody = await getRawBody(req, {
+      length: req.headers["content-length"]
+        ? parseInt(req.headers["content-length"], 10)
+        : undefined,
+      encoding: req.headers["content-type"] || "utf-8",
+    });
+  } catch (err) {
+    console.error("Error reading raw body:", err);
+    return res.status(500).send("Error reading raw body");
+  }
+
+  const rawBodyString = rawBody.toString("utf8");
+  console.log("rawBody", rawBodyString);
 
   if (!process.env.STRIPE_WEBHOOK_SECRET)
     throw new Error("Stripe webhook secret key is not defined");
