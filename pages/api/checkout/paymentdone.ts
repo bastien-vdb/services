@@ -26,6 +26,27 @@ type metadataType = {
   formData: string;
 };
 
+// Middleware CORS
+const cors = (handler) => async (req, res) => {
+  res.setHeader("Access-Control-Allow-Credentials", true);
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Remplacez * par l'URL de votre application si besoin
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET,OPTIONS,PATCH,DELETE,POST,PUT"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+  );
+
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+    return;
+  }
+
+  return handler(req, res);
+};
+
 async function buffer(readable: Readable) {
   const chunks: any = [];
   for await (const chunk of readable) {
@@ -34,10 +55,7 @@ async function buffer(readable: Readable) {
   return Buffer.concat(chunks);
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const stripe = useCheckStripe();
 
   const buf = await buffer(req);
@@ -293,3 +311,5 @@ export default async function handler(
     res.status(400).send("Webhook error");
   }
 }
+
+export default cors(handler);
