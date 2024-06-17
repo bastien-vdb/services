@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   PaymentElement,
   useStripe,
@@ -6,6 +6,9 @@ import {
   AddressElement,
 } from "@stripe/react-stripe-js";
 import { Button } from "@/src/components/ui/button";
+import Email from "next-auth/providers/email";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
 
 export default function CheckoutForm({ clientSecret }) {
   const stripe = useStripe();
@@ -13,6 +16,7 @@ export default function CheckoutForm({ clientSecret }) {
 
   const [message, setMessage] = React.useState<string | undefined | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [email, setEmail] = useState("");
 
   React.useEffect(() => {
     if (!stripe) {
@@ -35,7 +39,7 @@ export default function CheckoutForm({ clientSecret }) {
           setMessage("Your payment is processing.");
           break;
         case "requires_payment_method":
-          setMessage("Your payment was not successful, please try again.");
+          setMessage("");
           break;
         default:
           setMessage("Something went wrong.");
@@ -43,6 +47,8 @@ export default function CheckoutForm({ clientSecret }) {
       }
     });
   }, [stripe]);
+
+  console.log("elements", elements);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +66,7 @@ export default function CheckoutForm({ clientSecret }) {
       confirmParams: {
         payment_method_data: {
           billing_details: {
-            email: "bastien.deboisrolin@gmail.com",
+            email,
           },
         },
         // Make sure to change this to your payment completion page
@@ -84,8 +90,34 @@ export default function CheckoutForm({ clientSecret }) {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <PaymentElement id="payment-element" />
-      <AddressElement options={{ mode: "billing" }} />
+      <PaymentElement
+        options={{
+          fields: { billingDetails: { email: "auto", phone: "auto" } },
+        }}
+        id="payment-element"
+      />
+      {/* <AddressElement
+        options={{
+          mode: "billing",
+          fields: {
+            phone: "always",
+          },
+          validation: {
+            phone: {
+              required: "always",
+            },
+          },
+        }}
+      /> */}
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          onChange={(e) => setEmail(e.target.value)}
+          type="email"
+          id="email"
+          placeholder="Email"
+        />
+      </div>
       <Button disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">
           {isLoading ? (

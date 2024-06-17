@@ -1,8 +1,11 @@
+import useCheckStripe from "@/src/hooks/useCheckStripe";
+import { useStripe } from "@stripe/react-stripe-js";
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
 // This is your test secret API key.
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+const stripe = useCheckStripe();
 
 const calculateOrderAmount = (items) => {
   // Replace this constant with a calculation of the order's amount
@@ -48,6 +51,16 @@ export async function POST(req: Request, res: NextApiResponse) {
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
       enabled: true,
+    },
+    metadata: {
+      startTime,
+      endTime,
+      serviceId,
+      stripePriceId,
+      userId,
+      serviceName,
+      addedOption: addedOption?.name || null,
+      formData: JSON.stringify(formData),
     },
   });
 
