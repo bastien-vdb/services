@@ -257,6 +257,8 @@ export default async function handler(
           },
         });
 
+        console.log("bookingCreated ->", bookingCreated);
+
         if (bookingCreated && customerDetails?.email) {
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
