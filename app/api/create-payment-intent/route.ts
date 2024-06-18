@@ -46,8 +46,6 @@ export async function POST(req: Request, res: NextApiResponse) {
     amount,
   } = body;
 
-  console.log("baaaaakcEND");
-
   const user: User[] = await useServerData("user", { id: userId });
   const { stripeAccount } = user[0];
 
@@ -57,7 +55,7 @@ export async function POST(req: Request, res: NextApiResponse) {
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount, //alculateOrderAmount(items),
-    application_fee_amount: 250,
+    application_fee_amount: amount * 0.06,
     transfer_data: {
       destination: stripeAccount,
     },
@@ -78,10 +76,5 @@ export async function POST(req: Request, res: NextApiResponse) {
     },
   });
 
-  console.log("paymentIntent", paymentIntent);
-
-  // res.send({
-  //   clientSecret: paymentIntent.client_secret,
-  // });
   return NextResponse.json({ clientSecret: paymentIntent.client_secret });
 }

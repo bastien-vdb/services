@@ -12,6 +12,7 @@ import { memo, useEffect, useState } from "react";
 import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
 import useFormStore from "./useFormStore";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -87,7 +88,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
       <div className="flex justify-center items-center flex-col gap-2">
         {fullOrDepotDisplayed && (
           <RadioGroup className="flex" defaultValue="option-one">
-            <div>
+            <div className="flex flex-col gap-2">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem
                   onClick={() => {
@@ -130,18 +131,15 @@ const Step6 = memo(({ userId }: { userId: string }) => {
       </div>
       <div className="flex justify-center gap-2 m-2 gap-10">
         <div className="flex gap-2 m-2">
-          <Button
-            className="sm:w-[250px]"
-            disabled={false}
+          <TextRevealButton
             onClick={() => {
               scrollPrev();
               window.scrollTo(0, 0);
             }}
-            size="sm"
-            variant="secondary"
+            arrowPosition="left"
           >
             Retour
-          </Button>
+          </TextRevealButton>
         </div>
       </div>
     </>

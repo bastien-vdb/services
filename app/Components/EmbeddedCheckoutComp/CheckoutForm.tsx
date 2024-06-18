@@ -9,6 +9,13 @@ import { Button } from "@/src/components/ui/button";
 import Email from "next-auth/providers/email";
 import { Input } from "@/src/components/ui/input";
 import { Label } from "@/src/components/ui/label";
+import { set } from "date-fns";
+import ShimmerButton from "@/src/components/syntax-ui/ShimmerButton";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
+
+const styles = {
+  fontFamily: "Be Vietnam Pro",
+};
 
 export default function CheckoutForm({ clientSecret }) {
   const stripe = useStripe();
@@ -16,7 +23,9 @@ export default function CheckoutForm({ clientSecret }) {
 
   const [message, setMessage] = React.useState<string | undefined | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
   React.useEffect(() => {
     if (!stripe) {
@@ -48,10 +57,10 @@ export default function CheckoutForm({ clientSecret }) {
     });
   }, [stripe]);
 
-  console.log("elements", elements);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!name && !email) return setMessage("Veuillez remplir tous les champs");
 
     if (!stripe || !elements) {
       // Stripe.js hasn't yet loaded.
@@ -61,12 +70,16 @@ export default function CheckoutForm({ clientSecret }) {
 
     setIsLoading(true);
 
+    // if (!name && !email) return setMessage("Veuillez remplir tous les champs");
+
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         payment_method_data: {
           billing_details: {
+            name,
             email,
+            phone,
           },
         },
         // Make sure to change this to your payment completion page
@@ -89,36 +102,53 @@ export default function CheckoutForm({ clientSecret }) {
   };
 
   return (
-    <form id="payment-form" onSubmit={handleSubmit}>
+    <form className="flex flex-col" id="payment-form" onSubmit={handleSubmit}>
       <PaymentElement
         options={{
           fields: { billingDetails: { email: "auto", phone: "auto" } },
         }}
         id="payment-element"
       />
-      {/* <AddressElement
-        options={{
-          mode: "billing",
-          fields: {
-            phone: "always",
-          },
-          validation: {
-            phone: {
-              required: "always",
-            },
-          },
-        }}
-      /> */}
-      <div className="grid w-full max-w-sm items-center gap-1.5">
-        <Label htmlFor="email">Email</Label>
+
+      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5 Label">
         <Input
+          className="text-[1.1rem]"
+          onChange={(e) => setName(e.target.value)}
+          type="name"
+          id="name"
+          placeholder="Nom*"
+        />
+      </div>
+
+      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5">
+        <Input
+          className="text-[1.1rem]"
           onChange={(e) => setEmail(e.target.value)}
           type="email"
           id="email"
-          placeholder="Email"
+          placeholder="Email*"
         />
       </div>
-      <Button disabled={isLoading || !stripe || !elements} id="submit">
+      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5">
+        <Input
+          className="text-[1.1rem]"
+          onChange={(e) => setPhone(e.target.value)}
+          type="tel"
+          id="tel"
+          placeholder="(+33)"
+        />
+      </div>
+
+      {/* Show any error or success messages */}
+      <span className="m-auto my-2">
+        {message && <div id="payment-message">{message}</div>}
+      </span>
+      <Button
+        className="animate-buttonheartbeat rounded-md bg-rose-500 px-4 py-1 text-sm font-semibold text-white"
+        disabled={isLoading || !stripe || !elements}
+        id="submit"
+        onClick={() => setIsLoading(false)}
+      >
         <span id="button-text">
           {isLoading ? (
             <div className="spinner" id="spinner"></div>
@@ -127,8 +157,6 @@ export default function CheckoutForm({ clientSecret }) {
           )}
         </span>
       </Button>
-      {/* Show any error or success messages */}
-      {message && <div id="payment-message">{message}</div>}
     </form>
   );
 }
