@@ -110,7 +110,7 @@ export default function CheckoutForm({ clientSecret }) {
         id="payment-element"
       />
 
-      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5 Label">
+      <div className="grid w-full max-w-sm items-center gap-1.5 mt-2.5 Label">
         <Input
           className="text-[1.1rem]"
           onChange={(e) => setName(e.target.value)}
@@ -120,7 +120,7 @@ export default function CheckoutForm({ clientSecret }) {
         />
       </div>
 
-      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5">
+      <div className="grid w-full max-w-sm items-center gap-1.5 mt-2.5">
         <Input
           className="text-[1.1rem]"
           onChange={(e) => setEmail(e.target.value)}
