@@ -29,6 +29,7 @@ export async function POST(req: Request, res: NextApiResponse) {
         }
       | undefined;
     formData: any;
+    amount: number;
   } = await req.json();
 
   const {
@@ -40,18 +41,20 @@ export async function POST(req: Request, res: NextApiResponse) {
     serviceName,
     addedOption,
     formData,
+    amount,
   } = body;
 
   console.log("baaaaakcEND");
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount: 20000, //alculateOrderAmount(items),
+    amount, //alculateOrderAmount(items),
     currency: "eur",
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
       enabled: true,
     },
+    application_fee_amount: (amount / 100) * 5,
     metadata: {
       startTime,
       endTime,

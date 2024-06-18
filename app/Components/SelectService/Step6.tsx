@@ -53,6 +53,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
             stripePriceId: deposit
               ? prixFixDeposit
               : serviceSelected?.stripePriceId,
+            amount: serviceSelected?.price,
             startTime: booking.startTime,
             endTime: booking.endTime,
             userId,
