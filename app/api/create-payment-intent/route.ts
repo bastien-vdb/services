@@ -1,4 +1,6 @@
 import useCheckStripe from "@/src/hooks/useCheckStripe";
+import useServerData from "@/src/hooks/useServerData";
+import { User } from "@prisma/client";
 import { useStripe } from "@stripe/react-stripe-js";
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
@@ -46,15 +48,24 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   console.log("baaaaakcEND");
 
+  const user: User[] = await useServerData("user", { id: userId });
+  const { stripeAccount } = user[0];
+
+  if (!stripeAccount)
+    throw new Error("Missing of the destination to receive the funds");
+
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount, //alculateOrderAmount(items),
+    application_fee_amount: 250,
+    transfer_data: {
+      destination: stripeAccount,
+    },
     currency: "eur",
     // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
       enabled: true,
     },
-    application_fee_amount: (amount / 100) * 5,
     metadata: {
       startTime,
       endTime,
