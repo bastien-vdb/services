@@ -66,7 +66,9 @@ function SelectService({ services }: { services?: Service[] }) {
 
     serviceSelected && changeServiceSelected(serviceSelected);
 
-    if (data.service === "option-depose") {
+    console.log("data", data);
+
+    if (data.option === "option-avec-depose") {
       changeOptionSelected({
         name: data.service,
         price: 2000,
@@ -93,7 +95,7 @@ function SelectService({ services }: { services?: Service[] }) {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="sm:w-[800px]">
+                  <SelectTrigger className="w-[250px] sm:w-[800px]">
                     <SelectValue placeholder="Que souhaitez vous faire ?" />
                   </SelectTrigger>
                 </FormControl>
@@ -137,7 +139,7 @@ function SelectService({ services }: { services?: Service[] }) {
                 defaultValue={field.value}
               >
                 <FormControl>
-                  <SelectTrigger className="sm:w-[800px]">
+                  <SelectTrigger className="w-[250px] sm:w-[800px]">
                     <SelectValue placeholder="Avec dépose ?" />
                   </SelectTrigger>
                 </FormControl>

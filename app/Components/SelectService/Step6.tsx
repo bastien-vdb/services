@@ -1,6 +1,5 @@
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
 import { Label } from "@/src/components/ui/label";
 import { LoadingSpinner } from "@/src/components/ui/loader";
@@ -20,7 +19,10 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const prixFixDeposit = "price_1PERuILYOIXZwhPrff0n8CbE"; //TODO mettre dans un fichier settings
+const prixFixDeposit = {
+  stripePriceId: "price_1PERuILYOIXZwhPrff0n8CbE",
+  price: 2000,
+}; //TODO mettre dans un fichier settings
 
 const Step6 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
@@ -52,9 +54,9 @@ const Step6 = memo(({ userId }: { userId: string }) => {
           },
           body: JSON.stringify({
             stripePriceId: deposit
-              ? prixFixDeposit
+              ? prixFixDeposit.stripePriceId
               : serviceSelected?.stripePriceId,
-            amount: serviceSelected?.price,
+            amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
             startTime: booking.startTime,
             endTime: booking.endTime,
             userId,
@@ -65,7 +67,6 @@ const Step6 = memo(({ userId }: { userId: string }) => {
           }),
         }
       );
-      console.log("paymentPage", paymentPage);
       const paymentPageJson = await paymentPage.json();
       setClientSecret(paymentPageJson.clientSecret);
     } catch (error) {
@@ -80,8 +81,11 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
+    console.log("bookingSelected step6", bookingSelected);
+    console.log("serviceSelected step6", serviceSelected);
+    console.log("optionSelected step6", optionSelected);
     bookingSelected && handleCreatePayment(bookingSelected);
-  }, [bookingSelected]);
+  }, [bookingSelected, serviceSelected, optionSelected]);
 
   return (
     <>

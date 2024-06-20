@@ -12,10 +12,8 @@ import { Label } from "@/src/components/ui/label";
 import { set } from "date-fns";
 import ShimmerButton from "@/src/components/syntax-ui/ShimmerButton";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
-
-const styles = {
-  fontFamily: "Be Vietnam Pro",
-};
+import { PaymentIntent } from "@stripe/stripe-js/types/api";
+import ShoppingCart from "@/src/components/cart/ShoppingCart";
 
 export default function CheckoutForm({ clientSecret }) {
   const stripe = useStripe();
@@ -26,6 +24,7 @@ export default function CheckoutForm({ clientSecret }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
 
   React.useEffect(() => {
     if (!stripe) {
@@ -40,6 +39,8 @@ export default function CheckoutForm({ clientSecret }) {
       if (!paymentIntent) {
         return;
       }
+      setPaymentIntent(paymentIntent);
+
       switch (paymentIntent.status) {
         case "succeeded":
           setMessage("Payment succeeded!");
@@ -103,6 +104,11 @@ export default function CheckoutForm({ clientSecret }) {
 
   return (
     <form className="flex flex-col" id="payment-form" onSubmit={handleSubmit}>
+      <ShoppingCart
+        items={[
+          { name: paymentIntent?.description, id: paymentIntent?.amount },
+        ]}
+      />
       <PaymentElement
         options={{
           fields: { billingDetails: { email: "auto", phone: "auto" } },
@@ -150,10 +156,10 @@ export default function CheckoutForm({ clientSecret }) {
         onClick={() => setIsLoading(false)}
       >
         <span id="button-text">
-          {isLoading ? (
+          {isLoading || !paymentIntent?.amount ? (
             <div className="spinner" id="spinner"></div>
           ) : (
-            "Payer maintenant"
+            `Payer ${paymentIntent.amount / 100} €`
           )}
         </span>
       </Button>

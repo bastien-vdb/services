@@ -52,9 +52,15 @@ export async function POST(req: Request, res: NextApiResponse) {
   if (!stripeAccount)
     throw new Error("Missing of the destination to receive the funds");
 
+  let totalAmount = amount;
+
+  if (addedOption) totalAmount = totalAmount + addedOption.price;
+
+  console.log("addedOption", addedOption);
+
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
-    amount, //alculateOrderAmount(items),
+    amount: totalAmount, //alculateOrderAmount(items),
     application_fee_amount: amount * 0.06,
     transfer_data: {
       destination: stripeAccount,
