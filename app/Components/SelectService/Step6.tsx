@@ -29,8 +29,11 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   const { formData } = useFormStore();
 
   const [clientSecret, setClientSecret] = useState("");
-  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
+
+  //TODO useState pour paypal uniquement mais refactoriser le code asap
+  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
+  const [deposit, setDeposit] = useState(false);
 
   const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
@@ -43,6 +46,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   ) => {
     if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
     setBookingSelectedPaypal(booking);
+    setDeposit(deposit);
 
     try {
       const paymentPage = await fetch(
@@ -57,6 +61,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
               ? prixFixDeposit.stripePriceId
               : serviceSelected?.stripePriceId,
             amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
+            deposit,
             startTime: booking.startTime,
             endTime: booking.endTime,
             userId,
@@ -112,11 +117,15 @@ const Step6 = memo(({ userId }: { userId: string }) => {
                   value="option-two"
                   id="option-two"
                 />
-                <Label htmlFor="option-two">Dépot</Label>
+                <Label htmlFor="option-two">Dépot: 20€</Label>
               </div>
             </div>
             {clientSecret && bookingSelectedPaypal && (
-              <PayPalButton bookingSelectedPaypal={bookingSelectedPaypal} />
+              <PayPalButton
+                bookingSelectedPaypal={bookingSelectedPaypal}
+                deposit={deposit}
+                prixFixDeposit={prixFixDeposit}
+              />
             )}
           </RadioGroup>
         )}

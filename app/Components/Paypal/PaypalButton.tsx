@@ -6,11 +6,16 @@ import { useRouter } from "next/navigation";
 
 export default function PayPalButton({
   bookingSelectedPaypal,
+  deposit,
+  prixFixDeposit,
 }: {
   bookingSelectedPaypal: Booking;
+  deposit: boolean;
+  prixFixDeposit: { stripePriceId: string; price: number };
 }) {
   const router = useRouter();
   const { serviceSelected } = useServiceStore();
+  const { optionSelected } = useServiceStore();
 
   if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
     throw new Error("Paypal client ID missing");
@@ -28,6 +33,12 @@ export default function PayPalButton({
       }}
     >
       <PayPalButtons
+        forceReRender={[
+          bookingSelectedPaypal.id,
+          deposit,
+          serviceSelected,
+          optionSelected,
+        ]}
         style={{
           layout: "horizontal",
           tagline: false,
@@ -35,19 +46,26 @@ export default function PayPalButton({
           color: "white",
         }} // il faut aussi ce bout de code css pour voir le bouton ... très étrange mais fonctionnel
         createOrder={(data, actions) => {
+          const totalPrice = deposit
+            ? prixFixDeposit.price
+            : serviceSelected.price +
+              (optionSelected?.price ? optionSelected.price : 0);
+
           return actions.order.create({
             intent: "CAPTURE", // Ajoutez cette ligne,
             purchase_units: [
               {
                 custom_id: bookingSelectedPaypal.id,
                 amount: {
-                  value: String(serviceSelected.price / 100), // Montant du paiement
-                  currency_code: "EUR",
+                  value: String(totalPrice / 100), // Montant du paiement
+                  currency_code:
+                    process.env.NODE_ENV === "development" ? "USD" : "EUR",
                   breakdown: {
                     item_total: {
                       // Total des articles, doit correspondre à la somme des prix des articles * quantité
-                      currency_code: "EUR",
-                      value: String(serviceSelected.price / 100),
+                      currency_code:
+                        process.env.NODE_ENV === "development" ? "USD" : "EUR",
+                      value: String(totalPrice / 100),
                     },
                   },
                 },
@@ -56,11 +74,32 @@ export default function PayPalButton({
                     name: serviceSelected.name,
                     description: String(bookingSelectedPaypal.startTime),
                     unit_amount: {
-                      currency_code: "USD",
-                      value: String(serviceSelected.price / 100),
+                      currency_code:
+                        process.env.NODE_ENV === "development" ? "USD" : "EUR",
+                      value: String(
+                        deposit
+                          ? prixFixDeposit.price / 100
+                          : serviceSelected.price / 100
+                      ),
                     },
                     quantity: "1",
                   },
+                  ...(optionSelected && !deposit
+                    ? [
+                        {
+                          name: optionSelected.name,
+                          description: String(bookingSelectedPaypal.startTime),
+                          unit_amount: {
+                            currency_code:
+                              process.env.NODE_ENV === "development"
+                                ? "USD"
+                                : "EUR",
+                            value: String(optionSelected.price / 100),
+                          },
+                          quantity: "1",
+                        },
+                      ]
+                    : []),
                 ],
               },
             ],

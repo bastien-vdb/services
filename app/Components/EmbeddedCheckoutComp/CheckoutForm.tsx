@@ -112,7 +112,6 @@ export default function CheckoutForm({ clientSecret }) {
       <PaymentElement
         options={{
           fields: { billingDetails: { email: "auto", phone: "auto" } },
-          paymentMethodOrder: ["apple_pay", "google_pay", "card", "klarna"],
         }}
         id="payment-element"
       />

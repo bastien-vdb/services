@@ -32,6 +32,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       | undefined;
     formData: any;
     amount: number;
+    deposit: boolean;
   } = await req.json();
 
   const {
@@ -44,6 +45,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     addedOption,
     formData,
     amount,
+    deposit,
   } = body;
 
   const user: User[] = await useServerData("user", { id: userId });
@@ -54,7 +56,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   let totalAmount = amount;
 
-  if (addedOption) totalAmount = totalAmount + addedOption.price;
+  if (addedOption && !deposit) totalAmount = totalAmount + addedOption.price;
 
   console.log("addedOption", addedOption);
 
