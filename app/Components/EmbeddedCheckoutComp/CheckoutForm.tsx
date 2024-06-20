@@ -56,7 +56,7 @@ export default function CheckoutForm({ clientSecret }) {
           break;
       }
     });
-  }, [stripe]);
+  }, [stripe, clientSecret]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,11 +104,11 @@ export default function CheckoutForm({ clientSecret }) {
 
   return (
     <form className="flex flex-col" id="payment-form" onSubmit={handleSubmit}>
-      <ShoppingCart
+      {/* <ShoppingCart
         items={[
-          { name: paymentIntent?.description, id: paymentIntent?.amount },
+          { name: paymentIntent?.description, price: paymentIntent?.amount },
         ]}
-      />
+      /> */}
       <PaymentElement
         options={{
           fields: { billingDetails: { email: "auto", phone: "auto" } },
@@ -159,7 +159,7 @@ export default function CheckoutForm({ clientSecret }) {
           {isLoading || !paymentIntent?.amount ? (
             <div className="spinner" id="spinner"></div>
           ) : (
-            `Payer ${paymentIntent.amount / 100} €`
+            `À payer: ${paymentIntent.amount / 100} €`
           )}
         </span>
       </Button>

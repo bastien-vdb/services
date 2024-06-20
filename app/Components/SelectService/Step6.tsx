@@ -42,7 +42,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
     deposit: boolean = false
   ) => {
     if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
-    setBookingSelectedPaypal(bookingSelected);
+    setBookingSelectedPaypal(booking);
 
     try {
       const paymentPage = await fetch(
@@ -81,9 +81,6 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
-    console.log("bookingSelected step6", bookingSelected);
-    console.log("serviceSelected step6", serviceSelected);
-    console.log("optionSelected step6", optionSelected);
     bookingSelected && handleCreatePayment(bookingSelected);
   }, [bookingSelected, serviceSelected, optionSelected]);
 

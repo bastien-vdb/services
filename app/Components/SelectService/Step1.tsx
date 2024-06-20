@@ -114,7 +114,7 @@ function SelectService({ services }: { services?: Service[] }) {
                       >
                         {service.name}
                         <span className="ml-2 text-green-600">
-                          - {service.price / 100} €
+                          + {service.price / 100} €
                         </span>
                       </SelectItem>
                     ))}

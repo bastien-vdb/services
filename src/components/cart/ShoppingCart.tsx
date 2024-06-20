@@ -26,7 +26,7 @@ const ShoppingCart = ({ items }) => {
             d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 6.45A2 2 0 007.6 21h8.8a2 2 0 001.95-1.55L17 13H7z"
           />
         </svg>
-        ${totalAmount.toFixed(2)}
+        {totalAmount.toFixed(2) / 100} €
       </button>
       {isCartOpen && (
         <div className="absolute top-14 right-0 w-96 z-10">
