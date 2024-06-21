@@ -23,6 +23,8 @@ export default function PayPalButton({
 
   if (!serviceSelected?.price) throw new Error("Prix du service non défini");
 
+  console.log("NEXT_PUBLIC_NODE_ENV", process.env.NEXT_PUBLIC_NODE_ENV);
+
   return (
     <PayPalScriptProvider
       options={{
@@ -59,12 +61,16 @@ export default function PayPalButton({
                 amount: {
                   value: String(totalPrice / 100), // Montant du paiement
                   currency_code:
-                    process.env.NODE_ENV === "development" ? "USD" : "EUR",
+                    process.env.NEXT_PUBLIC_NODE_ENV === "development"
+                      ? "USD"
+                      : "EUR",
                   breakdown: {
                     item_total: {
                       // Total des articles, doit correspondre à la somme des prix des articles * quantité
                       currency_code:
-                        process.env.NODE_ENV === "development" ? "USD" : "EUR",
+                        process.env.NEXT_PUBLIC_NODE_ENV === "development"
+                          ? "USD"
+                          : "EUR",
                       value: String(totalPrice / 100),
                     },
                   },
@@ -75,7 +81,9 @@ export default function PayPalButton({
                     description: String(bookingSelectedPaypal.startTime),
                     unit_amount: {
                       currency_code:
-                        process.env.NODE_ENV === "development" ? "USD" : "EUR",
+                        process.env.NEXT_PUBLIC_NODE_ENV === "development"
+                          ? "USD"
+                          : "EUR",
                       value: String(
                         deposit
                           ? prixFixDeposit.price / 100
@@ -91,7 +99,7 @@ export default function PayPalButton({
                           description: String(bookingSelectedPaypal.startTime),
                           unit_amount: {
                             currency_code:
-                              process.env.NODE_ENV === "development"
+                              process.env.NEXT_PUBLIC_NODE_ENV === "development"
                                 ? "USD"
                                 : "EUR",
                             value: String(optionSelected.price / 100),
