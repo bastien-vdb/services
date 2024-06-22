@@ -1,16 +1,15 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { buffer } from "micro";
-import useSendEmail from "@/src/emails/useSendEmail";
+import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
-import actionSetBookingUser from "@/app/admin/Components/Bookings/action-setBookingUser";
+import EmailNotBooked from "@/src/emails/EmailNotBooked";
+import useSendEmail from "@/src/emails/useSendEmail";
 import {
   paypalCheckoutOrderApprovedType,
   paypalCustomIdType,
   paypalDescriptionTransactionType,
 } from "@/src/types/paypal";
-import moment from "moment";
-import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
-import EmailNotBooked from "@/src/emails/EmailNotBooked";
+import { buffer } from "micro";
+import moment from "moment-timezone";
+import { NextApiRequest, NextApiResponse } from "next";
 
 export const config = {
   api: {
