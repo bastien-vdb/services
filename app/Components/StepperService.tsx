@@ -10,7 +10,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/src/components/ui/carousel";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
 import Step5 from "./SelectService/Step5";
@@ -25,14 +25,13 @@ export default function StepperService({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const totalStep = useMemo(() => api?.scrollSnapList().length, []);
 
   useEffect(() => {
     if (!api) {
       return;
     }
 
-    setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
@@ -50,7 +49,7 @@ export default function StepperService({
       >
         <div className="flex justify-center mb-6 sm:mb-20">
           <Badge variant="outline" className="text-sm">
-            Etape:{current}/{count}
+            Etape:{current}/{totalStep}
           </Badge>
         </div>
         <CarouselContent>
