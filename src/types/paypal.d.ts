@@ -1,47 +1,47 @@
 //types créé par bastien vdb et non par paypal directement
 export type paypalCustomIdType = {
-  startTime: Date;
-  endTime: Date;
   userId: string;
+  formData: formData;
 };
 
-export type paypalDescriptionTransactionType = {
-  serviceId: string;
-  addedOption: string | undefined;
-  formData: {
-    q8: boolean;
-    q1?: string | undefined;
-    q2?: string | undefined;
-    q3?: string | undefined;
-    q4?: string | undefined;
-    q5?: string | undefined;
-    q6?: string | undefined;
-    q7?: string | undefined;
-  };
+type formData = {
+  q8: boolean;
+  q1?: string | undefined;
+  q2?: string | undefined;
+  q3?: string | undefined;
+  q4?: string | undefined;
+  q5?: string | undefined;
+  q6?: string | undefined;
+  q7?: string | undefined;
+};
+
+export type paypalDescriptionItemType = {
+  startTime: Date;
+  endTime: Date;
 };
 
 //exemple de type de retour de l'api de paypal
 export type paypalCheckoutOrderApprovedType = typeof checkoutOrderApprouved;
 
 const checkoutOrderApprouved = {
-  id: "WH-9DD32025B1415024T-7YG25723EK6376900",
-  create_time: "2024-06-23T07:13:52.446Z",
+  id: "WH-2B439334FN987980C-85589662NE765253P",
+  create_time: "2024-06-23T08:24:14.838Z",
   resource_type: "checkout-order",
   event_type: "CHECKOUT.ORDER.APPROVED",
   summary: "An order has been approved by buyer",
   resource: {
-    update_time: "2024-06-23T07:13:48Z",
-    create_time: "2024-06-23T07:13:40Z",
+    update_time: "2024-06-23T08:24:13Z",
+    create_time: "2024-06-23T08:24:06Z",
     purchase_units: [
       {
         reference_id: "default",
         amount: {
           currency_code: "USD",
-          value: "60.00",
+          value: "70.00",
           breakdown: {
             item_total: {
               currency_code: "USD",
-              value: "60.00",
+              value: "70.00",
             },
           },
         },
@@ -49,20 +49,29 @@ const checkoutOrderApprouved = {
           email_address: "sb-vkgos30062005@business.example.com",
           merchant_id: "5SGUYBLWY5KYJ",
         },
-        description:
-          '{"serviceId":"66601a7ebdad1b184f160cb8","formData":{"q1":"","q2":"","q3":"","q4":"","q5":"","q6":"","q7":"","q8":true}}',
+        description: "66732501f4c457014c0a490c",
         custom_id:
-          '{"startTime":"2024-06-23T06:30:00.000Z","endTime":"2024-06-23T07:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
+          '{"userId":"666019ccbdad1b184f160cb3","formData":{"q1":"","q2":"","q3":"","q4":"","q5":"","q6":"","q7":"","q8":true}}',
         items: [
           {
-            name: "Eyes to Eyes contact",
+            name: "66732501f4c457014c0a490c",
             unit_amount: {
               currency_code: "USD",
-              value: "60.00",
+              value: "50.00",
             },
             quantity: "1",
             description:
-              "Sun Jun 23 2024 08:30:00 GMT+0200 (heure d’été d’Europe centrale)",
+              '{"startTime":"2024-06-24T05:00:00.000Z","endTime":"2024-06-24T06:00:00.000Z"}',
+          },
+          {
+            name: "66732501f4c457014c0a490c",
+            unit_amount: {
+              currency_code: "USD",
+              value: "20.00",
+            },
+            quantity: "1",
+            description:
+              "Mon Jun 24 2024 07:00:00 GMT+0200 (heure d’été d’Europe centrale)",
           },
         ],
         shipping: {
@@ -80,11 +89,11 @@ const checkoutOrderApprouved = {
         payments: {
           captures: [
             {
-              id: "9R012301F9871212J",
+              id: "56607432S2228941U",
               status: "COMPLETED",
               amount: {
                 currency_code: "USD",
-                value: "60.00",
+                value: "70.00",
               },
               final_capture: true,
               seller_protection: {
@@ -97,19 +106,19 @@ const checkoutOrderApprouved = {
               seller_receivable_breakdown: {
                 gross_amount: {
                   currency_code: "USD",
-                  value: "60.00",
+                  value: "70.00",
                 },
                 paypal_fee: {
                   currency_code: "USD",
-                  value: "2.34",
+                  value: "2.68",
                 },
                 net_amount: {
                   currency_code: "USD",
-                  value: "57.66",
+                  value: "67.32",
                 },
                 receivable_amount: {
                   currency_code: "EUR",
-                  value: "52.44",
+                  value: "61.23",
                 },
                 exchange_rate: {
                   source_currency: "USD",
@@ -118,26 +127,26 @@ const checkoutOrderApprouved = {
                 },
               },
               custom_id:
-                '{"startTime":"2024-06-23T06:30:00.000Z","endTime":"2024-06-23T07:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
+                '{"userId":"666019ccbdad1b184f160cb3","formData":{"q1":"","q2":"","q3":"","q4":"","q5":"","q6":"","q7":"","q8":true}}',
               links: [
                 {
-                  href: "https://api.sandbox.paypal.com/v2/payments/captures/9R012301F9871212J",
+                  href: "https://api.sandbox.paypal.com/v2/payments/captures/56607432S2228941U",
                   rel: "self",
                   method: "GET",
                 },
                 {
-                  href: "https://api.sandbox.paypal.com/v2/payments/captures/9R012301F9871212J/refund",
+                  href: "https://api.sandbox.paypal.com/v2/payments/captures/56607432S2228941U/refund",
                   rel: "refund",
                   method: "POST",
                 },
                 {
-                  href: "https://api.sandbox.paypal.com/v2/checkout/orders/0R516505NS482354M",
+                  href: "https://api.sandbox.paypal.com/v2/checkout/orders/20X79841MC7124056",
                   rel: "up",
                   method: "GET",
                 },
               ],
-              create_time: "2024-06-23T07:13:48Z",
-              update_time: "2024-06-23T07:13:48Z",
+              create_time: "2024-06-23T08:24:13Z",
+              update_time: "2024-06-23T08:24:13Z",
             },
           ],
         },
@@ -145,12 +154,12 @@ const checkoutOrderApprouved = {
     ],
     links: [
       {
-        href: "https://api.sandbox.paypal.com/v2/checkout/orders/0R516505NS482354M",
+        href: "https://api.sandbox.paypal.com/v2/checkout/orders/20X79841MC7124056",
         rel: "self",
         method: "GET",
       },
     ],
-    id: "0R516505NS482354M",
+    id: "20X79841MC7124056",
     payment_source: {
       paypal: {
         email_address: "sb-0jcb530065991@personal.example.com",
@@ -196,24 +205,24 @@ const checkoutOrderApprouved = {
         "X-Vercel-Cache": "MISS",
         "Content-Length": "31",
         "X-Matched-Path": "/api/checkout/paymentdone_paypal",
-        "X-Vercel-Id": "sfo1::iad1::f64d8-1719126901424-cb6d9d7d58ee",
-        Date: "Sun, 23 Jun 2024 07:15:02 GMT",
+        "X-Vercel-Id": "sfo1::iad1::kqns9-1719131068290-b018faf170c2",
+        Date: "Sun, 23 Jun 2024 08:24:31 GMT",
         "Content-Type": "text/plain; charset=utf-8",
       },
-      transmission_id: "2be76170-3130-11ef-9030-033ad1349e47",
+      transmission_id: "ff5ebb30-3139-11ef-ac3c-db71f122b195",
       status: "PENDING",
-      timestamp: "2024-06-23T07:14:03Z",
+      timestamp: "2024-06-23T08:24:23Z",
     },
   ],
   links: [
     {
-      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-9DD32025B1415024T-7YG25723EK6376900",
+      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-2B439334FN987980C-85589662NE765253P",
       rel: "self",
       method: "GET",
       encType: "application/json",
     },
     {
-      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-9DD32025B1415024T-7YG25723EK6376900/resend",
+      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-2B439334FN987980C-85589662NE765253P/resend",
       rel: "resend",
       method: "POST",
       encType: "application/json",

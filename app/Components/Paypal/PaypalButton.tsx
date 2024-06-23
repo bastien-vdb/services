@@ -1,13 +1,13 @@
 "use client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import {
+  paypalCustomIdType,
+  paypalDescriptionItemType,
+} from "@/src/types/paypal";
+import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Booking } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import useFormStore from "../SelectService/useFormStore";
-import {
-  paypalCustomIdType,
-  paypalDescriptionTransactionType,
-} from "@/src/types/paypal";
 
 export default function PayPalButton({
   bookingSelectedPaypal,
@@ -61,15 +61,10 @@ export default function PayPalButton({
             intent: "CAPTURE", // Ajoutez cette ligne,
             purchase_units: [
               {
-                description: JSON.stringify({
-                  serviceId: bookingSelectedPaypal.serviceId,
-                  addedOption: undefined,
-                  formData,
-                } satisfies paypalDescriptionTransactionType),
+                description: bookingSelectedPaypal.serviceId,
                 custom_id: JSON.stringify({
-                  startTime: bookingSelectedPaypal.startTime,
-                  endTime: bookingSelectedPaypal.endTime,
                   userId: bookingSelectedPaypal.userId,
+                  formData,
                 } satisfies paypalCustomIdType),
                 amount: {
                   value: String(totalPrice / 100), // Montant du paiement
@@ -90,8 +85,11 @@ export default function PayPalButton({
                 },
                 items: [
                   {
-                    name: serviceSelected.name,
-                    description: String(bookingSelectedPaypal.startTime),
+                    name: serviceSelected.id,
+                    description: JSON.stringify({
+                      startTime: bookingSelectedPaypal.startTime,
+                      endTime: bookingSelectedPaypal.endTime,
+                    } satisfies paypalDescriptionItemType),
                     unit_amount: {
                       currency_code:
                         process.env.NEXT_PUBLIC_NODE_ENV === "development"

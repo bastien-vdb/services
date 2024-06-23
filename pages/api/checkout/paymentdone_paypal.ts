@@ -5,7 +5,7 @@ import useSendEmail from "@/src/emails/useSendEmail";
 import {
   paypalCheckoutOrderApprovedType,
   paypalCustomIdType,
-  paypalDescriptionTransactionType,
+  paypalDescriptionItemType,
 } from "@/src/types/paypal";
 import { buffer } from "micro";
 import moment from "moment-timezone";
@@ -36,19 +36,14 @@ export default async function handler(
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
       console.log("webhookEvent res ==>", webhookEvent.resource.purchase_units);
 
-      const { email_address: customerEmail } =
-        webhookEvent.resource.purchase_units[0].payee;
-      const { custom_id } = webhookEvent.resource.purchase_units[0];
-      const { description } = webhookEvent.resource.purchase_units[0];
-      const { startTime, endTime, userId } = JSON.parse(
-        custom_id
+      const { userId, formData } = JSON.parse(
+        webhookEvent.resource.purchase_units[0].custom_id
       ) as paypalCustomIdType;
-      const { serviceId, formData } = JSON.parse(
-        description
-      ) as paypalDescriptionTransactionType;
+      const serviceId = webhookEvent.resource.purchase_units[0].description;
+      const { startTime, endTime } = JSON.parse(
+        webhookEvent.resource.purchase_units[0].items[0].description
+      ) as paypalDescriptionItemType;
 
-      console.log("startTime ==>", startTime);
-      console.log("endTime ==>", endTime);
       console.log("userId ==>", userId);
       console.log("serviceId ==>", serviceId);
       console.log("formData ==>", formData);
