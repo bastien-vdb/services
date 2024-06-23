@@ -48,41 +48,41 @@ const Step6 = memo(({ userId }: { userId: string }) => {
     setBookingSelectedPaypal(booking);
     setDeposit(deposit);
 
-    try {
-      const paymentPage = await fetch(
-        `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            stripePriceId: deposit
-              ? prixFixDeposit.stripePriceId
-              : serviceSelected?.stripePriceId,
-            amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
-            deposit,
-            startTime: booking.startTime,
-            endTime: booking.endTime,
-            userId,
-            serviceId: serviceSelected?.id,
-            serviceName: serviceSelected?.name,
-            addedOption: optionSelected,
-            formData,
-          }),
-        }
-      );
-      const paymentPageJson = await paymentPage.json();
-      setClientSecret(paymentPageJson.clientSecret);
-    } catch (error) {
-      console.error("error: ", error);
-      toast({
-        variant: "destructive",
-        title: "Le rendez-vous est déjà en cours de réservation",
-        description:
-          "Il serait préférable de sélectionner un autre créneau disponible",
-      });
-    }
+    // try {
+    //   const paymentPage = await fetch(
+    //     `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         stripePriceId: deposit
+    //           ? prixFixDeposit.stripePriceId
+    //           : serviceSelected?.stripePriceId,
+    //         amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
+    //         deposit,
+    //         startTime: booking.startTime,
+    //         endTime: booking.endTime,
+    //         userId,
+    //         serviceId: serviceSelected?.id,
+    //         serviceName: serviceSelected?.name,
+    //         addedOption: optionSelected,
+    //         formData,
+    //       }),
+    //     }
+    //   );
+    //   const paymentPageJson = await paymentPage.json();
+    //   setClientSecret(paymentPageJson.clientSecret);
+    // } catch (error) {
+    //   console.error("error: ", error);
+    //   toast({
+    //     variant: "destructive",
+    //     title: "Le rendez-vous est déjà en cours de réservation",
+    //     description:
+    //       "Il serait préférable de sélectionner un autre créneau disponible",
+    //   });
+    // }
   };
 
   useEffect(() => {
@@ -120,13 +120,15 @@ const Step6 = memo(({ userId }: { userId: string }) => {
                 <Label htmlFor="option-two">Dépot: 20€</Label>
               </div>
             </div>
-            {clientSecret && bookingSelectedPaypal && (
+            {/* {clientSecret && bookingSelectedPaypal && ( */}
+            {bookingSelected && (
               <PayPalButton
-                bookingSelectedPaypal={bookingSelectedPaypal}
+                bookingSelectedPaypal={bookingSelected}
                 deposit={deposit}
                 prixFixDeposit={prixFixDeposit}
               />
             )}
+            {/* )} */}
           </RadioGroup>
         )}
 
