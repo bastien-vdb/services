@@ -29,8 +29,6 @@ export default function PayPalButton({
 
   if (!serviceSelected?.price) throw new Error("Prix du service non défini");
 
-  console.log("NEXT_PUBLIC_NODE_ENV", process.env.NEXT_PUBLIC_NODE_ENV);
-
   return (
     <PayPalScriptProvider
       options={{
@@ -65,7 +63,7 @@ export default function PayPalButton({
               {
                 description: JSON.stringify({
                   serviceId: bookingSelectedPaypal.serviceId,
-                  addedOption: optionSelected,
+                  addedOption: undefined,
                   formData,
                 } satisfies paypalDescriptionTransactionType),
                 custom_id: JSON.stringify({

@@ -7,12 +7,7 @@ export type paypalCustomIdType = {
 
 export type paypalDescriptionTransactionType = {
   serviceId: string;
-  addedOption:
-    | {
-        name: string;
-        price: number;
-      }
-    | undefined;
+  addedOption: string | undefined;
   formData: {
     q8: boolean;
     q1?: string | undefined;

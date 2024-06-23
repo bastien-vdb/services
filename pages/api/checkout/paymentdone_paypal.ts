@@ -43,7 +43,7 @@ export default async function handler(
       const { startTime, endTime, userId } = JSON.parse(
         custom_id
       ) as paypalCustomIdType;
-      const { serviceId, formData, addedOption } = JSON.parse(
+      const { serviceId, formData } = JSON.parse(
         description
       ) as paypalDescriptionTransactionType;
 
@@ -52,7 +52,6 @@ export default async function handler(
       console.log("userId ==>", userId);
       console.log("serviceId ==>", serviceId);
       console.log("formData ==>", formData);
-      console.log("addedOption ==>", addedOption);
 
       const startDateTmz = moment
         .utc(startTime)
