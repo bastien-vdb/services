@@ -64,8 +64,7 @@ export default async function handler(
         serviceId,
         userId,
         amountPayed: Number(
-          webhookEvent.resource.purchase_units[0].payments.captures[0].amount
-            .value
+          webhookEvent.resource.purchase_units[0].amount.value
         ),
         form: JSON.stringify(formData),
         customerInfo: {
