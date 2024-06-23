@@ -29,14 +29,14 @@ export type paypalDescriptionTransactionType = {
 export type paypalCheckoutOrderApprovedType = typeof checkoutOrderApprouved;
 
 const checkoutOrderApprouved = {
-  id: "WH-50414537RE1577411-9DR8686765084740G",
-  create_time: "2024-06-22T21:49:11.212Z",
+  id: "WH-9DD32025B1415024T-7YG25723EK6376900",
+  create_time: "2024-06-23T07:13:52.446Z",
   resource_type: "checkout-order",
   event_type: "CHECKOUT.ORDER.APPROVED",
   summary: "An order has been approved by buyer",
   resource: {
-    update_time: "2024-06-22T21:49:10Z",
-    create_time: "2024-06-22T21:49:01Z",
+    update_time: "2024-06-23T07:13:48Z",
+    create_time: "2024-06-23T07:13:40Z",
     purchase_units: [
       {
         reference_id: "default",
@@ -57,7 +57,7 @@ const checkoutOrderApprouved = {
         description:
           '{"serviceId":"66601a7ebdad1b184f160cb8","formData":{"q1":"","q2":"","q3":"","q4":"","q5":"","q6":"","q7":"","q8":true}}',
         custom_id:
-          '{"startTime":"2024-06-23T05:30:00.000Z","endTime":"2024-06-23T06:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
+          '{"startTime":"2024-06-23T06:30:00.000Z","endTime":"2024-06-23T07:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
         items: [
           {
             name: "Eyes to Eyes contact",
@@ -67,7 +67,7 @@ const checkoutOrderApprouved = {
             },
             quantity: "1",
             description:
-              "Sun Jun 23 2024 07:30:00 GMT+0200 (heure d’été d’Europe centrale)",
+              "Sun Jun 23 2024 08:30:00 GMT+0200 (heure d’été d’Europe centrale)",
           },
         ],
         shipping: {
@@ -85,7 +85,7 @@ const checkoutOrderApprouved = {
         payments: {
           captures: [
             {
-              id: "4EV232657M6584605",
+              id: "9R012301F9871212J",
               status: "COMPLETED",
               amount: {
                 currency_code: "USD",
@@ -123,26 +123,26 @@ const checkoutOrderApprouved = {
                 },
               },
               custom_id:
-                '{"startTime":"2024-06-23T05:30:00.000Z","endTime":"2024-06-23T06:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
+                '{"startTime":"2024-06-23T06:30:00.000Z","endTime":"2024-06-23T07:30:00.000Z","userId":"666019ccbdad1b184f160cb3"}',
               links: [
                 {
-                  href: "https://api.sandbox.paypal.com/v2/payments/captures/4EV232657M6584605",
+                  href: "https://api.sandbox.paypal.com/v2/payments/captures/9R012301F9871212J",
                   rel: "self",
                   method: "GET",
                 },
                 {
-                  href: "https://api.sandbox.paypal.com/v2/payments/captures/4EV232657M6584605/refund",
+                  href: "https://api.sandbox.paypal.com/v2/payments/captures/9R012301F9871212J/refund",
                   rel: "refund",
                   method: "POST",
                 },
                 {
-                  href: "https://api.sandbox.paypal.com/v2/checkout/orders/1EW67485PT496654V",
+                  href: "https://api.sandbox.paypal.com/v2/checkout/orders/0R516505NS482354M",
                   rel: "up",
                   method: "GET",
                 },
               ],
-              create_time: "2024-06-22T21:49:10Z",
-              update_time: "2024-06-22T21:49:10Z",
+              create_time: "2024-06-23T07:13:48Z",
+              update_time: "2024-06-23T07:13:48Z",
             },
           ],
         },
@@ -150,12 +150,12 @@ const checkoutOrderApprouved = {
     ],
     links: [
       {
-        href: "https://api.sandbox.paypal.com/v2/checkout/orders/1EW67485PT496654V",
+        href: "https://api.sandbox.paypal.com/v2/checkout/orders/0R516505NS482354M",
         rel: "self",
         method: "GET",
       },
     ],
-    id: "1EW67485PT496654V",
+    id: "0R516505NS482354M",
     payment_source: {
       paypal: {
         email_address: "sb-0jcb530065991@personal.example.com",
@@ -184,40 +184,41 @@ const checkoutOrderApprouved = {
     },
     status: "COMPLETED",
   },
-  status: "SUCCESS",
+  status: "PENDING",
   transmissions: [
     {
       webhook_url:
-        "https://www.quickreserve.app/api/checkout/paymentdone_paypal",
-      http_status: 200,
+        "https://services-git-master-bastienvdbs-projects.vercel.app/api/checkout/paymentdone_paypal",
+      http_status: 400,
       reason_phrase: "HTTP/1.1 200 Connection established",
       response_headers: {
-        "Strict-Transport-Security": "max-age=63072000",
+        "Strict-Transport-Security":
+          "max-age=63072000; includeSubDomains; preload",
         Server: "Vercel",
-        Etag: '"tqv1urdxohq"',
+        Etag: '"w5xa8r157cv"',
         "Cache-Control": "public, max-age=0, must-revalidate",
         Connection: "keep-alive",
         "X-Vercel-Cache": "MISS",
-        "Content-Length": "28",
+        "Content-Length": "31",
         "X-Matched-Path": "/api/checkout/paymentdone_paypal",
-        "X-Vercel-Id": "sfo1::iad1::pk7w4-1719092967710-8e084d5a1aed",
-        Date: "Sat, 22 Jun 2024 21:49:27 GMT",
+        "X-Vercel-Id": "sfo1::iad1::f64d8-1719126901424-cb6d9d7d58ee",
+        Date: "Sun, 23 Jun 2024 07:15:02 GMT",
         "Content-Type": "text/plain; charset=utf-8",
       },
-      transmission_id: "49f93b60-30e1-11ef-ac3c-db71f122b195",
-      status: "SUCCESS",
-      timestamp: "2024-06-22T21:49:23Z",
+      transmission_id: "2be76170-3130-11ef-9030-033ad1349e47",
+      status: "PENDING",
+      timestamp: "2024-06-23T07:14:03Z",
     },
   ],
   links: [
     {
-      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-50414537RE1577411-9DR8686765084740G",
+      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-9DD32025B1415024T-7YG25723EK6376900",
       rel: "self",
       method: "GET",
       encType: "application/json",
     },
     {
-      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-50414537RE1577411-9DR8686765084740G/resend",
+      href: "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-9DD32025B1415024T-7YG25723EK6376900/resend",
       rel: "resend",
       method: "POST",
       encType: "application/json",
