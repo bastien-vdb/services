@@ -30,7 +30,7 @@ export default function StepperService({
   useEffect(() => {
     if (!api) return;
     setCount(api.scrollSnapList().length);
-  }, []);
+  }, [api ? api.scrollSnapList().length : undefined]);
 
   useEffect(() => {
     if (!api) return;
