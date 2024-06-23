@@ -13,10 +13,12 @@ export default function PayPalButton({
   bookingSelectedPaypal,
   deposit,
   prixFixDeposit,
+  setPaypmentValided,
 }: {
   bookingSelectedPaypal: Booking;
   deposit: boolean;
   prixFixDeposit: { stripePriceId: string; price: number };
+  setPaypmentValided: (value: boolean) => void;
 }) {
   const router = useRouter();
   const { serviceSelected } = useServiceStore();
@@ -126,9 +128,7 @@ export default function PayPalButton({
         }}
         onApprove={(data, actions) => {
           if (!actions.order) throw new Error("Paiement échoué");
-          return actions.order?.capture().then((details) => {
-            router.push(`${process.env.NEXT_PUBLIC_HOST}/checkout/success`);
-          });
+          return actions.order?.capture().then(() => setPaypmentValided(true));
         }}
       />
     </PayPalScriptProvider>

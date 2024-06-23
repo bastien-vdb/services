@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
 import {
   PaymentElement,
-  useStripe,
   useElements,
-  AddressElement,
+  useStripe,
 } from "@stripe/react-stripe-js";
-import { Button } from "@/src/components/ui/button";
-import Email from "next-auth/providers/email";
-import { Input } from "@/src/components/ui/input";
-import { Label } from "@/src/components/ui/label";
-import { set } from "date-fns";
-import ShimmerButton from "@/src/components/syntax-ui/ShimmerButton";
-import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { PaymentIntent } from "@stripe/stripe-js/types/api";
-import ShoppingCart from "@/src/components/cart/ShoppingCart";
+import React, { useState } from "react";
 
-export default function CheckoutForm({ clientSecret }) {
+type CheckoutFormProps = {
+  clientSecret: string | undefined;
+  setPaypmentValided: (value: boolean) => void;
+};
+
+export default function CheckoutForm({
+  clientSecret,
+  setPaypmentValided,
+}: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -83,9 +84,11 @@ export default function CheckoutForm({ clientSecret }) {
             phone,
           },
         },
+        // redirect: "if applicable",
         // Make sure to change this to your payment completion page
-        return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
+        // return_url: `${process.env.NEXT_PUBLIC_HOST}/checkout/success`,
       },
+      redirect: "if_required",
     });
 
     // This point will only be reached if there is an immediate error when
@@ -93,10 +96,14 @@ export default function CheckoutForm({ clientSecret }) {
     // your `return_url`. For some payment methods like iDEAL, your customer will
     // be redirected to an intermediate site first to authorize the payment, then
     // redirected to the `return_url`.
-    if (error.type === "card_error" || error.type === "validation_error") {
-      setMessage(error.message);
+    if (error) {
+      if (error.type === "card_error" || error.type === "validation_error") {
+        setMessage(error.message);
+      } else {
+        setMessage("An unexpected error occurred.");
+      }
     } else {
-      setMessage("An unexpected error occurred.");
+      setPaypmentValided(true);
     }
 
     setIsLoading(false);

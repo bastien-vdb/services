@@ -30,6 +30,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
 
   const [clientSecret, setClientSecret] = useState("");
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
+  const [paypmentValided, setPaypmentValided] = useState(false);
 
   //TODO useState pour paypal uniquement mais refactoriser le code asap
   const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
@@ -48,46 +49,60 @@ const Step6 = memo(({ userId }: { userId: string }) => {
     setBookingSelectedPaypal(booking);
     setDeposit(deposit);
 
-    // try {
-    //   const paymentPage = await fetch(
-    //     `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify({
-    //         stripePriceId: deposit
-    //           ? prixFixDeposit.stripePriceId
-    //           : serviceSelected?.stripePriceId,
-    //         amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
-    //         deposit,
-    //         startTime: booking.startTime,
-    //         endTime: booking.endTime,
-    //         userId,
-    //         serviceId: serviceSelected?.id,
-    //         serviceName: serviceSelected?.name,
-    //         addedOption: optionSelected,
-    //         formData,
-    //       }),
-    //     }
-    //   );
-    //   const paymentPageJson = await paymentPage.json();
-    //   setClientSecret(paymentPageJson.clientSecret);
-    // } catch (error) {
-    //   console.error("error: ", error);
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Le rendez-vous est déjà en cours de réservation",
-    //     description:
-    //       "Il serait préférable de sélectionner un autre créneau disponible",
-    //   });
-    // }
+    try {
+      const paymentPage = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            stripePriceId: deposit
+              ? prixFixDeposit.stripePriceId
+              : serviceSelected?.stripePriceId,
+            amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
+            deposit,
+            startTime: booking.startTime,
+            endTime: booking.endTime,
+            userId,
+            serviceId: serviceSelected?.id,
+            serviceName: serviceSelected?.name,
+            addedOption: optionSelected,
+            formData,
+          }),
+        }
+      );
+      const paymentPageJson = await paymentPage.json();
+      setClientSecret(paymentPageJson.clientSecret);
+    } catch (error) {
+      console.error("error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Le rendez-vous est déjà en cours de réservation",
+        description:
+          "Il serait préférable de sélectionner un autre créneau disponible",
+      });
+    }
   };
 
   useEffect(() => {
     bookingSelected && handleCreatePayment(bookingSelected);
   }, [bookingSelected, serviceSelected, optionSelected]);
+
+  if (paypmentValided) {
+    return (
+      <div className="py-10 flex flex-col justify-center text-center gap-10">
+        <span className="text-xs sm:text-base font-bold  text-red-400 ">
+          🎉 Votre rendez-vous booké avec success! 🎉
+        </span>
+
+        <span className="text-xs">
+          Vous recevrez un email de confirmation dans quelques minutes...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -126,6 +141,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
                 bookingSelectedPaypal={bookingSelected}
                 deposit={deposit}
                 prixFixDeposit={prixFixDeposit}
+                setPaypmentValided={setPaypmentValided}
               />
             )}
             {/* )} */}
@@ -136,6 +152,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
           <EmbeddedCheckoutComp
             stripePromise={stripePromise}
             clientSecret={clientSecret}
+            setPaypmentValided={setPaypmentValided}
           />
         ) : (
           <LoadingSpinner className="w-12 h-12 animate-spin" />
