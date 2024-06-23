@@ -7,9 +7,12 @@ import {
   paypalCustomIdType,
   paypalDescriptionItemType,
 } from "@/src/types/paypal";
+import { PrismaClient, Service } from "@prisma/client";
 import { buffer } from "micro";
 import moment from "moment-timezone";
 import { NextApiRequest, NextApiResponse } from "next";
+
+const prisma = new PrismaClient();
 
 export const config = {
   api: {
@@ -47,6 +50,8 @@ export default async function handler(
       console.log("userId ==>", userId);
       console.log("serviceId ==>", serviceId);
       console.log("formData ==>", formData);
+      console.log("startTime ==>", startTime);
+      console.log("endTime ==>", endTime);
 
       const startDateTmz = moment
         .utc(startTime)
@@ -93,6 +98,18 @@ export default async function handler(
         },
       });
 
+      console.log("bookingCreated ==>", bookingCreated);
+
+      let service: Service | null;
+      try {
+        service = await prisma.service.findFirst({
+          where: { id: serviceId },
+        });
+      } catch (error) {
+        console.error("Erreur lors de la recherche du service:", error);
+        return res.status(400).send("Erreur lors de la recherche du service");
+      }
+
       if (
         bookingCreated &&
         webhookEvent.resource.purchase_units[0].payee.email_address
@@ -106,7 +123,7 @@ export default async function handler(
               webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
               "",
             bookingStartTime: startDateTmz,
-            serviceName: webhookEvent.resource.purchase_units[0].items[0].name,
+            serviceName: service?.name ?? "",
             employeeName: "Natacha S",
             businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
           }),
