@@ -81,7 +81,7 @@ export default async function handler(
           endTime: new Date(endTime),
           serviceId,
           userId,
-          amountPayed: webhookEvent.data.object.amount_captured,
+          amountPayed: webhookEvent.data.object.amount_captured / 100,
           form: formData,
           customerInfo: {
             name: customerDetails?.name ? customerDetails.name : "NC",

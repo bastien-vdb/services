@@ -60,9 +60,7 @@ function BookingsHistory() {
         customerEmail: booking.customer?.email ?? "Non renseigné",
         prestation: booking.service?.name,
         form: JSON.parse(booking.form as string),
-        prix: booking.amountPayed
-          ? String(booking.amountPayed / 100) + " €"
-          : "NA ",
+        prix: booking.amountPayed ? String(booking.amountPayed) + " €" : "NA ",
         status: (
           <div
             className={`
