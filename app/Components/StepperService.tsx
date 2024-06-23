@@ -25,7 +25,7 @@ export default function StepperService({
 }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!api) return;
@@ -38,6 +38,7 @@ export default function StepperService({
     setCurrent(api.selectedScrollSnap() + 1);
 
     api.on("select", () => {
+      setCount(api.scrollSnapList().length);
       setCurrent(api.selectedScrollSnap() + 1);
     });
   }, [api]);
