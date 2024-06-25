@@ -31,13 +31,15 @@ export default function PayPalButton({
 
   if (!serviceSelected?.price) throw new Error("Prix du service non défini");
 
+  const currency =
+    process.env.NEXT_PUBLIC_NODE_ENV === "development" ? "USD" : "EUR";
+
   return (
     <PayPalScriptProvider
       options={{
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID,
-        disableFuiding: "", // Très très étrange mais trouvé par hasard,
-        //c'est le seul moyen de Disable credit
-        //and debit cards tout en gardant le button paypal jaune
+        currency: currency,
+        disableFunding: "credit,card", // Très très étrange mais trouvé par hasard, c'est le seul moyen de Disable credit and debit cards tout en gardant le button paypal jaune
       }}
     >
       <PayPalButtons
@@ -70,17 +72,11 @@ export default function PayPalButton({
                 } satisfies paypalCustomIdType),
                 amount: {
                   value: String(totalPrice / 100), // Montant du paiement
-                  currency_code:
-                    process.env.NEXT_PUBLIC_NODE_ENV === "development"
-                      ? "USD"
-                      : "EUR",
+                  currency_code: currency,
                   breakdown: {
                     item_total: {
                       // Total des articles, doit correspondre à la somme des prix des articles * quantité
-                      currency_code:
-                        process.env.NEXT_PUBLIC_NODE_ENV === "development"
-                          ? "USD"
-                          : "EUR",
+                      currency_code: currency,
                       value: String(totalPrice / 100),
                     },
                   },
@@ -93,10 +89,7 @@ export default function PayPalButton({
                       endTime: bookingSelectedPaypal.endTime,
                     } satisfies paypalDescriptionItemType),
                     unit_amount: {
-                      currency_code:
-                        process.env.NEXT_PUBLIC_NODE_ENV === "development"
-                          ? "USD"
-                          : "EUR",
+                      currency_code: currency,
                       value: String(
                         deposit
                           ? prixFixDeposit.price / 100
@@ -111,10 +104,7 @@ export default function PayPalButton({
                           name: optionSelected.name,
                           description: String(bookingSelectedPaypal.startTime),
                           unit_amount: {
-                            currency_code:
-                              process.env.NEXT_PUBLIC_NODE_ENV === "development"
-                                ? "USD"
-                                : "EUR",
+                            currency_code: currency,
                             value: String(optionSelected.price / 100),
                           },
                           quantity: "1",
