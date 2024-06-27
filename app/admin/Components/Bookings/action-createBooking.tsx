@@ -39,37 +39,37 @@ async function actionCreateBooking({
     }
 
     // Gérer la création de la réservation et la mise à jour des disponibilités dans une transaction
-    const result = await prisma.$transaction(async (prisma) => {
-      const updates = [] as Availability[];
-
+    return await prisma.$transaction(async (prisma) => {
       // Si la réservation commence après le début de la disponibilité
       if (startTime > availability.startTime) {
-        const newAvailability = await prisma.availability.create({
+        await prisma.availability.create({
           data: {
             startTime: availability.startTime,
             endTime: startTime,
             userId: availability.userId,
           },
         });
-        updates.push(newAvailability);
       }
 
       // Si la réservation finit avant la fin de la disponibilité
       if (endTime < availability.endTime) {
-        const newAvailability = await prisma.availability.create({
+        await prisma.availability.create({
           data: {
             startTime: endTime,
             endTime: availability.endTime,
             userId: availability.userId,
           },
         });
-        updates.push(newAvailability);
       }
+
+      console.log("availability av supr ==>", availability);
 
       // Supprimer l'ancienne disponibilité
       await prisma.availability.delete({
         where: { id: availability.id },
       });
+
+      console.log("availability ap supr ==>", availability);
 
       // Rechercher ou créer un client basé sur l'email fourni
       let customer = await prisma.customer.findFirst({
@@ -97,7 +97,7 @@ async function actionCreateBooking({
       if (!customer) throw new Error("Customer not found or cannot be created");
 
       // Créer la nouvelle réservation
-      const booking = await prisma.booking.create({
+      return await prisma.booking.create({
         data: {
           startTime,
           endTime,
@@ -110,13 +110,7 @@ async function actionCreateBooking({
           customerId: customer.id,
         },
       });
-
-      updates.push(booking);
-
-      return updates;
     });
-
-    return result;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to create booking");
