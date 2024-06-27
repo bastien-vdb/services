@@ -38,6 +38,8 @@ async function actionCreateBooking({
       throw new Error("No availability found");
     }
 
+    console.log("availability av supr ==>", availability);
+
     // Gérer la création de la réservation et la mise à jour des disponibilités dans une transaction
     return await prisma.$transaction(async (prisma) => {
       // Si la réservation commence après le début de la disponibilité
