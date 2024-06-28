@@ -88,8 +88,13 @@ const SelectBooking = ({
                           scrollNext();
                         }}
                       >
-                        {moment(booking.startTime).format("HH:mm").toString()}-
-                        {moment(booking.endTime).format("HH:mm").toString()}
+                        {moment(booking.startTime)
+                          .format("DD/MM HH:mm")
+                          .toString()}
+                        -
+                        {moment(booking.endTime)
+                          .format("DD/MM HH:mm")
+                          .toString()}
                       </Button>
                     </li>
                   ))
