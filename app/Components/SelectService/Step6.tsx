@@ -46,6 +46,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
     deposit: boolean = false
   ) => {
     if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
+    setClientSecret("");
     setBookingSelectedPaypal(booking);
     setDeposit(deposit);
 
@@ -87,6 +88,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
   };
 
   useEffect(() => {
+    setClientSecret("");
     bookingSelected && handleCreatePayment(bookingSelected);
   }, [bookingSelected, serviceSelected, optionSelected]);
 
