@@ -1,5 +1,6 @@
 import useFormStore from "@/app/Components/SelectService/useFormStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
@@ -161,23 +162,20 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
                     )}
                   />
                 </div>
-                <div className="flex gap-2 m-2">
-                  <Button
-                    className="sm:w-[100px]"
-                    disabled={false}
-                    onClick={scrollPrev}
-                    size="sm"
-                    variant="secondary"
+                <div className="flex w-full justify-between gap-10 m-2">
+                  <TextRevealButton
+                    onClick={() => scrollPrev()}
+                    arrowPosition="left"
                   >
                     Retour
-                  </Button>
-                  <Button
-                    className="bg-[#CCB3AE] text-black sm:w-[400px]"
-                    size="sm"
+                  </TextRevealButton>
+                  <TextRevealButton
+                    bg={"bg-black"}
                     type="submit"
+                    arrowPosition="right"
                   >
                     Suivant
-                  </Button>
+                  </TextRevealButton>
                 </div>
               </form>
             </Form>

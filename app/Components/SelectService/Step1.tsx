@@ -1,5 +1,6 @@
 "use client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
 import {
@@ -65,8 +66,6 @@ function SelectService({ services }: { services?: Service[] }) {
     );
 
     serviceSelected && changeServiceSelected(serviceSelected);
-
-    console.log("data", data);
 
     if (data.option === "option-avec-depose") {
       changeOptionSelected({
@@ -173,22 +172,10 @@ function SelectService({ services }: { services?: Service[] }) {
             </FormItem>
           )}
         />
-        <div className="flex gap-2 m-2">
-          <Button
-            className="sm:w-[100px]"
-            disabled
-            size="sm"
-            variant="secondary"
-          >
-            Retour
-          </Button>
-          <Button
-            className="bg-[#CCB3AE] text-black sm:w-[400px]"
-            size="sm"
-            type="submit"
-          >
+        <div className="flex m-2">
+          <TextRevealButton bg={"bg-black"} type="submit" arrowPosition="right">
             Suivant
-          </Button>
+          </TextRevealButton>
         </div>
       </form>
     </Form>

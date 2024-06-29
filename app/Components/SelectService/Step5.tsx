@@ -3,6 +3,7 @@ import { Calendar } from "@/src/components/ui/calendar";
 import { useCarousel } from "@/src/components/ui/carousel";
 import { memo, useState } from "react";
 import SelectBooking from "../SelectBooking/SelectBooking";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 
 const Step5 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
@@ -23,16 +24,10 @@ const Step5 = memo(({ userId }: { userId: string }) => {
           className="p-10"
         />
 
-        <div className="flex gap-2 m-2">
-          <Button
-            className="sm:w-[250px]"
-            disabled={false}
-            onClick={scrollPrev}
-            size="sm"
-            variant="secondary"
-          >
+        <div className="flex gap-10 m-2">
+          <TextRevealButton onClick={() => scrollPrev()} arrowPosition="left">
             Retour
-          </Button>
+          </TextRevealButton>
         </div>
       </div>
       <SelectBooking userId={userId} daySelectedManager={daySelectedManager} />
