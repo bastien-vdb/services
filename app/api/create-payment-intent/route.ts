@@ -19,8 +19,8 @@ const calculateOrderAmount = (items) => {
 export async function POST(req: Request, res: NextApiResponse) {
   const body: {
     stripePriceId: string;
-    startTime: string;
-    endTime: string;
+    startTime: Date;
+    endTime: Date;
     userId: string;
     serviceId: string;
     serviceName: string;
@@ -58,7 +58,9 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   if (addedOption && !deposit) totalAmount = totalAmount + addedOption.price;
 
-  console.log("addedOption", addedOption);
+  console.log("addedOption-------------", addedOption);
+  console.log("startTime", startTime);
+  console.log("endTime", endTime);
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -72,9 +74,10 @@ export async function POST(req: Request, res: NextApiResponse) {
     automatic_payment_methods: {
       enabled: true,
     },
+
     metadata: {
-      startTime,
-      endTime,
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
       serviceId,
       stripePriceId,
       userId,

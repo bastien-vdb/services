@@ -34,6 +34,9 @@ export default function PayPalButton({
   const currency =
     process.env.NEXT_PUBLIC_NODE_ENV === "development" ? "USD" : "EUR";
 
+  console.log("startTime", bookingSelectedPaypal.startTime);
+  console.log("endTime", bookingSelectedPaypal.endTime);
+
   return (
     <PayPalScriptProvider
       options={{
