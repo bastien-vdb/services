@@ -7,6 +7,7 @@ import useCheckStripe from "@/src/hooks/useCheckStripe";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
 import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 import moment from "moment-timezone";
+import { J } from "@fullcalendar/core/internal-common";
 
 export const config = {
   api: {
@@ -15,8 +16,7 @@ export const config = {
 };
 
 type metadataType = {
-  startTime: string;
-  endTime: string;
+  dates: [string, string];
   serviceId: string;
   stripePriceId: string;
   bookingId: string;
@@ -61,15 +61,11 @@ export default async function handler(
       case "charge.succeeded":
         const metadata = webhookEvent.data.object.metadata;
         const customerDetails = webhookEvent.data.object.billing_details;
-        const {
-          startTime,
-          endTime,
-          serviceId,
-          userId,
-          serviceName,
-          addedOption,
-          formData,
-        } = metadata;
+        const { dates, serviceId, userId, serviceName, addedOption, formData } =
+          metadata;
+
+        const startTime = JSON.parse(dates)[0];
+        const endTime = JSON.parse(dates)[1];
 
         const startDateTmz = moment
           .utc(startTime)

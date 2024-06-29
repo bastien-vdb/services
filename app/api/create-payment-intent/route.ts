@@ -19,8 +19,8 @@ const calculateOrderAmount = (items) => {
 export async function POST(req: Request, res: NextApiResponse) {
   const body: {
     stripePriceId: string;
-    startTime: Date;
-    endTime: Date;
+    startTime: string;
+    endTime: string;
     userId: string;
     serviceId: string;
     serviceName: string;
@@ -76,8 +76,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     },
 
     metadata: {
-      startTime: startTime.toISOString(),
-      endTime: endTime.toISOString(),
+      dates: JSON.stringify([startTime, endTime]), //Pour empêcher la conversion en date par Stripe
       serviceId,
       stripePriceId,
       userId,
