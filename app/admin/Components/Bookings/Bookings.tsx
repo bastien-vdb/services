@@ -10,8 +10,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
-import { JsonValue } from "next-auth/adapters";
-import { startOfDay } from "date-fns";
 
 function Bookings() {
   const {
@@ -126,6 +124,14 @@ function Bookings() {
                 booking.status === "CONFIRMED" ? "hidden" : "text-success"
               }`}
             ></Check>
+          </AlertModal>
+        ),
+        supprimer: (
+          <AlertModal
+            disabled={loadingBookings}
+            onAction={() => handleDeleteBooking(booking.id)}
+          >
+            <Trash2 className="text-destructive"></Trash2>
           </AlertModal>
         ),
       };

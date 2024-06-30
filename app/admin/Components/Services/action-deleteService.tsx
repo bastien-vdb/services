@@ -7,6 +7,7 @@ async function actionDeleteService({ service }: { service: Service }) {
   try {
     const stripe = useCheckStripe();
     if (!service.stripeId) throw new Error("Stripe id is not defined");
+    console.log("actionDeleteService");
     return await stripe.products
       .update(service.stripeId, { active: false })
       .then(

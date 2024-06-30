@@ -10,7 +10,7 @@ type TextRevealButtonProps = PropsWithChildren<
 const TextRevealButton: React.FC<TextRevealButtonProps> = ({
   children,
   arrowPosition = "right",
-  bg = "bg-gray-400",
+  bg = "bg-gray-300",
   ...props
 }) => {
   const isRight = arrowPosition === "right";

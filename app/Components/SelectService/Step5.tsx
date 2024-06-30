@@ -1,19 +1,35 @@
-import { Button } from "@/src/components/ui/button";
 import { Calendar } from "@/src/components/ui/calendar";
 import { useCarousel } from "@/src/components/ui/carousel";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import SelectBooking from "../SelectBooking/SelectBooking";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
+import useServerData from "@/src/hooks/useServerData";
+import { Availability } from "@prisma/client";
 
 const Step5 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
+  const [allAvailabilities, setAllAvailabilities] = useState<Availability[]>();
   const { orientation, scrollPrev } = useCarousel();
+
+  useEffect(() => {
+    const result = getAllAvailabilities(userId).then(setAllAvailabilities);
+  }, []);
+
+  const getAllAvailabilities = async (userId: string) =>
+    await useServerData("availability", {
+      userId,
+    });
 
   return (
     <>
       <div className="flex justify-center flex-col justify-center items-center">
         <Calendar
+          modifiers={{
+            available: allAvailabilities
+              ? allAvailabilities.map((availability) => availability.startTime)
+              : [],
+          }}
           fromDate={new Date()}
           mode="single"
           selected={undefined}
