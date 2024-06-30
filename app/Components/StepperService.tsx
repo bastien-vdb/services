@@ -15,6 +15,7 @@ import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
 import Step5 from "./SelectService/Step5";
 import Step6 from "./SelectService/Step6";
+import { AlertDialogCustomer } from "@/src/components/Modal/AlertDialogCustomer";
 
 export default function StepperService({
   services,
@@ -43,6 +44,8 @@ export default function StepperService({
     });
   }, [api]);
 
+  const alertStep = () => <Button variant={"outline"}>test</Button>;
+
   return (
     <div className="flex w-full flex-col gap-4 p-2">
       <Carousel
@@ -61,6 +64,7 @@ export default function StepperService({
             <Step1 services={services} />
           </CarouselItem>
           <CarouselItem>
+            <AlertDialogCustomer actionElement={alertStep()} />
             <Step3 userId={userId} api={api} />
           </CarouselItem>
           <CarouselItem>
