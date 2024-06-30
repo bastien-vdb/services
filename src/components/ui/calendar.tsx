@@ -22,7 +22,7 @@ function Calendar({
       modifiers={{
         available: props.modifiers ? props.modifiers.available : [],
       }} // permet d'ajouter des règles sur ces dates particulières. (va avec le com du bas)
-      modifiersClassNames={{ available: "bg-blue-500 text-white border" }} // Application d'un css particulier pour les dates dispo
+      modifiersClassNames={{ available: "bg-[#CCB3AE] border border-white" }} // Application d'un css particulier pour les dates dispo
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
