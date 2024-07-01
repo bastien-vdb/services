@@ -1,5 +1,6 @@
 "use client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import { AlertDialogCustomer } from "@/src/components/Modal/AlertDialogCustomer";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
