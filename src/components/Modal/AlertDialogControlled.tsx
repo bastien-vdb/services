@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
+import { CalendarOff } from "lucide-react";
 import { useState } from "react";
 
 type AlertDialogControlledProps = {
@@ -24,8 +25,24 @@ export default function AlertDialogControlled({
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>🎉 Nouvelle recrue ! 🎉</AlertDialogTitle>
-          <AlertDialogDescription>
+          <AlertDialogTitle className="text-center text-sm sm:text-base">
+            <h3 className="m-2">
+              {" "}
+              <CalendarOff className="m-auto mb-4" size={30} color="red" />{" "}
+              <span className="text-red-600">
+                Tous les rendez-vous sont complets
+              </span>
+            </h3>
+            <span>
+              {" "}
+              Nous sommes désolés, mais tous les rendez-vous avec{" "}
+              <span className="text-red-600">Natacha</span> sont actuellement
+              complets pour le mois en cours.
+            </span>
+            <div className="flex justify-center m-2">------------</div>
+            <h1 className="flex justify-center">🎉 Nouvelle recrue ! 🎉</h1>
+          </AlertDialogTitle>
+          <AlertDialogDescription className="text-center">
             <div>
               Nous sommes ravis de vous annoncer que notre équipe s'agrandit !
             </div>
