@@ -51,23 +51,15 @@ export default function AlertDialogControlled({
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center text-xs sm:text-sm">
             <div>
-              Nous sommes ravis de vous annoncer que notre équipe s'agrandit !
-            </div>
-            <br />
-            <div>
               Pour répondre à la forte demande et continuer à vous offrir un
               service de qualité, nous avons le plaisir d'accueillir [Nom de la
-              Recrue] dans notre salon.
+              Recrue].
             </div>
             <br />
             <div>
               [Nom de la Recrue] a été formée par mes soins, maîtrisant
-              parfaitement notre savoir-faire et nos techniques uniques.
-            </div>
-            <br />
-            <div>
-              Elle partage notre engagement envers l'excellence et est prête à
-              vous offrir des prestations exceptionnelles.
+              parfaitement notre savoir-faire et partage notre engagement envers
+              l'excellence.
             </div>
             <br />
             <div>
