@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/src/components/ui/alert-dialog";
-import { CalendarOff } from "lucide-react";
+import { CalendarOff, X } from "lucide-react";
 import { useState } from "react";
 import TextGradient from "../syntax-ui/TextGradient";
 
@@ -26,10 +26,12 @@ export default function AlertDialogControlled({
     <AlertDialog open={open}>
       <AlertDialogContent style={{ maxHeight: "90vh", overflowY: "auto" }}>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-center text-xs sm:text-base">
+          <AlertDialogTitle className="text-center flex flex-col text-xs sm:text-base">
+            <button onClick={() => setOpen(false)} className="m-0 p-0 self-end">
+              <X className="m-0 p-0" />{" "}
+            </button>
             <h3 className="m-2">
-              {" "}
-              <CalendarOff className="m-auto mb-4" size={30} color="red" />{" "}
+              <CalendarOff className="m-auto mb-2" size={28} color="red" />{" "}
               <span className="text-red-600">
                 Tous les rendez-vous sont complets
               </span>
