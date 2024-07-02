@@ -193,6 +193,7 @@ function SelectService({ services }: { services?: Service[] }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectItem
+                      disabled
                       value={"Natacha"}
                       className="w-auto cursor-pointer"
                       style={{
@@ -200,17 +201,17 @@ function SelectService({ services }: { services?: Service[] }) {
                         justifyContent: "space-between",
                       }}
                     >
-                      Natacha{" "}
+                      Natacha <span className="text-red-600"> - complet</span>
                     </SelectItem>
                     <SelectItem
-                      value={"Estelle"}
+                      value={"Louise"}
                       className="w-auto cursor-pointer"
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
                       }}
                     >
-                      Estelle
+                      Louise
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>

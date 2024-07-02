@@ -89,6 +89,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
 
   useEffect(() => {
     setClientSecret("");
+    console.log("alors ? ca useEffect ou pas ?");
     bookingSelected && handleCreatePayment(bookingSelected);
   }, [bookingSelected, serviceSelected, optionSelected]);
 

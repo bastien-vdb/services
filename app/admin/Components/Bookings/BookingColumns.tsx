@@ -128,6 +128,10 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
           id: "q8",
           question: "Acceptez-vous de suivre le règlement intérieur ?",
         },
+        {
+          id: "employee",
+          question: "Employée ? ",
+        },
       ];
       //@ts-ignore
       const values = Object.values(row.getValue("form")).map((p) => p);
@@ -140,7 +144,11 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
               {values.map((value, i) => (
                 <div>
                   <div key={i}>{questions[i].question}</div>
-                  <b key={i}>{value === "no" || !value ? "non" : "oui"}</b>
+                  {questions[i].id === "employee" ? (
+                    <b key={i}>{value as string}</b>
+                  ) : (
+                    <b key={i}>{value === "no" || !value ? "non" : "oui"}</b>
+                  )}
                   <br />
                 </div>
               ))}
