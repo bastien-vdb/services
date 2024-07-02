@@ -14,6 +14,7 @@ const FormSchema = z.object({
   q8: z.boolean({
     required_error: "Veuillez accepter le règlement",
   }),
+  employee: z.optional(z.string()),
 });
 
 type FormData = z.infer<typeof FormSchema>;
@@ -36,6 +37,7 @@ const useFormStore = create<FormStoreType>()(
       q6: "",
       q7: "",
       q8: false,
+      employee: "",
     },
     setFormData: (data) =>
       set((state) => ({ formData: { ...state.formData, ...data } })),
@@ -50,6 +52,7 @@ const useFormStore = create<FormStoreType>()(
           q6: "",
           q7: "",
           q8: false,
+          employee: "",
         },
       }),
     submitFormData: async () => {

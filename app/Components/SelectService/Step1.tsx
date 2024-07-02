@@ -24,6 +24,7 @@ import { Service } from "@prisma/client";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import useFormStore from "./useFormStore";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -36,17 +37,17 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 function SelectService({ services }: { services?: Service[] }) {
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected } = useServiceStore();
+  const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { orientation, scrollNext } = useCarousel();
-
-  useEffect(() => {
-    console.log("orientation", orientation);
-  }, [orientation]);
 
   const FormSchema = z.object({
     service: z.string({
-      required_error: "Merci de sélectionner une prestation.",
+      required_error: "Champ obligatoire.",
     }),
     option: z.string({
+      required_error: "Champ obligatoire.",
+    }),
+    employee: z.string({
       required_error: "Champ obligatoire.",
     }),
   });
@@ -56,19 +57,20 @@ function SelectService({ services }: { services?: Service[] }) {
     defaultValues: {
       service: serviceSelected?.id || undefined,
       option: undefined,
+      employee: undefined,
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    const serviceSelected = services?.find(
-      (service) => service.id === data.service
-    );
+  function onSubmit({ service, employee, option }: z.infer<typeof FormSchema>) {
+    const serviceSelected = services?.find((s) => s.id === service);
+
+    setFormData({ employee: employee }); // Update store with form data
 
     serviceSelected && changeServiceSelected(serviceSelected);
 
-    if (data.option === "option-avec-depose") {
+    if (option === "option-avec-depose") {
       changeOptionSelected({
-        name: data.service,
+        name: service,
         price: 2000,
       });
     } else changeOptionSelected(undefined);
@@ -163,6 +165,52 @@ function SelectService({ services }: { services?: Service[] }) {
                       }}
                     >
                       Oui <span className="ml-2 text-green-600">+ 20 € </span>
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="employee"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Choisir son artiste</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-[250px] sm:w-[800px]">
+                    <SelectValue placeholder="Par qui ?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      value={"Natacha"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Natacha{" "}
+                    </SelectItem>
+                    <SelectItem
+                      value={"Estelle"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Estelle
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>

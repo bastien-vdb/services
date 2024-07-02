@@ -78,6 +78,8 @@ export default async function handler(
         console.log("startTime ==>", new Date(startTime));
         console.log("endTime ==>", new Date(endTime));
 
+        const { employee } = JSON.parse(formData);
+
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),
@@ -121,7 +123,7 @@ export default async function handler(
               customerName: customerDetails.name ?? "",
               bookingStartTime: startDateTmz,
               serviceName,
-              employeeName: "Natacha S",
+              employeeName: employee,
               businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
             }),
           });

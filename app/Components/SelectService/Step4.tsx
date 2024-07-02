@@ -16,7 +16,7 @@ import {
 import { Label } from "@/src/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -53,8 +53,12 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
     defaultValues: formData, // Use data from the store
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    setFormData(data); // Update store with form data
+  useEffect(() => {
+    console.log("formData", formData);
+  }, [formData]);
+
+  function onSubmit({ q5, q6, q7, q8 }: z.infer<typeof FormSchema>) {
+    setFormData({ q5, q6, q7, q8 }); // Update store with form data
     // nextStep();
 
     scrollNext();

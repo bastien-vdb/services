@@ -49,8 +49,8 @@ const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
     defaultValues: formData, // Use data from the store
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    setFormData(data); // Update store with form data
+  function onSubmit({ q1, q2, q3 }: z.infer<typeof FormSchema>) {
+    setFormData({ q1, q2, q3 }); // Update store with form data
     // nextStep();
 
     scrollNext();
