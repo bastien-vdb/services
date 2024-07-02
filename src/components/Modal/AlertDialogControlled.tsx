@@ -25,7 +25,7 @@ export default function AlertDialogControlled({
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-center text-sm sm:text-base">
+          <AlertDialogTitle className="text-center text-xs sm:text-base">
             <h3 className="m-2">
               {" "}
               <CalendarOff className="m-auto mb-4" size={30} color="red" />{" "}
@@ -42,7 +42,7 @@ export default function AlertDialogControlled({
             <div className="flex justify-center m-2">------------</div>
             <h1 className="flex justify-center">🎉 Nouvelle recrue ! 🎉</h1>
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-center">
+          <AlertDialogDescription className="text-center text-xs sm:text-sm">
             <div>
               Nous sommes ravis de vous annoncer que notre équipe s'agrandit !
             </div>
