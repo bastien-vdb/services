@@ -65,6 +65,16 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        textGradient: {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
         buttonheartbeat: {
           "0%": {
             "box-shadow": '0 0 0 0 theme("colors.red.500")',
@@ -84,6 +94,7 @@ module.exports = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         buttonheartbeat: "buttonheartbeat 2s infinite ease-in-out",
+        textGradient: "textGradient 5s ease infinite",
       },
     },
   },

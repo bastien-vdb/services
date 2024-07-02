@@ -10,6 +10,7 @@ import {
 } from "@/src/components/ui/alert-dialog";
 import { CalendarOff } from "lucide-react";
 import { useState } from "react";
+import TextGradient from "../syntax-ui/TextGradient";
 
 type AlertDialogControlledProps = {
   cancel?: boolean;
@@ -23,7 +24,7 @@ export default function AlertDialogControlled({
   const [open, setOpen] = useState(true);
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent>
+      <AlertDialogContent style={{ maxHeight: "80vh", overflowY: "auto" }}>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center text-xs sm:text-base">
             <h3 className="m-2">
@@ -39,8 +40,14 @@ export default function AlertDialogControlled({
               <span className="text-red-600">Natacha</span> sont actuellement
               complets pour le mois en cours.
             </span>
-            <div className="flex justify-center m-2">------------</div>
-            <h1 className="flex justify-center">🎉 Nouvelle recrue ! 🎉</h1>
+            <h1 className="flex justify-center m-2">
+              🎉{" "}
+              <TextGradient
+                additionalClassName="text-lg"
+                text={"Nouvelle recrue !"}
+              />{" "}
+              🎉
+            </h1>
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center text-xs sm:text-sm">
             <div>
