@@ -24,7 +24,7 @@ export default function AlertDialogControlled({
   const [open, setOpen] = useState(true);
   return (
     <AlertDialog open={open}>
-      <AlertDialogContent style={{ maxHeight: "80vh", overflowY: "auto" }}>
+      <AlertDialogContent style={{ maxHeight: "90vh", overflowY: "auto" }}>
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center text-xs sm:text-base">
             <h3 className="m-2">
