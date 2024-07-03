@@ -38,6 +38,8 @@ model Service {
   duration      Int
   Booking       Booking[]
   stripePriceId String?   @map("stripe_price_id")
+  Employee      Employee? @relation(fields: [employeeId], references: [id])
+  employeeId    String?   @db.ObjectId
 }
 
 model User {
@@ -73,6 +75,8 @@ model Booking {
   customerId  String?       @db.ObjectId
   amountPayed Int?
   form        Json?
+  employee    Employee?     @relation(fields: [employeeId], references: [id])
+  employeeId  String?       @db.ObjectId
 }
 
 model Customer {
@@ -86,14 +90,26 @@ model Customer {
   Booking   Booking[]
 }
 
+model Employee {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  firstname       String?
+  email           String?
+  Booking         Booking[]
+  Availability    Availability[]
+  servicesCreated Service[]
+}
+
 model Availability {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  startTime DateTime
-  endTime   DateTime
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String   @db.ObjectId
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  startTime  DateTime
+  endTime    DateTime
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String    @db.ObjectId
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?   @db.ObjectId
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Account {

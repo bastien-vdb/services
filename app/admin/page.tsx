@@ -64,6 +64,17 @@ async function Admin() {
             <Services services={services} />
           </AccordionContent>
         </AccordionItem>
+        <AccordionItem value={"Services"}>
+          <AccordionTrigger>
+            <div className="flex items-center gap-4">
+              <Gem />
+              <span>{"Gestion des prestations"}</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
+            <Services services={services} />
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </main>
   );

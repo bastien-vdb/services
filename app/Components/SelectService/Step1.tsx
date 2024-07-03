@@ -21,7 +21,6 @@ import {
 } from "@/src/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
@@ -84,6 +83,53 @@ function SelectService({ services }: { services?: Service[] }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex justify-center items-center flex-col gap-10"
       >
+        <FormField
+          control={form.control}
+          name="employee"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Choisir son artiste</FormLabel>
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger className="w-[250px] sm:w-[800px]">
+                    <SelectValue placeholder="Par qui ?" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem
+                      disabled
+                      value={"Natacha"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Natacha <span className="text-red-600"> - complet</span>
+                    </SelectItem>
+                    <SelectItem
+                      value={"Louise"}
+                      className="w-auto cursor-pointer"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      Louise
+                    </SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="service"
@@ -165,53 +211,6 @@ function SelectService({ services }: { services?: Service[] }) {
                       }}
                     >
                       Oui <span className="ml-2 text-green-600">+ 20 € </span>
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="employee"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Choisir son artiste</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                }}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-[250px] sm:w-[800px]">
-                    <SelectValue placeholder="Par qui ?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      disabled
-                      value={"Natacha"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Natacha <span className="text-red-600"> - complet</span>
-                    </SelectItem>
-                    <SelectItem
-                      value={"Louise"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Louise
                     </SelectItem>
                   </SelectGroup>
                 </SelectContent>
