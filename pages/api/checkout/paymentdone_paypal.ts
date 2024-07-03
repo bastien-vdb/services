@@ -53,6 +53,8 @@ export default async function handler(
         .tz("Europe/Paris")
         .format("YYYY-MM-DD HH:mm:ss");
 
+      const { employee } = formData;
+
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
         endTime: new Date(endTime),
@@ -116,7 +118,7 @@ export default async function handler(
               "",
             bookingStartTime: startDateTmz,
             serviceName: service?.name ?? "",
-            employeeName: "Natacha S",
+            employeeName: employee ?? "",
             businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
           }),
         });

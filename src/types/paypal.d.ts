@@ -13,6 +13,7 @@ type formData = {
   q5?: string | undefined;
   q6?: string | undefined;
   q7?: string | undefined;
+  employee?: string | undefined;
 };
 
 export type paypalDescriptionItemType = {
