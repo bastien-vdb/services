@@ -7,9 +7,11 @@ import { Availability } from "@prisma/client";
 async function actionCreateAvailability({
   startTime,
   endTime,
+  employeeId,
 }: {
   startTime: Date;
   endTime: Date;
+  employeeId: string;
 }) {
   const session = await getServerSession(authOptions);
 
@@ -21,6 +23,7 @@ async function actionCreateAvailability({
         startTime,
         endTime,
         userId: session.user.id,
+        employeeId,
       } as Availability,
     });
   } catch (error) {

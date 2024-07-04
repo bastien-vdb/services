@@ -8,8 +8,22 @@ import { useEffect, useMemo, useState } from "react";
 import useAvailabilityStore from "./useAvailabilityStore";
 import { v4 as uuidv4 } from "uuid";
 import useBookingsStore from "../Bookings/useBookingsStore";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import useEmployeeStore from "../Employee/useEmpoyeesStore";
+import { set } from "date-fns";
 
 const Calendar = () => {
+  const [employeeSelectedId, setEmployeeSelectedId] = useState<
+    string | undefined
+  >(undefined);
   const {
     availabilities,
     getAvailabilities,
@@ -17,6 +31,7 @@ const Calendar = () => {
     deleteAvailability,
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
+  const { employees, getEmployees } = useEmployeeStore();
   const today = useMemo(() => new Date(), []);
   const session = useSession();
   const [events, setEvents] = useState<
@@ -32,7 +47,14 @@ const Calendar = () => {
     if (!session.data?.user) return;
     getAvailabilities(session.data?.user.id!);
     getBookings(session.data?.user.id!);
+    getEmployees(session.data?.user.id!);
   }, [session.data?.user]);
+
+  useEffect(() => {
+    //Pour avoir la 1ère valeur de la liste des collaborateurs par default à l'ouverture
+    if (!employeeSelectedId && employees.length > 0)
+      setEmployeeSelectedId(employees[0].id);
+  }, [employees]);
 
   useEffect(() => {
     const bookingsEvents = bookings.map((booking) => ({
@@ -45,7 +67,7 @@ const Calendar = () => {
 
     const availabilitiesEvents = availabilities.map((availability) => ({
       id: availability.id,
-      title: "Rendez-vous",
+      title: "Disponibilité",
       start: availability.startTime,
       end: availability.endTime,
     }));
@@ -64,8 +86,12 @@ const Calendar = () => {
     }
   };
 
-  const handleDateSelect = async (selectInfo) => {
-    let title = "Rendez-vous"; // prompt("Enter a new title for this event:");
+  const handleDateSelect = async (selectInfo, employeeSelectedId) => {
+    if (employeeSelectedId === undefined) {
+      alert("Veuillez sélectionner un collaborateur");
+      return;
+    }
+    let title = "Disponibilité"; // prompt("Enter a new title for this event:");
     let calendarApi = selectInfo.view.calendar;
     calendarApi.unselect(); // clear date selection
 
@@ -78,47 +104,73 @@ const Calendar = () => {
         end: selectInfo.endStr,
       },
     ]);
-
-    await createAvailability(selectInfo.startStr, selectInfo.endStr);
+    employeeSelectedId &&
+      (await createAvailability(
+        selectInfo.startStr,
+        selectInfo.endStr,
+        employeeSelectedId
+      ));
   };
 
   return (
     <>
-      <FullCalendar
-        plugins={[timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        locale="fr" // Définir le locale en français
-        weekends
-        validRange={{
-          start: today,
-        }}
-        events={events}
-        duration={30}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "timeGridWeek,timeGridDay", // Boutons pour changer de vue
-        }}
-        slotLabelFormat={{
-          hour: "2-digit", // 2-digit, numeric
-          minute: "2-digit", // 2-digit, numeric
-          hour12: false, // false to display 24 hour format
-        }}
-        buttonText={{
-          today: "Aujourd'hui",
-          month: "Mois",
-          week: "Semaine",
-          day: "Jour",
-        }}
-        eventClick={handleEventClick}
-        slotDuration="00:30:00"
-        slotMinTime={"06:00:00"}
-        slotMaxTime={"22:00:00"}
-        firstDay={1}
-        editable
-        selectable // Assurez-vous que cette propriété est définie
-        select={handleDateSelect} // Fonction pour gérer les nouvelles sélections
-      />
+      {employees.length > 0 && (
+        <>
+          <FullCalendar
+            plugins={[timeGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            locale="fr" // Définir le locale en français
+            weekends
+            validRange={{
+              start: today,
+            }}
+            events={events}
+            duration={30}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "timeGridWeek,timeGridDay", // Boutons pour changer de vue
+            }}
+            slotLabelFormat={{
+              hour: "2-digit", // 2-digit, numeric
+              minute: "2-digit", // 2-digit, numeric
+              hour12: false, // false to display 24 hour format
+            }}
+            buttonText={{
+              today: "Aujourd'hui",
+              month: "Mois",
+              week: "Semaine",
+              day: "Jour",
+            }}
+            eventClick={handleEventClick}
+            slotDuration="00:30:00"
+            slotMinTime={"06:00:00"}
+            slotMaxTime={"22:00:00"}
+            firstDay={1}
+            editable
+            selectable // Assurez-vous que cette propriété soit définie
+            select={(selectInfo) =>
+              handleDateSelect(selectInfo, employeeSelectedId)
+            } // Fonction pour gérer les nouvelles sélections
+          />
+
+          <Select
+            onValueChange={setEmployeeSelectedId}
+            defaultValue={employees[0].id ?? undefined}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Collaborateur" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {employees.map((e) => (
+                  <SelectItem value={e.id}>{e.name}</SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </>
+      )}
     </>
   );
 };

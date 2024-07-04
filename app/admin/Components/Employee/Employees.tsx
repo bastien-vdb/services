@@ -14,26 +14,26 @@ import {
 import { Input } from "@/src/components/ui/input";
 import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Service } from "@prisma/client";
+import { Employee } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import useServiceStore from "./useServicesStore";
+import useEmployeeStore from "./useEmpoyeesStore";
 
-function Services({ services }: { services: Service[] }) {
+function Employees({ employees }: { employees: Employee[] }) {
   const {
-    services: servicesFromStore,
-    removeService,
-    initialiseServices,
-    addService,
-    loadingService,
-  } = useServiceStore();
+    employees: employeesFromStore,
+    removeEmployee,
+    initialiseEmployees,
+    addEmployee,
+    loadingEmployee,
+  } = useEmployeeStore();
 
-  const formatDataToServiceTableHeader = [
-    { className: "w-20", text: "Prestations", tooltip: "Prestations" },
-    { className: "text-right", text: "Prix", tooltip: "Prix" },
-    { className: "text-right", text: "Durée", tooltip: "Durée" },
+  const formatDataToTableHeader = [
+    { className: "w-20", text: "Nom", tooltip: "Nom" },
+    { className: "text-right", text: "Prénom", tooltip: "Prénom" },
+    { className: "text-right", text: "e-mail", tooltip: "e-mail" },
     {
       className: "",
       text: "",
@@ -41,23 +41,28 @@ function Services({ services }: { services: Service[] }) {
     },
   ];
 
-  const formatDataToServiceTableBody = servicesFromStore.map((service) => [
+  const formatDataToTableBody = employeesFromStore.map((employee) => [
     {
       className: "font-medium w-40",
-      text: service.name.charAt(0).toUpperCase() + service.name.slice(1),
+      text: employee.name.charAt(0).toUpperCase() + employee.name.slice(1),
     }, //Pour mettre en majuscule
-    { className: "text-right", text: service.price / 100 + " €" },
     {
-      className: "text-right",
-      text: service.duration + " min",
-    },
+      className: "font-medium w-40",
+      text:
+        employee.firstname.charAt(0).toUpperCase() +
+        employee.firstname.slice(1),
+    }, //Pour mettre en majuscule
+    {
+      className: "font-medium w-40",
+      text: employee.email.charAt(0).toUpperCase() + employee.email.slice(1),
+    }, //Pour mettre en majuscule
     {
       className: "text-right",
       text: (
         <Button
           title="Supprimer"
-          onClick={() => handleDeleteService(service)}
-          disabled={loadingService}
+          onClick={() => handleDeleteEmployee(employee)}
+          disabled={loadingEmployee}
           variant="outline"
         >
           <Trash2 className="text-destructive" />
@@ -67,43 +72,39 @@ function Services({ services }: { services: Service[] }) {
   ]);
 
   useEffect(() => {
-    initialiseServices(services);
+    initialiseEmployees(employees);
   }, []);
 
-  const handleDeleteService = async (service: Service) => {
-    removeService(service); //Optimistic update
+  const handleDeleteEmployee = async (employee: Employee) => {
+    removeEmployee(employee); //Optimistic update
     toast({
       variant: "success",
-      description: "Service supprimé",
+      description: "Collaborateur supprimé",
     });
   };
 
   const formSchema = z.object({
     name: z
       .string()
-      .min(2, "Le nom de la prestation doit contenir au moins 2 caractères.")
+      .min(2, "Le nom du collaborateur doit contenir au moins 2 caractères.")
       .max(
         100,
-        "Le nom de la prestation doit contenir moins de 100 caractères."
+        "Le nom du collaborateur doit contenir moins de 100 caractères."
       ),
-    price: z
+    firstname: z
       .string()
-      .transform((value) => parseFloat(value))
-      .refine((value) => !isNaN(value) && value >= 1, {
-        message: "Prix minimum supérieur à 1 €.",
-      })
-      .refine((value) => value <= 1000, {
-        message: "Prix maximum inférieur à 10000 €.",
-      }),
-    duration: z
+      .min(2, "Le prénom du collaborateur doit contenir au moins 2 caractères.")
+      .max(
+        100,
+        "Le prénom du collaborateur doit contenir moins de 100 caractères."
+      ),
+    email: z
       .string()
-      .transform((value) => parseFloat(value))
-      .refine((value) => !isNaN(value) && value >= 15, {
-        message: "Durée minimum supérieure à 15 minutes.",
-      })
-      .refine((value) => value <= 1440, {
-        message: "Durée maximum inférieure à 1440 minutes.",
-      }),
+      .min(5, "L'email du collaborateur doit contenir au moins 2 caractères.")
+      .max(
+        100,
+        "L'email du collaborateur doit contenir moins de 100 caractères."
+      ),
   });
 
   // 1. Define your form.
@@ -138,8 +139,8 @@ function Services({ services }: { services: Service[] }) {
       </Badge>
       <TableMain
         caption="Sélection du collaborateur"
-        headers={formatDataToServiceTableHeader}
-        rows={formatDataToServiceTableBody}
+        headers={formatDataToTableHeader}
+        rows={formatDataToTableBody}
       />
 
       <Form {...form}>
@@ -195,4 +196,4 @@ function Services({ services }: { services: Service[] }) {
   );
 }
 
-export default Services;
+export default Employees;
