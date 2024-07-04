@@ -20,6 +20,15 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import useServiceStore from "./useServicesStore";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/src/components/ui/select";
+import useEmployeeStore from "../Employee/useEmpoyeesStore";
 
 function Services({ services }: { services: Service[] }) {
   const {
@@ -29,6 +38,7 @@ function Services({ services }: { services: Service[] }) {
     addService,
     loadingService,
   } = useServiceStore();
+  const { employees } = useEmployeeStore();
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -104,6 +114,9 @@ function Services({ services }: { services: Service[] }) {
       .refine((value) => value <= 1440, {
         message: "Durée maximum inférieure à 1440 minutes.",
       }),
+    collaborateur: z.string({
+      required_error: "Champ obligatoire.",
+    }),
   });
 
   // 1. Define your form.
@@ -113,6 +126,7 @@ function Services({ services }: { services: Service[] }) {
       name: "",
       price: String(0) as unknown as number,
       duration: String(0) as unknown as number,
+      collaborateur: "",
     },
   });
 
@@ -187,6 +201,36 @@ function Services({ services }: { services: Service[] }) {
                   <FormDescription>
                     Durée de la prestation en minutes
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="collaborateur"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Collaborateur</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Collaborateur" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {employees.map((e) => (
+                            <SelectItem value={e.id}>{e.name}</SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormDescription>Nom du collaborateur</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

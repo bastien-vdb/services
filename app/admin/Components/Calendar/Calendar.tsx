@@ -13,12 +13,10 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
 import useEmployeeStore from "../Employee/useEmpoyeesStore";
-import { set } from "date-fns";
 
 const Calendar = () => {
   const [employeeSelectedId, setEmployeeSelectedId] = useState<
@@ -65,15 +63,17 @@ const Calendar = () => {
       color: booking.status === "PENDING" ? "pink" : "green",
     }));
 
-    const availabilitiesEvents = availabilities.map((availability) => ({
-      id: availability.id,
-      title: "Disponibilité",
-      start: availability.startTime,
-      end: availability.endTime,
-    }));
+    const availabilitiesEvents = availabilities
+      .filter((availability) => availability.employeeId === employeeSelectedId)
+      .map((availability) => ({
+        id: availability.id,
+        title: "Disponibilité",
+        start: availability.startTime,
+        end: availability.endTime,
+      }));
 
     setEvents([...bookingsEvents, ...availabilitiesEvents]);
-  }, [availabilities, bookings]);
+  }, [availabilities, bookings, employeeSelectedId]);
 
   const handleEventClick = (clickInfo) => {
     if (
