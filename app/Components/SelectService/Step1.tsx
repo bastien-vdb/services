@@ -24,6 +24,9 @@ import { Service } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
+import { use, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -34,10 +37,15 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 };
 
 function SelectService({ services }: { services?: Service[] }) {
+  const { employees, getEmployees, changeEmployeeSelected, employeeSelected } =
+    useEmployeeStore();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected } = useServiceStore();
   const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { orientation, scrollNext } = useCarousel();
+  const session = useSession();
+
+  useEffect(() => {}, [employeeSelected]);
 
   const FormSchema = z.object({
     service: z.string({
@@ -46,7 +54,7 @@ function SelectService({ services }: { services?: Service[] }) {
     option: z.string({
       required_error: "Champ obligatoire.",
     }),
-    employee: z.string({
+    employeeId: z.string({
       required_error: "Champ obligatoire.",
     }),
   });
@@ -56,16 +64,22 @@ function SelectService({ services }: { services?: Service[] }) {
     defaultValues: {
       service: serviceSelected?.id || undefined,
       option: undefined,
-      employee: undefined,
+      employeeId: undefined,
     },
   });
 
-  function onSubmit({ service, employee, option }: z.infer<typeof FormSchema>) {
+  function onSubmit({
+    service,
+    employeeId,
+    option,
+  }: z.infer<typeof FormSchema>) {
     const serviceSelected = services?.find((s) => s.id === service);
+    const employeeSelected = employees?.find((e) => e.id === employeeId);
 
-    setFormData({ employee: employee }); // Update store with form data
+    setFormData({ employee: employeeId }); // Update store with form data
 
     serviceSelected && changeServiceSelected(serviceSelected);
+    employeeSelected && changeEmployeeSelected(employeeSelected);
 
     if (option === "option-avec-depose") {
       changeOptionSelected({
@@ -77,6 +91,10 @@ function SelectService({ services }: { services?: Service[] }) {
     scrollNext();
   }
 
+  useEffect(() => {
+    getEmployees(session.data?.user.id!);
+  }, []);
+
   return (
     <Form {...form}>
       <form
@@ -85,13 +103,17 @@ function SelectService({ services }: { services?: Service[] }) {
       >
         <FormField
           control={form.control}
-          name="employee"
+          name="employeeId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Choisir son artiste</FormLabel>
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
+                  const employeeSelected = employees?.find(
+                    (e) => e.id === value
+                  );
+                  employeeSelected && changeEmployeeSelected(employeeSelected);
                 }}
                 defaultValue={field.value}
               >
@@ -102,27 +124,24 @@ function SelectService({ services }: { services?: Service[] }) {
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem
-                      disabled
-                      value={"Natacha"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Natacha <span className="text-red-600"> - complet</span>
-                    </SelectItem>
-                    <SelectItem
-                      value={"Louise"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Louise
-                    </SelectItem>
+                    {employees?.map((employee, i) => (
+                      <SelectItem
+                        // disabled={i === 0}
+                        value={employee.id}
+                        className="w-auto cursor-pointer"
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        {employee.name}
+                        {/* TODO: simplement pour bloquer le calendrier de Natacha
+                        car il est complet */}
+                        {i === 0 && (
+                          <span className="text-red-600"> - complet</span>
+                        )}
+                      </SelectItem>
+                    ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -148,22 +167,24 @@ function SelectService({ services }: { services?: Service[] }) {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Prestations</SelectLabel>
-                    {services?.map((service) => (
-                      <SelectItem
-                        key={service.id} // Added key here
-                        value={service.id}
-                        className="w-auto cursor-pointer"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {service.name}
-                        <span className="ml-2 text-green-600">
-                          + {service.price / 100} €
-                        </span>
-                      </SelectItem>
-                    ))}
+                    {services
+                      ?.filter((s) => s.employeeId === employeeSelected?.id)
+                      .map((service) => (
+                        <SelectItem
+                          key={service.id} // Added key here
+                          value={service.id}
+                          className="w-auto cursor-pointer"
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {service.name}
+                          <span className="ml-2 text-green-600">
+                            + {service.price / 100} €
+                          </span>
+                        </SelectItem>
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>

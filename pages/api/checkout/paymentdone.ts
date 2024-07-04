@@ -24,6 +24,8 @@ type metadataType = {
   serviceName: string;
   addedOption: string;
   formData: string;
+  employeeId: string;
+  employeeName: string;
 };
 
 async function buffer(readable: Readable) {
@@ -61,8 +63,16 @@ export default async function handler(
       case "charge.succeeded":
         const metadata = webhookEvent.data.object.metadata;
         const customerDetails = webhookEvent.data.object.billing_details;
-        const { dates, serviceId, userId, serviceName, addedOption, formData } =
-          metadata;
+        const {
+          dates,
+          serviceId,
+          userId,
+          serviceName,
+          addedOption,
+          formData,
+          employeeId,
+          employeeName,
+        } = metadata;
 
         const startTime = JSON.parse(dates)[0];
         const endTime = JSON.parse(dates)[1];
@@ -78,12 +88,11 @@ export default async function handler(
         console.log("startTime ==>", new Date(startTime));
         console.log("endTime ==>", new Date(endTime));
 
-        const { employee } = JSON.parse(formData);
-
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),
           serviceId,
+          employeeId,
           userId,
           amountPayed: webhookEvent.data.object.amount_captured / 100,
           form: formData,
@@ -123,7 +132,7 @@ export default async function handler(
               customerName: customerDetails.name ?? "",
               bookingStartTime: startDateTmz,
               serviceName,
-              employeeName: employee,
+              employeeName,
               businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
             }),
           });

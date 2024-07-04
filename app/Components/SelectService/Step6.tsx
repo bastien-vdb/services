@@ -12,6 +12,7 @@ import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
 import useFormStore from "./useFormStore";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -38,6 +39,7 @@ const Step6 = memo(({ userId }: { userId: string }) => {
 
   const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
+  const { employeeSelected } = useEmployeeStore();
 
   const { scrollPrev } = useCarousel();
 
@@ -71,6 +73,8 @@ const Step6 = memo(({ userId }: { userId: string }) => {
             serviceName: serviceSelected?.name,
             addedOption: optionSelected,
             formData,
+            employeeId: employeeSelected?.id,
+            employeeName: employeeSelected?.name,
           }),
         }
       );

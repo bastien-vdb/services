@@ -12,6 +12,7 @@ async function actionCreateBooking({
   amountPayed,
   form,
   customerInfo,
+  employeeId,
 }: {
   startTime: Date;
   endTime: Date;
@@ -20,6 +21,7 @@ async function actionCreateBooking({
   amountPayed;
   form: string;
   customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
+  employeeId: string;
 }) {
   try {
     // Chercher la première disponibilité qui chevauche la réservation
@@ -104,6 +106,7 @@ async function actionCreateBooking({
           amountPayed,
           form,
           customerId: customer.id,
+          employeeId: employeeId,
         },
       });
     });

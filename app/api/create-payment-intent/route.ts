@@ -33,6 +33,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     formData: any;
     amount: number;
     deposit: boolean;
+    employeeId: string;
+    employeeName: string;
   } = await req.json();
 
   const {
@@ -42,6 +44,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     userId,
     serviceId,
     serviceName,
+    employeeId,
+    employeeName,
     addedOption,
     formData,
     amount,
@@ -57,10 +61,6 @@ export async function POST(req: Request, res: NextApiResponse) {
   let totalAmount = amount;
 
   if (addedOption && !deposit) totalAmount = totalAmount + addedOption.price;
-
-  console.log("addedOption-------------", addedOption);
-  console.log("startTime", startTime);
-  console.log("endTime", endTime);
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -81,6 +81,8 @@ export async function POST(req: Request, res: NextApiResponse) {
       stripePriceId,
       userId,
       serviceName,
+      employeeId,
+      employeeName,
       addedOption: addedOption?.name || null,
       formData: JSON.stringify(formData),
     },

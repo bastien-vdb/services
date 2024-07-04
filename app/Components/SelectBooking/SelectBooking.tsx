@@ -1,5 +1,6 @@
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
@@ -13,7 +14,7 @@ import {
   DrawerTitle,
 } from "@/src/components/ui/drawer";
 import { LoadingSpinner } from "@/src/components/ui/loader";
-import { Availability, Booking, Service } from "@prisma/client";
+import { Availability, Booking, Employee, Service } from "@prisma/client";
 import { addMinutes, isAfter } from "date-fns";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -34,6 +35,7 @@ const SelectBooking = ({
     useAvailabilityStore();
   const { serviceSelected } = useServiceStore();
   const { setBookingSelected } = useBookingsStore();
+  const { employeeSelected } = useEmployeeStore();
 
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
@@ -45,9 +47,13 @@ const SelectBooking = ({
   }, [daySelected]);
 
   useEffect(() => {
-    if (!serviceSelected) return;
-    const cuttedBookings = availabilities.flatMap((booking) =>
-      splitBookingIntoServiceDuration(booking, serviceSelected)
+    if (!serviceSelected || !employeeSelected) return;
+    const cuttedBookings = availabilities.flatMap((avaibility) =>
+      splitBookingIntoServiceDuration({
+        avaibility,
+        serviceSelected,
+        employeeSelected,
+      })
     );
     setSlots(cuttedBookings); // Directement un tableau simple
   }, [availabilities]);
@@ -111,10 +117,15 @@ const SelectBooking = ({
 
 export default SelectBooking;
 
-function splitBookingIntoServiceDuration(
-  avaibility: Availability,
-  serviceSelected: Service
-) {
+function splitBookingIntoServiceDuration({
+  avaibility,
+  serviceSelected,
+  employeeSelected,
+}: {
+  avaibility: Availability;
+  serviceSelected: Service;
+  employeeSelected: Employee;
+}) {
   const slots: Booking[] = [];
   let currentTime = new Date(avaibility.startTime);
   const endTime = new Date(avaibility.endTime);
@@ -137,6 +148,7 @@ function splitBookingIntoServiceDuration(
         customerId: "",
         amountPayed: 0,
         form: "",
+        employeeId: employeeSelected.id ?? "",
       });
     }
 

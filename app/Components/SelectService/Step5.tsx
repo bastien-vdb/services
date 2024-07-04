@@ -5,12 +5,14 @@ import SelectBooking from "../SelectBooking/SelectBooking";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import useServerData from "@/src/hooks/useServerData";
 import { Availability } from "@prisma/client";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 
 const Step5 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
   const [allAvailabilities, setAllAvailabilities] = useState<Availability[]>();
   const { orientation, scrollPrev } = useCarousel();
+  const { employeeSelected } = useEmployeeStore();
 
   useEffect(() => {
     const result = getAllAvailabilities(userId).then(setAllAvailabilities);
@@ -27,7 +29,9 @@ const Step5 = memo(({ userId }: { userId: string }) => {
         <Calendar
           modifiers={{
             available: allAvailabilities
-              ? allAvailabilities.map((availability) => availability.startTime)
+              ? allAvailabilities
+                  .filter((a) => a.employeeId === employeeSelected?.id)
+                  .map((availability) => availability.startTime)
               : [],
           }}
           fromDate={new Date()}

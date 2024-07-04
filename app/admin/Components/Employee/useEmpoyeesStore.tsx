@@ -7,9 +7,11 @@ import actionDeleteEmployee from "./action-deleteEmployee";
 type EmployeeStoreType = {
   employees: Employee[];
   employeeSelected: Employee | null;
+  employeeAdminSideSelectedId: string | null;
   loadingEmployee: boolean;
   initialiseEmployees: (employees: Employee[]) => void;
   changeEmployeeSelected: (employee: Employee | null) => void;
+  changeEmployeeAdminSideSelectedId: (employee: string | null) => void;
   getEmployees: (userId: string) => void;
   addEmployee: (employee: {
     name: string;
@@ -22,9 +24,12 @@ type EmployeeStoreType = {
 const useEmployeeStore = create<EmployeeStoreType>((set) => ({
   employees: [],
   employeeSelected: null,
+  employeeAdminSideSelectedId: null,
   optionSelected: undefined,
   loadingEmployee: false,
   initialiseEmployees: (employees) => set({ employees }),
+  changeEmployeeAdminSideSelectedId: (employeeId) =>
+    set({ employeeAdminSideSelectedId: employeeId }),
   changeEmployeeSelected: (employee) => set({ employeeSelected: employee }),
   getEmployees: async (userId) => {
     const employees = await useServerData("employee", { createdById: userId });

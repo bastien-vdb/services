@@ -19,6 +19,7 @@ type ServiceStoreType = {
     name: string;
     price: number;
     duration: number;
+    employeeId: string;
   }) => Promise<void>;
   removeService: (service: Service) => void;
 };
@@ -41,6 +42,7 @@ const useServiceStore = create<ServiceStoreType>((set) => ({
       name: service.name,
       price: service.price * 100,
       duration: service.duration,
+      employeeId: service.employeeId,
     }).then((service) => {
       set((state) => ({ services: [...state.services, service] }));
       set({ loadingService: false });

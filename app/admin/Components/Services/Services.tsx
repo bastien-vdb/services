@@ -45,6 +45,11 @@ function Services({ services }: { services: Service[] }) {
     { className: "text-right", text: "Prix", tooltip: "Prix" },
     { className: "text-right", text: "Durée", tooltip: "Durée" },
     {
+      className: "text-right",
+      text: "Collaborateur",
+      tooltip: "Collaborateur",
+    },
+    {
       className: "",
       text: "",
       tooltip: "",
@@ -60,6 +65,10 @@ function Services({ services }: { services: Service[] }) {
     {
       className: "text-right",
       text: service.duration + " min",
+    },
+    {
+      className: "text-right",
+      text: employees.find((e) => e.id === service.employeeId)?.name,
     },
     {
       className: "text-right",
@@ -114,9 +123,7 @@ function Services({ services }: { services: Service[] }) {
       .refine((value) => value <= 1440, {
         message: "Durée maximum inférieure à 1440 minutes.",
       }),
-    collaborateur: z.string({
-      required_error: "Champ obligatoire.",
-    }),
+    employeeId: z.string().min(1, "Champ obligatoire."),
   });
 
   // 1. Define your form.
@@ -126,7 +133,7 @@ function Services({ services }: { services: Service[] }) {
       name: "",
       price: String(0) as unknown as number,
       duration: String(0) as unknown as number,
-      collaborateur: "",
+      employeeId: "",
     },
   });
 
@@ -207,7 +214,7 @@ function Services({ services }: { services: Service[] }) {
             />
             <FormField
               control={form.control}
-              name="collaborateur"
+              name="employeeId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Collaborateur</FormLabel>

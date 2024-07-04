@@ -19,9 +19,6 @@ import {
 import useEmployeeStore from "../Employee/useEmpoyeesStore";
 
 const Calendar = () => {
-  const [employeeSelectedId, setEmployeeSelectedId] = useState<
-    string | undefined
-  >(undefined);
   const {
     availabilities,
     getAvailabilities,
@@ -29,7 +26,12 @@ const Calendar = () => {
     deleteAvailability,
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
-  const { employees, getEmployees } = useEmployeeStore();
+  const {
+    employees,
+    getEmployees,
+    changeEmployeeAdminSideSelectedId,
+    employeeAdminSideSelectedId,
+  } = useEmployeeStore();
   const today = useMemo(() => new Date(), []);
   const session = useSession();
   const [events, setEvents] = useState<
@@ -50,8 +52,8 @@ const Calendar = () => {
 
   useEffect(() => {
     //Pour avoir la 1ère valeur de la liste des collaborateurs par default à l'ouverture
-    if (!employeeSelectedId && employees.length > 0)
-      setEmployeeSelectedId(employees[0].id);
+    if (!employeeAdminSideSelectedId && employees.length > 0)
+      changeEmployeeAdminSideSelectedId(employees[0].id);
   }, [employees]);
 
   useEffect(() => {
@@ -64,7 +66,10 @@ const Calendar = () => {
     }));
 
     const availabilitiesEvents = availabilities
-      .filter((availability) => availability.employeeId === employeeSelectedId)
+      .filter(
+        (availability) =>
+          availability.employeeId === employeeAdminSideSelectedId
+      )
       .map((availability) => ({
         id: availability.id,
         title: "Disponibilité",
@@ -73,7 +78,7 @@ const Calendar = () => {
       }));
 
     setEvents([...bookingsEvents, ...availabilitiesEvents]);
-  }, [availabilities, bookings, employeeSelectedId]);
+  }, [availabilities, bookings, employeeAdminSideSelectedId]);
 
   const handleEventClick = (clickInfo) => {
     if (
@@ -150,12 +155,12 @@ const Calendar = () => {
             editable
             selectable // Assurez-vous que cette propriété soit définie
             select={(selectInfo) =>
-              handleDateSelect(selectInfo, employeeSelectedId)
+              handleDateSelect(selectInfo, employeeAdminSideSelectedId)
             } // Fonction pour gérer les nouvelles sélections
           />
 
           <Select
-            onValueChange={setEmployeeSelectedId}
+            onValueChange={changeEmployeeAdminSideSelectedId}
             defaultValue={employees[0].id ?? undefined}
           >
             <SelectTrigger className="w-[180px]">

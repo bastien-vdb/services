@@ -8,10 +8,12 @@ async function actionCreateService({
   name,
   price: productPrice,
   duration,
+  employeeId,
 }: {
   name: string;
   price: number;
   duration: number;
+  employeeId: string;
 }) {
   const session = await getServerSession(authOptions);
 
@@ -37,6 +39,7 @@ async function actionCreateService({
         createdById: session.user.id,
         stripeId: service.id,
         stripePriceId: price.id,
+        employeeId,
       },
     });
   } catch (error) {
