@@ -48,13 +48,15 @@ const SelectBooking = ({
 
   useEffect(() => {
     if (!serviceSelected || !employeeSelected) return;
-    const cuttedBookings = availabilities.flatMap((avaibility) =>
-      splitBookingIntoServiceDuration({
-        avaibility,
-        serviceSelected,
-        employeeSelected,
-      })
-    );
+    const cuttedBookings = availabilities
+      .filter((e) => e.employeeId === employeeSelected.id)
+      .flatMap((avaibility) =>
+        splitBookingIntoServiceDuration({
+          avaibility,
+          serviceSelected,
+          employeeSelected,
+        })
+      );
     setSlots(cuttedBookings); // Directement un tableau simple
   }, [availabilities]);
 
