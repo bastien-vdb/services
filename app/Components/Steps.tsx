@@ -2,7 +2,6 @@
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Service } from "@prisma/client";
 import StepperService from "./StepperService";
-import ShoppingCart from "@/src/components/cart/ShoppingCart";
 import { useState } from "react";
 import ShineButton from "@/src/components/syntax-ui/ShineButton";
 
@@ -19,9 +18,9 @@ const Steps = ({
       <Card>
         <CardContent>
           {infoTemporaireVisible && (
-            <div className="flex flex-col gap-4 bg-gradient-to-r from-[#0000] via-[#CCB3AE] to-[#0000] p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
-              <CalendarOff className="m-auto mb-2" size={28} color="white" />{" "}
-              <div>
+            <div className="flex flex-col gap-4 bg-gradient-to-r from-[#0001] via-[#0000] to-[#0001] p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
+              <CalendarOff className="m-auto mb-2" size={28} color="red" />{" "}
+              <div className="text-red-600">
                 Le planning de Natacha ( créatrice du Finest Lash Studio et lash
                 expert ) est complet pour le mois de juillet.
               </div>
@@ -76,7 +75,6 @@ import {
   CarouselPrevious,
 } from "@/src/components/ui/carousel";
 import { CalendarOff } from "lucide-react";
-import BackgroundDots from "@/src/components/Hero/BackgroundDots";
 
 export function CarouselTemporaire() {
   return (
