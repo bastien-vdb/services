@@ -18,9 +18,6 @@ export default async function handler(
     const stripe = useCheckStripe();
 
     try {
-      console.log("Code:", code); // Log le code pour déboguer
-      console.log("State:", state); // Log l'état pour déboguer
-
       const response = await stripe.oauth.token({
         grant_type: "authorization_code",
         code,

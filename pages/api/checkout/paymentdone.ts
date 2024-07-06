@@ -82,12 +82,6 @@ export default async function handler(
           .tz("Europe/Paris")
           .format("YYYY-MM-DD HH:mm:ss");
 
-        console.log("startTime ==>", startTime);
-        console.log("endTime ==>", endTime);
-
-        console.log("startTime ==>", new Date(startTime));
-        console.log("endTime ==>", new Date(endTime));
-
         const bookingCreated = await actionCreateBooking({
           startTime: new Date(startTime),
           endTime: new Date(endTime),

@@ -35,8 +35,6 @@ const Step3 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
   const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext, scrollPrev } = useCarousel();
 
-  console.log("api", api?.selectedScrollSnap());
-
   // Définition du schéma du formulaire
   const FormSchema = z.object({
     q1: RadioButtonRuleForm(false),

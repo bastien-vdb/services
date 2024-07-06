@@ -36,8 +36,6 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
   const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext, scrollPrev } = useCarousel();
 
-  console.log("api", api?.selectedScrollSnap());
-
   // Définition du schéma du formulaire
   const FormSchema = z.object({
     q5: RadioButtonRuleForm(false),
@@ -52,10 +50,6 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
     resolver: zodResolver(FormSchema),
     defaultValues: formData, // Use data from the store
   });
-
-  useEffect(() => {
-    console.log("formData", formData);
-  }, [formData]);
 
   function onSubmit({ q5, q6, q7, q8 }: z.infer<typeof FormSchema>) {
     setFormData({ q5, q6, q7, q8 }); // Update store with form data

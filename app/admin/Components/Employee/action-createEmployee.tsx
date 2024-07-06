@@ -16,8 +16,6 @@ async function actionCreateEmployee({
 
   if (!session) throw new Error("Session is not defined");
 
-  console.log("name, firstname, email", name, firstname, email);
-
   try {
     return await prisma.employee.create({
       data: {

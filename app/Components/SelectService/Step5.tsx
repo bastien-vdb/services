@@ -23,8 +23,6 @@ const Step5 = memo(({ userId }: { userId: string }) => {
       userId,
     });
 
-  console.log("employeeSelected", employeeSelected);
-  console.log("allAvailability", allAvailabilities);
   return (
     <>
       <div className="flex justify-center flex-col justify-center items-center">

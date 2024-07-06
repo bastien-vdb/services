@@ -66,7 +66,6 @@ const useFormStore = create<FormStoreType>()(
           },
           body: JSON.stringify(formData),
         });
-        console.log("Formulaire soumis avec succès");
       } catch (error) {
         console.error("Erreur lors de la soumission du formulaire", error);
       }

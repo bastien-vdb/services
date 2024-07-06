@@ -40,8 +40,6 @@ async function Home() {
     createdById: userId,
   });
 
-  console.log("userId", userId);
-
   return (
     <>
       <Header />

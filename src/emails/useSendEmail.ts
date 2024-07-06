@@ -21,9 +21,8 @@ const useSendEmail = async ({ from, to, subject, react }: useSendEmailType) => {
     subject,
     react,
   } as any);
-  console.log("data, error", data, error);
-
   if (error) return error;
+  console.error(error);
   return data;
 };
 

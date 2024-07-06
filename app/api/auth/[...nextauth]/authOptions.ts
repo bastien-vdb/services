@@ -30,7 +30,7 @@ export const sendVerificationRequest = async (
         '"><b>Sign in</b></a></p>',
     });
   } catch (error) {
-    console.log({ error });
+    console.error({ error });
   }
 };
 

@@ -32,7 +32,6 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
     set({ loadingBookings: true });
     return actionSetBookingUser({ bookingId, status })
       .then((r) => {
-        console.log("Réservation mise à jour", r);
         set((state) => ({
           bookings: state.bookings.map((b) =>
             b.id === bookingId ? { ...b, status } : b

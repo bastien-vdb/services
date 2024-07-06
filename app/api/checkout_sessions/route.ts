@@ -90,7 +90,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     return NextResponse.json({ clientSecret: session.client_secret });
   } catch (err) {
     if (err.type === "StripeIdempotencyError") {
-      console.log("Réservation en cours sur ce créneau, merci de changer");
+      console.error("Réservation en cours sur ce créneau, merci de changer");
       return new Response(
         "Réservation en cours sur ce créneau, merci de changer",
         {
