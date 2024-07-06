@@ -18,7 +18,7 @@ const Steps = ({
       <Card>
         <CardContent>
           {infoTemporaireVisible && (
-            <div className="flex flex-col gap-4 bg-gradient-to-r from-[#0001] via-[#0000] to-[#0001] p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
+            <div className="flex flex-col gap-4 bg-gradient-to-r from-pink-50 via-[#0000] to-pink-50 p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
               <CalendarOff className="m-auto mb-2" size={28} color="red" />{" "}
               <div className="text-red-600">
                 Le planning de Natacha ( créatrice du Finest Lash Studio et lash
