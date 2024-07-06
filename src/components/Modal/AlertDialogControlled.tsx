@@ -54,14 +54,14 @@ export default function AlertDialogControlled({
           <AlertDialogDescription className="text-center text-xs sm:text-sm">
             <div>
               Pour répondre à la forte demande et continuer à vous offrir un
-              service de qualité, nous avons le plaisir d'accueillir [Nom de la
-              Recrue].
+              service de qualité, nous avons le plaisir d&lsquo;accueillir [Nom
+              de la Recrue].
             </div>
             <br />
             <div>
               [Nom de la Recrue] a été formée par mes soins, maîtrisant
               parfaitement notre savoir-faire et partage notre engagement envers
-              l'excellence.
+              l&lsquo;excellence.
             </div>
             <br />
             <div>

@@ -75,3 +75,5 @@ const Step = React.forwardRef<HTMLLIElement, StepProps>(
 );
 
 export { Step };
+// Définir le displayName pour le composant Step
+Step.displayName = "Step";
