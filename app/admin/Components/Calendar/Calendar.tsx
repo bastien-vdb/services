@@ -57,13 +57,15 @@ const Calendar = () => {
   }, [employees]);
 
   useEffect(() => {
-    const bookingsEvents = bookings.map((booking) => ({
-      id: booking.id,
-      title: "Rendez-vous",
-      start: booking.startTime,
-      end: booking.endTime,
-      color: booking.status === "PENDING" ? "pink" : "green",
-    }));
+    const bookingsEvents = bookings
+      .filter((b) => b.employeeId === employeeAdminSideSelectedId)
+      .map((booking) => ({
+        id: booking.id,
+        title: "Rendez-vous",
+        start: booking.startTime,
+        end: booking.endTime,
+        color: booking.status === "PENDING" ? "pink" : "green",
+      }));
 
     const availabilitiesEvents = availabilities
       .filter(
