@@ -53,7 +53,10 @@ const Steps = ({
                 prendre rdv sur le bouton ci-après !
               </div>
               <CarouselTemporaire />
-              <ShineButton text={"Prendre Rendez-vous"} />
+              <ShineButton
+                onClick={() => setInfoTemporaireVisible(false)}
+                text={"Prendre Rendez-vous"}
+              />
             </div>
           )}
           {!infoTemporaireVisible && (
