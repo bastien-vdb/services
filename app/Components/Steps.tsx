@@ -18,7 +18,7 @@ const Steps = ({
       <Card>
         <CardContent>
           {infoTemporaireVisible && (
-            <div className="flex flex-col gap-4 bg-gradient-to-r from-pink-50 via-[#0000] to-pink-50 p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
+            <div className="flex flex-col items-center text-justify gap-4 bg-gradient-to-r from-pink-50 via-[#0000] to-pink-50 p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
               <CalendarOff className="m-auto mb-2" size={28} color="red" />{" "}
               <div className="text-red-600">
                 Le planning de Natacha ( créatrice du Finest Lash Studio et lash
@@ -87,10 +87,10 @@ export function CarouselTemporaire() {
           <CarouselItem key={index}>
             <div className="p-1">
               <Card>
-                <CardContent className="bg-black flex aspect-square items-center justify-center p-6 flex-col">
+                <CardContent className="bg-black text-white flex aspect-square items-center justify-center p-6 flex-col">
                   <img src="/images/bresil.jpg" />
-                  <span className="text-xs font-semibold">{index + 1}</span>
-                  <span>Cil à cil</span>
+
+                  <span className="m-4">Cil à cil</span>
                 </CardContent>
               </Card>
             </div>
