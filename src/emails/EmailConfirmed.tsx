@@ -73,16 +73,16 @@ export const EmailConfirmed = ({
               facturé 5€ de plus.
             </Text>
             <Text style={paragraph}>
-              Si vous avez choisi le paiement de l'acompte sur le site, il
+              Si vous avez choisi le paiement de l&apos;acompte sur le site, il
               faudra impérativement régler le solde en ESPÈCES le jour J.
             </Text>
             <Text style={paragraph}>
               Le studio se trouve au 36 chemin des Huats, 93000 Bobigny.
             </Text>
             <Text style={paragraph}>
-              Une fois arrivé(e), vous pourrez m'envoyer un message ou m'appeler
-              au 0783639738 pour m'informer de votre arrivée. (attention, il ne
-              faut pas sonner !)
+              Une fois arrivé(e), vous pourrez m&apos;envoyer un message ou
+              m&apos;appeler au 0783639738 pour m&apos;informer de votre
+              arrivée. (attention, il ne faut pas sonner !)
             </Text>
             <Text style={paragraph}>
               Les accompagnateurs ne sont pas acceptés.

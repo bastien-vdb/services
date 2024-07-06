@@ -66,7 +66,7 @@ export const EmailRdvBooked = ({
           <Heading style={heading}>
             <Text style={paragraph}>🪄 Cher {customerName},</Text>
             <Text style={paragraph}>
-              Le rendez-vous {serviceName} avec {employeeName} à l'adresse{" "}
+              Le rendez-vous {serviceName} avec {employeeName} à l&apos;adresse{" "}
               {businessPhysicalAddress}, prévu pour le{" "}
               {bookingStartTime && dateString} à{" "}
               {bookingStartTime && heureString}, est en attente de confirmation.

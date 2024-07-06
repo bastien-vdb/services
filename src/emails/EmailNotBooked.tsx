@@ -48,7 +48,7 @@ export const EmailRdvBooked = ({
   return (
     <Html>
       <Head />
-      <Preview>Le rendez-vous n'a pas pu être pris en compte</Preview>
+      <Preview>Le rendez-vous n&apos;a pas pu être pris en compte</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -60,12 +60,12 @@ export const EmailRdvBooked = ({
           <Heading style={heading}>
             🪄 Cher {customerName}, le rendez-vous, prévu pour le
             {bookingStartTime && dateString} à {bookingStartTime && heureString}
-            , n'a pas pu être confirmé.
+            , n&apos;a pas pu être confirmé.
           </Heading>
           <Section style={body}>
             <Text style={paragraph}>
               Nous nous excusons pour la gêne occasionnée. Veuillez nous
-              contacter pour plus d'informations.
+              contacter pour plus d&apos;informations.
             </Text>
             Finest lash Studio
           </Section>
