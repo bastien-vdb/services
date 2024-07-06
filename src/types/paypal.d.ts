@@ -2,6 +2,8 @@
 export type paypalCustomIdType = {
   userId: string;
   formData: formData;
+  employeeId: string;
+  employeeName: string;
 };
 
 type formData = {

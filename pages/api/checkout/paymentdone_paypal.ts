@@ -37,7 +37,7 @@ export default async function handler(
     const webhookEvent = JSON.parse(rawBody) as paypalCheckoutOrderApprovedType; //TODO à vérifier avec ZOD
 
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
-      const { userId, formData } = JSON.parse(
+      const { userId, formData, employeeId, employeeName } = JSON.parse(
         webhookEvent.resource.purchase_units[0].custom_id
       ) as paypalCustomIdType;
       const serviceId = webhookEvent.resource.purchase_units[0].description;
@@ -60,6 +60,7 @@ export default async function handler(
         endTime: new Date(endTime),
         serviceId,
         userId,
+        employeeId,
         amountPayed: Number(
           webhookEvent.resource.purchase_units[0].amount.value
         ),
@@ -118,7 +119,7 @@ export default async function handler(
               "",
             bookingStartTime: startDateTmz,
             serviceName: service?.name ?? "",
-            employeeName: employee ?? "",
+            employeeName: employeeName,
             businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
           }),
         });
