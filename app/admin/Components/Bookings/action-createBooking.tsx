@@ -33,6 +33,7 @@ async function actionCreateBooking({
         endTime: {
           gte: startTime,
         },
+        employeeId,
       },
     });
 
@@ -49,6 +50,7 @@ async function actionCreateBooking({
             startTime: availability.startTime,
             endTime: startTime,
             userId: availability.userId,
+            employeeId,
           },
         });
       }
@@ -60,6 +62,7 @@ async function actionCreateBooking({
             startTime: endTime,
             endTime: availability.endTime,
             userId: availability.userId,
+            employeeId,
           },
         });
       }
