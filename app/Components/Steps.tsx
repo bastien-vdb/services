@@ -19,7 +19,7 @@ const Steps = ({
       <Card>
         <CardContent>
           {infoTemporaireVisible && (
-            <div className="flex flex-col gap-4 bg-[#CCB3AE] p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
+            <div className="flex flex-col gap-4 bg-gradient-to-r from-[#0000] via-[#CCB3AE] to-[#0000] p-6 max-w-4xl mx-auto mt-10 rounded-lg shadow-lg">
               <CalendarOff className="m-auto mb-2" size={28} color="white" />{" "}
               <div>
                 Le planning de Natacha ( créatrice du Finest Lash Studio et lash
@@ -76,6 +76,7 @@ import {
   CarouselPrevious,
 } from "@/src/components/ui/carousel";
 import { CalendarOff } from "lucide-react";
+import BackgroundDots from "@/src/components/Hero/BackgroundDots";
 
 export function CarouselTemporaire() {
   return (
@@ -85,8 +86,8 @@ export function CarouselTemporaire() {
           <CarouselItem key={index}>
             <div className="p-1">
               <Card>
-                <CardContent className="flex aspect-square items-center justify-center p-6 flex-col">
-                  <img src="/images/hero.png" />
+                <CardContent className="bg-black flex aspect-square items-center justify-center p-6 flex-col">
+                  <img src="/images/bresil.jpg" />
                   <span className="text-xs font-semibold">{index + 1}</span>
                   <span>Cil à cil</span>
                 </CardContent>
