@@ -110,19 +110,16 @@ export default async function handler(
         bookingCreated &&
         webhookEvent.resource.purchase_units[0].payee.email_address
       ) {
-        console.log(
-          "nom produit",
-          webhookEvent.resource.purchase_units[0].items[0].name
-        );
+        console.log("nom produit", service?.name);
         console.log(
           "email du client",
           webhookEvent.resource.purchase_units[0].payee.email_address
         );
-        console.log("email de lemployee", employeeName);
+        console.log("email de lemployee", employeeEmail);
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
           to: [webhookEvent.resource.purchase_units[0].payee.email_address],
-          subject: `Rendez-vous ${webhookEvent.resource.purchase_units[0].items[0].name} en attente.`,
+          subject: `Rendez-vous ${service?.name} en attente.`,
           react: EmailRdvBooked({
             customerName:
               webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
@@ -138,7 +135,7 @@ export default async function handler(
           (await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [employeeEmail],
-            subject: `Vous avez un Rendez-vous ${webhookEvent.resource.purchase_units[0].items[0].name} en attente.`,
+            subject: `Vous avez un Rendez-vous ${service?.name} en attente.`,
             react: EmailPaymentReceived({
               customerName:
                 webhookEvent.resource.purchase_units[0].shipping.name
