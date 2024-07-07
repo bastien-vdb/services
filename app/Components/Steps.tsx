@@ -4,6 +4,7 @@ import { Service } from "@prisma/client";
 import StepperService from "./StepperService";
 import { useState } from "react";
 import ShineButton from "@/src/components/syntax-ui/ShineButton";
+import Image from "next/image";
 
 const Steps = ({
   services,
@@ -78,19 +79,61 @@ import {
   CarouselPrevious,
 } from "@/src/components/ui/carousel";
 import { CalendarOff } from "lucide-react";
+import { AspectRatio } from "@/src/components/ui/aspect-ratio";
+
+const Pictures = [
+  {
+    id: 1,
+    src: "/images/cil1.jpeg",
+    alt: "",
+  },
+  {
+    id: 2,
+    src: "/images/cil2.png",
+    alt: "",
+  },
+  {
+    id: 3,
+    src: "/images/cil3.png",
+    alt: "",
+  },
+  {
+    id: 4,
+    src: "/images/cil4.png",
+    alt: "",
+  },
+  {
+    id: 5,
+    src: "/images/cil5.jpeg",
+    alt: "",
+  },
+];
 
 export function CarouselTemporaire() {
   return (
-    <Carousel className="w-full max-w-xs">
+    <Carousel
+      opts={{
+        align: "start",
+      }}
+      className="w-full max-w-sm"
+    >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index}>
+        {Pictures.map((p) => (
+          <CarouselItem key={p.id} className="md:basis-1/2 lg:basis-1/2">
             <div className="p-1">
               <Card>
-                <CardContent className="bg-black text-white flex aspect-square items-center justify-center p-6 flex-col">
-                  <img src="/images/bresil.jpg" />
+                <CardContent className="flex flex-col aspect-square items-center justify-center">
+                  <AspectRatio ratio={16 / 9}>
+                    <Image
+                      className="rounded-md object-cover"
+                      width={500}
+                      height={500}
+                      src={p.src}
+                      alt={p.alt}
+                    />
+                  </AspectRatio>
 
-                  <span className="m-4">Cil à cil</span>
+                  <span className="font-semibold">{p.id + 1}</span>
                 </CardContent>
               </Card>
             </div>
