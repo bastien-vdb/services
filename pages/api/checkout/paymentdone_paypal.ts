@@ -110,6 +110,15 @@ export default async function handler(
         bookingCreated &&
         webhookEvent.resource.purchase_units[0].payee.email_address
       ) {
+        console.log(
+          "nom produit",
+          webhookEvent.resource.purchase_units[0].items[0].name
+        );
+        console.log(
+          "email du client",
+          webhookEvent.resource.purchase_units[0].payee.email_address
+        );
+        console.log("email de lemployee", employeeName);
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
           to: [webhookEvent.resource.purchase_units[0].payee.email_address],
