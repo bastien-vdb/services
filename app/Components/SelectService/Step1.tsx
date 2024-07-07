@@ -76,7 +76,7 @@ function SelectService({ services }: { services?: Service[] }) {
     const serviceSelected = services?.find((s) => s.id === service);
     const employeeSelected = employees?.find((e) => e.id === employeeId);
 
-    setFormData({ employee: employeeId }); // Update store with form data
+    setFormData({ employee: employeeSelected?.email }); // Update store with form data
 
     serviceSelected && changeServiceSelected(serviceSelected);
     employeeSelected && changeEmployeeSelected(employeeSelected);

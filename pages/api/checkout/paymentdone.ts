@@ -1,3 +1,4 @@
+import { Employee } from "@prisma/client";
 import { metadata } from "./../../../app/layout";
 import { NextApiRequest, NextApiResponse } from "next";
 import type { Readable } from "node:stream";
@@ -8,6 +9,7 @@ import EmailNotBooked from "@/src/emails/EmailNotBooked";
 import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 import moment from "moment-timezone";
 import { J } from "@fullcalendar/core/internal-common";
+import EmailPaymentReceived from "@/src/emails/EmailPaymentReceived";
 
 export const config = {
   api: {
@@ -74,6 +76,8 @@ export default async function handler(
           employeeName,
         } = metadata;
 
+        const { employee: employeeEmail } = JSON.parse(formData);
+
         const startTime = JSON.parse(dates)[0];
         const endTime = JSON.parse(dates)[1];
 
@@ -123,6 +127,19 @@ export default async function handler(
             to: [customerDetails.email],
             subject: `Rendez-vous ${serviceName} en attente.`,
             react: EmailRdvBooked({
+              customerName: customerDetails.name ?? "",
+              bookingStartTime: startDateTmz,
+              serviceName,
+              employeeName,
+              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
+            }),
+          });
+
+          await useSendEmail({
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
+            to: [employeeEmail],
+            subject: `Vous avez un Rendez-vous ${serviceName} en attente.`,
+            react: EmailPaymentReceived({
               customerName: customerDetails.name ?? "",
               bookingStartTime: startDateTmz,
               serviceName,

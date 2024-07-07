@@ -1,6 +1,7 @@
 import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBooking";
 import EmailRdvBooked from "@/src/emails/EmailBooked";
 import EmailNotBooked from "@/src/emails/EmailNotBooked";
+import EmailPaymentReceived from "@/src/emails/EmailPaymentReceived";
 import useSendEmail from "@/src/emails/useSendEmail";
 import {
   paypalCheckoutOrderApprovedType,
@@ -53,7 +54,7 @@ export default async function handler(
         .tz("Europe/Paris")
         .format("YYYY-MM-DD HH:mm:ss");
 
-      const { employee } = formData;
+      const { employee: employeeEmail } = formData;
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
@@ -119,10 +120,26 @@ export default async function handler(
               "",
             bookingStartTime: startDateTmz,
             serviceName: service?.name ?? "",
-            employeeName: employeeName,
+            employeeName,
             businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
           }),
         });
+
+        employeeEmail &&
+          (await useSendEmail({
+            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
+            to: [employeeEmail],
+            subject: `Vous avez un Rendez-vous ${webhookEvent.resource.purchase_units[0].items[0].name} en attente.`,
+            react: EmailPaymentReceived({
+              customerName:
+                webhookEvent.resource.purchase_units[0].shipping.name
+                  .full_name ?? "",
+              bookingStartTime: startDateTmz,
+              serviceName: service?.name ?? "",
+              employeeName,
+              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
+            }),
+          }));
       }
       if (
         !bookingCreated &&
