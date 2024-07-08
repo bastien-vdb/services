@@ -6,6 +6,7 @@ import actionSendConfirmationEmail from "@/src/emails/action-send-confirmation-e
 import { Booking, Customer, Service } from "@prisma/client";
 import { Check, Trash2 } from "lucide-react";
 import moment from "moment";
+import momentTz from "moment-timezone";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
@@ -100,7 +101,7 @@ function Bookings() {
                   to: [booking.customer.email],
                   subject: `${booking.customer.name} Confirmation de réservation`,
                   customerName: booking.customer.name,
-                  bookingStartTime: moment
+                  bookingStartTime: momentTz
                     .utc(booking.startTime)
                     .tz("Europe/Paris")
                     .format("YYYY-MM-DD HH:mm:ss"),
