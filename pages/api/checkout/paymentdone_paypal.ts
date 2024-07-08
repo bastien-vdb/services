@@ -105,19 +105,10 @@ export default async function handler(
         return res.status(400).send("Erreur lors de la recherche du service");
       }
 
-      if (
-        bookingCreated &&
-        webhookEvent.resource.purchase_units[0].payee.email_address
-      ) {
-        console.log("nom produit", service?.name);
-        console.log(
-          "email du client",
-          webhookEvent.resource.purchase_units[0].payee.email_address
-        );
-        console.log("email de lemployee", employeeEmail);
+      if (bookingCreated && webhookEvent.resource.payer.email_address) {
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-          to: [webhookEvent.resource.purchase_units[0].payee.email_address],
+          to: [webhookEvent.resource.payer.email_address],
           subject: `Rendez-vous ${service?.name} en attente.`,
           react: EmailRdvBooked({
             customerName:
@@ -146,15 +137,10 @@ export default async function handler(
             }),
           }));
       }
-      if (
-        !bookingCreated &&
-        webhookEvent.resource.purchase_units[0].payee.email_address
-      ) {
+      if (!bookingCreated && webhookEvent.resource.payer.email_address) {
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-          to: [
-            String(webhookEvent.resource.purchase_units[0].payee.email_address),
-          ],
+          to: [webhookEvent.resource.payer.email_address],
           subject: `${webhookEvent.resource.purchase_units[0].shipping.name.full_name} Votre n'a pas pu être réservé`,
           react: EmailNotBooked({
             customerName:
