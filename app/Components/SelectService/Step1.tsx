@@ -49,13 +49,13 @@ function SelectService({ services }: { services?: Service[] }) {
 
   const FormSchema = z.object({
     service: z.string({
-      required_error: "Champ obligatoire.",
+      required_error: "*",
     }),
     option: z.string({
-      required_error: "Champ obligatoire.",
+      required_error: "*",
     }),
     employeeId: z.string({
-      required_error: "Champ obligatoire.",
+      required_error: "*",
     }),
   });
 
