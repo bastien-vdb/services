@@ -92,7 +92,6 @@ function Services({ services }: { services: Service[] }) {
   const handleDeleteService = async (service: Service) => {
     removeService(service); //Optimistic update
     toast({
-      variant: "success",
       description: "Service supprimé",
     });
   };
@@ -143,7 +142,6 @@ function Services({ services }: { services: Service[] }) {
     addService(values).then(() => {
       form.reset();
       toast({
-        variant: "success",
         description: "Service créé avec succès",
       });
     });

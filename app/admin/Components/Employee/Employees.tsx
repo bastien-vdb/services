@@ -78,7 +78,6 @@ function Employees({ employees }: { employees: Employee[] }) {
   const handleDeleteEmployee = async (employee: Employee) => {
     removeEmployee(employee); //Optimistic update
     toast({
-      variant: "success",
       description: "Collaborateur supprimé",
     });
   };
@@ -123,7 +122,6 @@ function Employees({ employees }: { employees: Employee[] }) {
     addEmployee(values).then(() => {
       form.reset();
       toast({
-        variant: "success",
         description: "Profil collabotateur créé avec succès",
       });
     });

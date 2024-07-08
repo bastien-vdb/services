@@ -46,7 +46,7 @@ export default function StepperService({
 
   return (
     <div className="flex w-full flex-col gap-4 p-2">
-      <AlertDialogControlled validationButtonMsg="J'ai bien compris" />
+      {/* <AlertDialogControlled validationButtonMsg="J'ai bien compris" /> */}
       <Carousel
         setApi={setApi}
         opts={{

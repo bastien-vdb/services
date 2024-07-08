@@ -51,7 +51,6 @@ function Bookings() {
     if (!bookingId) return;
     await deleteBooking(bookingId);
     toast({
-      variant: "success",
       description: "Réservation supprimée",
     });
   };
@@ -101,7 +100,10 @@ function Bookings() {
                   to: [booking.customer.email],
                   subject: `${booking.customer.name} Confirmation de réservation`,
                   customerName: booking.customer.name,
-                  bookingStartTime: booking.startTime.toString(),
+                  bookingStartTime: moment
+                    .utc(booking.startTime)
+                    .tz("Europe/Paris")
+                    .format("YYYY-MM-DD HH:mm:ss"),
                 });
                 if (error) {
                   toast({
@@ -111,7 +113,6 @@ function Bookings() {
                   return;
                 }
                 toast({
-                  variant: "success",
                   description:
                     "Réservation confirmée: Email de confirmation envoyé",
                 });

@@ -42,7 +42,6 @@ function BookingsHistory() {
     if (!bookingId) return;
     await deleteBooking(bookingId);
     toast({
-      variant: "success",
       description: "Réservation supprimée",
     });
   };
