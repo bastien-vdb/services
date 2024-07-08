@@ -70,8 +70,7 @@ export default async function handler(
           name:
             webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
             "NC",
-          email:
-            webhookEvent.resource.purchase_units[0].payee.email_address ?? "NC",
+          email: webhookEvent.resource.payer.email_address ?? "NC",
           phone: "NC",
           address: {
             city:
