@@ -126,7 +126,7 @@ function SelectService({ services }: { services?: Service[] }) {
                   <SelectGroup>
                     {employees?.map((employee, i) => (
                       <SelectItem
-                        // disabled={i === 0}
+                        disabled={i === 0}
                         value={employee.id}
                         className="w-auto cursor-pointer"
                         style={{
