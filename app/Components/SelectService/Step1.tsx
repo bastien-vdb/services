@@ -21,12 +21,13 @@ import {
 } from "@/src/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
-import { useForm } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
 import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -36,16 +37,14 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   );
 };
 
-function SelectService({ services }: { services?: Service[] }) {
-  const { employees, getEmployees, changeEmployeeSelected, employeeSelected } =
+function SelectService({ services }: { services: Service[] }) {
+  const { employees, getEmployees, changeEmployeeSelected } =
     useEmployeeStore();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected } = useServiceStore();
   const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { orientation, scrollNext } = useCarousel();
   const session = useSession();
-
-  useEffect(() => {}, [employeeSelected]);
 
   const FormSchema = z.object({
     service: z.string({
@@ -67,6 +66,15 @@ function SelectService({ services }: { services?: Service[] }) {
       employeeId: undefined,
     },
   });
+
+  const employeeSelected = form.watch("employeeId");
+
+  useEffect(() => {
+    const employeeSelectedFull = employees.find(
+      (e) => e.id === employeeSelected
+    );
+    employeeSelectedFull && changeEmployeeSelected(employeeSelectedFull);
+  }, [employeeSelected]);
 
   function onSubmit({
     service,
@@ -101,143 +109,52 @@ function SelectService({ services }: { services?: Service[] }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex justify-center items-center flex-col gap-10"
       >
-        <FormField
-          control={form.control}
+        <QuickSelectWrapper
+          placeHolder={"Par qui ?"}
+          disabledValues={[0]}
           name="employeeId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Choisir son artiste</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  const employeeSelected = employees?.find(
-                    (e) => e.id === value
-                  );
-                  employeeSelected && changeEmployeeSelected(employeeSelected);
-                }}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-[250px] sm:w-[800px]">
-                    <SelectValue placeholder="Par qui ?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    {employees?.map((employee, i) => (
-                      <SelectItem
-                        disabled={i === 0}
-                        value={employee.id}
-                        className="w-auto cursor-pointer"
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        {employee.name}
-                        {/* TODO: simplement pour bloquer le calendrier de Natacha
-                        car il est complet */}
-                        {i === 0 && (
-                          <span className="text-red-600"> - complet</span>
-                        )}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
+          label="Choisir son artiste"
+          form={form}
+          className="w-[250px] sm:w-[800px]"
+          values={employees}
+          renderFn={(e) => (
+            <>
+              {e.name}{" "}
+              {e.name === "Natacha" && (
+                <span className="text-red-600">- complet</span>
+              )}
+            </>
           )}
         />
-        <FormField
-          control={form.control}
+        <QuickSelectWrapper
+          placeHolder={"Que souhaitez vous faire ?"}
           name="service"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Choisir sa prestation</FormLabel>
-              <Select
-                onValueChange={(value) => field.onChange(value)}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-[250px] sm:w-[800px]">
-                    <SelectValue placeholder="Que souhaitez vous faire ?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Prestations</SelectLabel>
-                    {services
-                      ?.filter((s) => s.employeeId === employeeSelected?.id)
-                      .map((service) => (
-                        <SelectItem
-                          key={service.id} // Added key here
-                          value={service.id}
-                          className="w-auto cursor-pointer"
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          {service.name}
-                          <span className="ml-2 text-green-600">
-                            + {service.price / 100} €
-                          </span>
-                        </SelectItem>
-                      ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
+          label="Choisir sa prestation"
+          form={form}
+          className="w-[250px] sm:w-[800px]"
+          values={services?.filter((s) => s.employeeId === employeeSelected)}
+          renderFn={(s) => (
+            <>
+              {s.name}
+              <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
+            </>
           )}
         />
-        <FormField
-          control={form.control}
+        <QuickSelectWrapper
+          placeHolder={"Avec dépose ?"}
           name="option"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Option: Dépose</FormLabel>
-              <Select
-                onValueChange={(value) => {
-                  field.onChange(value);
-                  // form.handleSubmit(onSubmit)(); // Trigger the form submission
-                }}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-[250px] sm:w-[800px]">
-                    <SelectValue placeholder="Avec dépose ?" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      value={"option-sans-depose"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Sans dépose{" "}
-                      <span className="ml-2 text-green-600">+ 0 € </span>
-                    </SelectItem>
-                    <SelectItem
-                      value={"option-avec-depose"}
-                      className="w-auto cursor-pointer"
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      Oui <span className="ml-2 text-green-600">+ 20 € </span>
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
+          label="Option: Dépose"
+          form={form}
+          className="w-[250px] sm:w-[800px]"
+          values={[
+            { id: "option-sans-depose", name: "Sans dépose", price: 0 },
+            { id: "option-avec-depose", name: "Avec dépose", price: 2000 },
+          ]}
+          renderFn={(s) => (
+            <>
+              {s.name}
+              <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
+            </>
           )}
         />
         <div className="flex m-2">
