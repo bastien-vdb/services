@@ -9,10 +9,8 @@ const FormSchema = z.object({
   q3: z.optional(z.string()),
   q4: z.optional(z.string()),
   q5: z.optional(z.string()),
-  q6: z.optional(z.string()),
-  q7: z.optional(z.string()),
-  q8: z.boolean({
-    required_error: "Veuillez accepter le règlement",
+  q6: z.boolean({
+    required_error: "*",
   }),
   employee: z.optional(z.string()),
 });
@@ -34,9 +32,7 @@ const useFormStore = create<FormStoreType>()(
       q3: "",
       q4: "",
       q5: "",
-      q6: "",
-      q7: "",
-      q8: false,
+      q6: false,
       employee: "",
     },
     setFormData: (data) =>
@@ -49,9 +45,7 @@ const useFormStore = create<FormStoreType>()(
           q3: "",
           q4: "",
           q5: "",
-          q6: "",
-          q7: "",
-          q8: false,
+          q6: false,
           employee: "",
         },
       }),

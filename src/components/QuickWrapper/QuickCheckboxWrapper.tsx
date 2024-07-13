@@ -5,24 +5,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/src/components/ui/form";
-import { Label } from "@/src/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
 import { UseFormReturn } from "react-hook-form";
+import { Checkbox } from "@/src/components/ui/checkbox";
 
-type QuickCheckboxWrapperProps<T> = {
+type QuickCheckboxWrapperProps = {
   name: string;
   label: string;
-  idYes: string;
-  idNo: string;
 };
 
-const QuickCheckboxWrapper = <T,>({
+const QuickCheckboxWrapper = ({
   form,
   name,
   label,
-  idYes,
-  idNo,
-}: QuickCheckboxWrapperProps<T> & {
+}: QuickCheckboxWrapperProps & {
   form?: UseFormReturn<any, any, undefined>;
 }) => {
   if (!form) throw new Error("The component must be use into form context");
@@ -34,20 +29,12 @@ const QuickCheckboxWrapper = <T,>({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <RadioGroup
-              className="flex gap-8"
-              value={field.value}
-              onValueChange={field.onChange}
-            >
-              <div className="flex items-center space-x-1">
-                <RadioGroupItem value="true" id={idYes} />
-                <Label htmlFor={idYes}>Oui</Label>
-              </div>
-              <div className="flex items-center space-x-1">
-                <RadioGroupItem value="false" id={idNo} />
-                <Label htmlFor={idNo}>Non</Label>
-              </div>
-            </RadioGroup>
+            <Checkbox
+              className="ml-8 w-6 h-6"
+              id={name}
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>
