@@ -4,14 +4,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import TextRevealButton from "../syntax-ui/TextRevealButton";
 
 type QuickFormWrapperProps<T> = {
-  children: (React.ReactElement<any> | React.ReactNode)[];
-  // form: UseFormReturn<any, any, undefined>;
+  children: React.ReactNode;
   FormSchema: z.ZodObject<any>;
-  defaultValues: { [key: string]: string | number | undefined };
+  defaultValues: { [key: string]: string | number | undefined | boolean };
   onSubmit: SubmitHandler<{ [x: string]: any }>;
-  watchLive: (fields: { [x: string]: any }) => void;
+  watchLive?: (fields: { [x: string]: any }) => void;
+  onBackAction?: () => void;
+  backButton?: boolean;
 };
 const QuickFormWrapper = <T,>({
   children,
@@ -19,6 +21,8 @@ const QuickFormWrapper = <T,>({
   defaultValues,
   onSubmit,
   watchLive,
+  onBackAction,
+  backButton = true,
 }: QuickFormWrapperProps<T>) => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -28,14 +32,14 @@ const QuickFormWrapper = <T,>({
   const watchFields = form.watch(); // you can also target specific fields by their names
 
   useEffect(() => {
-    watchLive(watchFields);
+    watchLive && watchLive(watchFields);
   }, [watchFields]);
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex justify-center items-center flex-col gap-10"
+        className="flex justify-center items-start flex-col gap-10"
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
@@ -45,6 +49,19 @@ const QuickFormWrapper = <T,>({
           }
           return child;
         })}
+        <div className="flex justify-between w-full">
+          <TextRevealButton
+            disabled={!backButton}
+            onClick={onBackAction}
+            arrowPosition="left"
+          >
+            Retour
+          </TextRevealButton>
+
+          <TextRevealButton bg={"bg-black"} type="submit" arrowPosition="right">
+            Suivant
+          </TextRevealButton>
+        </div>{" "}
       </form>
     </Form>
   );

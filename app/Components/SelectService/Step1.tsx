@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
 import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
+import { Card, CardContent } from "@/src/components/ui/card";
+import AlertDialogControlled from "@/src/components/Modal/AlertDialogControlled";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -21,6 +23,7 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 
 function SelectService({ services }: { services: Service[] }) {
   const [employeeSelectedLive, setEmployeeSelectedLive] = useState();
+  const [serviceIdSelectedLive, setServiceIdSelectedLive] = useState<string>();
   const { employees, getEmployees, changeEmployeeSelected } =
     useEmployeeStore();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
@@ -28,6 +31,8 @@ function SelectService({ services }: { services: Service[] }) {
   const { setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext } = useCarousel();
   const session = useSession();
+  const openCtr = useState(false);
+  const [, setModalVisible] = openCtr;
 
   const FormSchema = z.object({
     service: z.string({
@@ -81,64 +86,86 @@ function SelectService({ services }: { services: Service[] }) {
     employeeSelectedFull && changeEmployeeSelected(employeeSelectedFull);
   }, [employeeSelectedLive]);
 
+  useEffect(() => {
+    const serviceSelectedFull = services.find(
+      (s) => s.id === serviceIdSelectedLive
+    );
+    if (serviceSelectedFull && serviceSelectedFull.name.includes("Fox eyes")) {
+      console.log("on passe setModalVisilbe à true");
+      setModalVisible(true);
+    }
+  }, [serviceIdSelectedLive]);
+
   return (
-    <QuickFormWrapper
-      FormSchema={FormSchema}
-      onSubmit={onSubmit}
-      defaultValues={defaultValues}
-      watchLive={({ employeeId }) => setEmployeeSelectedLive(employeeId)}
-    >
-      <QuickSelectWrapper
-        placeHolder={"Par qui ?"}
-        disabledValues={[0]}
-        name="employeeId"
-        label="Choisir son artiste"
-        className="w-[250px] sm:w-[800px]"
-        values={employees}
-        renderFn={(e) => (
-          <>
-            {e.name}{" "}
-            {e.name === "Natacha" && (
-              <span className="text-red-600">- complet</span>
-            )}
-          </>
-        )}
-      />
-      <QuickSelectWrapper
-        placeHolder={"Que souhaitez vous faire ?"}
-        name="service"
-        label="Choisir sa prestation"
-        className="w-[250px] sm:w-[800px]"
-        values={services?.filter((s) => s.employeeId === employeeSelectedLive)}
-        renderFn={(s) => (
-          <>
-            {s.name}
-            <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
-          </>
-        )}
-      />
-      <QuickSelectWrapper
-        placeHolder={"Avec dépose ?"}
-        name="option"
-        label="Option: Dépose"
-        className="w-[250px] sm:w-[800px]"
-        values={[
-          { id: "option-sans-depose", name: "Sans dépose", price: 0 },
-          { id: "option-avec-depose", name: "Avec dépose", price: 2000 },
-        ]}
-        renderFn={(s) => (
-          <>
-            {s.name}
-            <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
-          </>
-        )}
-      />
-      <div className="flex m-2">
-        <TextRevealButton bg={"bg-black"} type="submit" arrowPosition="right">
-          Suivant
-        </TextRevealButton>
-      </div>
-    </QuickFormWrapper>
+    <>
+      <AlertDialogControlled openCtr={openCtr} />;
+      <Card>
+        <CardContent className="flex justify-center items-center flex-col">
+          <QuickFormWrapper
+            FormSchema={FormSchema}
+            onSubmit={onSubmit}
+            defaultValues={defaultValues}
+            watchLive={({ employeeId, service: serviceId }) => {
+              setEmployeeSelectedLive(employeeId);
+              setServiceIdSelectedLive(serviceId);
+            }}
+            backButton={false}
+          >
+            <QuickSelectWrapper
+              placeHolder={"Par qui ?"}
+              disabledValues={[0]}
+              name="employeeId"
+              label="Choisir son artiste"
+              className="w-[250px] sm:w-[800px]"
+              values={employees}
+              renderFn={(e) => (
+                <>
+                  {e.name}{" "}
+                  {e.name === "Natacha" && (
+                    <span className="text-red-600">- complet</span>
+                  )}
+                </>
+              )}
+            />
+            <QuickSelectWrapper
+              placeHolder={"Que souhaitez vous faire ?"}
+              name="service"
+              label="Choisir sa prestation"
+              className="w-[250px] sm:w-[800px]"
+              values={services?.filter(
+                (s) => s.employeeId === employeeSelectedLive
+              )}
+              renderFn={(s) => (
+                <>
+                  {s.name}
+                  <span className="ml-2 text-green-600">
+                    + {s.price / 100} €
+                  </span>
+                </>
+              )}
+            />
+            <QuickSelectWrapper
+              placeHolder={"Avec dépose ?"}
+              name="option"
+              label="Option: Dépose"
+              className="w-[250px] sm:w-[800px]"
+              values={[
+                { id: "option-sans-depose", name: "Sans dépose", price: 0 },
+                { id: "option-avec-depose", name: "Avec dépose", price: 2000 },
+              ]}
+              renderFn={(s) => (
+                <>
+                  {s.name}
+                  <span className="ml-2 text-green-600">
+                    + {s.price / 100} €
+                  </span>
+                </>
+              )}
+            />
+          </QuickFormWrapper>
+        </CardContent>
+      </Card>
+    </>
   );
 }
 

@@ -1,5 +1,7 @@
 import useFormStore from "@/app/Components/SelectService/useFormStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import QuickCheckboxWrapper from "@/src/components/QuickWrapper/QuickCheckboxWrapper";
+import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Button } from "@/src/components/ui/button";
 import { Card, CardContent } from "@/src/components/ui/card";
@@ -93,90 +95,61 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
         //Moreover, i'm using this to avoid mount a big form that allow to scroll down even on the other steps because of this form that is long
         <Card>
           <CardContent>
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex justify-center items-center gap-12 flex-col"
-              >
-                <div className="flex flex-col gap-8">
-                  <FormField
-                    control={form.control}
-                    name="q5"
-                    render={({ field }) =>
-                      renderRadioGroup(
-                        field,
-                        "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)",
-                        "option-yes-5",
-                        "option-no-5"
-                      )
-                    }
-                  />
-                  <FormField
-                    control={form.control}
-                    name="q6"
-                    render={({ field }) =>
-                      renderRadioGroup(
-                        field,
-                        "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?",
-                        "option-yes-6",
-                        "option-no-6"
-                      )
-                    }
-                  />
+            <QuickFormWrapper
+              FormSchema={FormSchema}
+              onSubmit={onSubmit}
+              defaultValues={formData}
+              backButton={true}
+              onBackAction={scrollPrev}
+            >
+              <QuickCheckboxWrapper
+                name={"q5"}
+                label={
+                  "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)"
+                }
+                idYes={"option-yes-5"}
+                idNo={"option-no-5"}
+              />
 
-                  {serviceSelected?.name === OPTIONAL_SERVICE && (
-                    <FormField
-                      control={form.control}
-                      name="q7"
-                      render={({ field }) =>
-                        renderRadioGroup(
-                          field,
-                          "Vous venez de sélectionner la pose Fox eyes, pour précision : Ce set va à la perfection à celles ayant des yeux en amande, avec une base ciliaire assez fournie et régulière. Pour celles ayant les yeux plus ronds / les yeux tombants / les yeux avec paupières tombantes, il est important de préciser que l'effet ne sera pas du tout le même ! Cela aura tendance à alourdir le regard au lieu de le relever, donc tout l'inverse. Etes-vous sûr(e) de convenir à la description et sélectionner cette pose ? Note : En cas de doute, vous pouvez directement contacter votre Finest Lash Artist via DM sur instagram, par mail à contact@finestlashstudio.fr ou par SMS / Whatsapp au 07 83 63 97 38 si vous voulez être conseillée au mieux avant de réserver votre créneau.",
-                          "option-yes-7",
-                          "option-no-7"
-                        )
-                      }
-                    />
-                  )}
+              <QuickCheckboxWrapper
+                name={"q6"}
+                label={
+                  "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?"
+                }
+                idYes={"option-yes-6"}
+                idNo={"option-no-6"}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name="q8"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Acceptez-vous de suivre le règlement intérieur ?
-                        </FormLabel>
-                        <FormControl>
-                          <Checkbox
-                            className="ml-8 w-6 h-6"
-                            id="acceptRules"
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex w-full justify-between gap-10 m-2">
-                  <TextRevealButton
-                    onClick={() => scrollPrev()}
-                    arrowPosition="left"
-                  >
-                    Retour
-                  </TextRevealButton>
-                  <TextRevealButton
-                    bg={"bg-black"}
-                    type="submit"
-                    arrowPosition="right"
-                  >
-                    Suivant
-                  </TextRevealButton>
-                </div>
-              </form>
-            </Form>
+              {/* <QuickCheckboxWrapper
+                name={"q2"}
+                label={
+                  "Acceptez-vous de suivre le règlement intérieur ?"
+                }
+                idYes={"option-yes-2"}
+                idNo={"option-no-2"}
+              /> */}
+
+              <FormField
+                control={form.control}
+                name="q8"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Acceptez-vous de suivre le règlement intérieur ?
+                    </FormLabel>
+                    <FormControl>
+                      <Checkbox
+                        className="ml-8 w-6 h-6"
+                        id="acceptRules"
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </QuickFormWrapper>
           </CardContent>
         </Card>
       )}
