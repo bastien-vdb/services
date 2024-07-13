@@ -17,7 +17,6 @@ import {
 import { UseFormReturn } from "react-hook-form";
 
 type QuickSelectWrapperProps<T extends { id: string }> = {
-  form: UseFormReturn<any, any, undefined>;
   name: string;
   label: string;
   values: T[];
@@ -36,7 +35,10 @@ const QuickSelectWrapper = <T extends { id: string }>({
   placeHolder,
   className,
   renderFn,
-}: QuickSelectWrapperProps<T>) => {
+}: QuickSelectWrapperProps<T> & {
+  form?: UseFormReturn<any, any, undefined>;
+}) => {
+  if (!form) throw new Error("The component must be used in form context");
   return (
     <FormField
       control={form.control}

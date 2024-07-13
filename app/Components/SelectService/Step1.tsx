@@ -1,33 +1,15 @@
 "use client";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { useCarousel } from "@/src/components/ui/carousel";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/src/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/src/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Service } from "@prisma/client";
-import { UseFormReturn, useForm } from "react-hook-form";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
-import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
-import { useEffect } from "react";
-import { useSession } from "next-auth/react";
-import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
+import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -38,12 +20,13 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 };
 
 function SelectService({ services }: { services: Service[] }) {
+  const [employeeSelectedLive, setEmployeeSelectedLive] = useState();
   const { employees, getEmployees, changeEmployeeSelected } =
     useEmployeeStore();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected } = useServiceStore();
-  const { formData, setFormData } = useFormStore(); // Use Zustand store
-  const { orientation, scrollNext } = useCarousel();
+  const { setFormData } = useFormStore(); // Use Zustand store
+  const { scrollNext } = useCarousel();
   const session = useSession();
 
   const FormSchema = z.object({
@@ -58,23 +41,11 @@ function SelectService({ services }: { services: Service[] }) {
     }),
   });
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      service: serviceSelected?.id || undefined,
-      option: undefined,
-      employeeId: undefined,
-    },
-  });
-
-  const employeeSelected = form.watch("employeeId");
-
-  useEffect(() => {
-    const employeeSelectedFull = employees.find(
-      (e) => e.id === employeeSelected
-    );
-    employeeSelectedFull && changeEmployeeSelected(employeeSelectedFull);
-  }, [employeeSelected]);
+  const defaultValues = {
+    service: serviceSelected?.id || undefined,
+    option: undefined,
+    employeeId: undefined,
+  };
 
   function onSubmit({
     service,
@@ -103,67 +74,71 @@ function SelectService({ services }: { services: Service[] }) {
     getEmployees(session.data?.user.id!);
   }, []);
 
+  useEffect(() => {
+    const employeeSelectedFull = employees.find(
+      (e) => e.id === employeeSelectedLive
+    );
+    employeeSelectedFull && changeEmployeeSelected(employeeSelectedFull);
+  }, [employeeSelectedLive]);
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex justify-center items-center flex-col gap-10"
-      >
-        <QuickSelectWrapper
-          placeHolder={"Par qui ?"}
-          disabledValues={[0]}
-          name="employeeId"
-          label="Choisir son artiste"
-          form={form}
-          className="w-[250px] sm:w-[800px]"
-          values={employees}
-          renderFn={(e) => (
-            <>
-              {e.name}{" "}
-              {e.name === "Natacha" && (
-                <span className="text-red-600">- complet</span>
-              )}
-            </>
-          )}
-        />
-        <QuickSelectWrapper
-          placeHolder={"Que souhaitez vous faire ?"}
-          name="service"
-          label="Choisir sa prestation"
-          form={form}
-          className="w-[250px] sm:w-[800px]"
-          values={services?.filter((s) => s.employeeId === employeeSelected)}
-          renderFn={(s) => (
-            <>
-              {s.name}
-              <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
-            </>
-          )}
-        />
-        <QuickSelectWrapper
-          placeHolder={"Avec dépose ?"}
-          name="option"
-          label="Option: Dépose"
-          form={form}
-          className="w-[250px] sm:w-[800px]"
-          values={[
-            { id: "option-sans-depose", name: "Sans dépose", price: 0 },
-            { id: "option-avec-depose", name: "Avec dépose", price: 2000 },
-          ]}
-          renderFn={(s) => (
-            <>
-              {s.name}
-              <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
-            </>
-          )}
-        />
-        <div className="flex m-2">
-          <TextRevealButton bg={"bg-black"} type="submit" arrowPosition="right">
-            Suivant
-          </TextRevealButton>
-        </div>
-      </form>
-    </Form>
+    <QuickFormWrapper
+      FormSchema={FormSchema}
+      onSubmit={onSubmit}
+      defaultValues={defaultValues}
+      watchLive={({ employeeId }) => setEmployeeSelectedLive(employeeId)}
+    >
+      <QuickSelectWrapper
+        placeHolder={"Par qui ?"}
+        disabledValues={[0]}
+        name="employeeId"
+        label="Choisir son artiste"
+        className="w-[250px] sm:w-[800px]"
+        values={employees}
+        renderFn={(e) => (
+          <>
+            {e.name}{" "}
+            {e.name === "Natacha" && (
+              <span className="text-red-600">- complet</span>
+            )}
+          </>
+        )}
+      />
+      <QuickSelectWrapper
+        placeHolder={"Que souhaitez vous faire ?"}
+        name="service"
+        label="Choisir sa prestation"
+        className="w-[250px] sm:w-[800px]"
+        values={services?.filter((s) => s.employeeId === employeeSelectedLive)}
+        renderFn={(s) => (
+          <>
+            {s.name}
+            <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
+          </>
+        )}
+      />
+      <QuickSelectWrapper
+        placeHolder={"Avec dépose ?"}
+        name="option"
+        label="Option: Dépose"
+        className="w-[250px] sm:w-[800px]"
+        values={[
+          { id: "option-sans-depose", name: "Sans dépose", price: 0 },
+          { id: "option-avec-depose", name: "Avec dépose", price: 2000 },
+        ]}
+        renderFn={(s) => (
+          <>
+            {s.name}
+            <span className="ml-2 text-green-600">+ {s.price / 100} €</span>
+          </>
+        )}
+      />
+      <div className="flex m-2">
+        <TextRevealButton bg={"bg-black"} type="submit" arrowPosition="right">
+          Suivant
+        </TextRevealButton>
+      </div>
+    </QuickFormWrapper>
   );
 }
 
