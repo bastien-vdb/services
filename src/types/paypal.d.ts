@@ -7,14 +7,12 @@ export type paypalCustomIdType = {
 };
 
 type formData = {
-  q8: boolean;
   q1?: string | undefined;
   q2?: string | undefined;
   q3?: string | undefined;
   q4?: string | undefined;
   q5?: string | undefined;
-  q6?: string | undefined;
-  q7?: string | undefined;
+  q6?: boolean;
   employee?: string | undefined;
 };
 

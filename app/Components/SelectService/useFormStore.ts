@@ -21,7 +21,6 @@ type FormStoreType = {
   formData: FormData;
   setFormData: (data: Partial<FormData>) => void;
   resetFormData: () => void;
-  submitFormData: () => Promise<void>;
 };
 
 const useFormStore = create<FormStoreType>()(
@@ -49,21 +48,6 @@ const useFormStore = create<FormStoreType>()(
           employee: "",
         },
       }),
-    submitFormData: async () => {
-      const { formData } = useFormStore.getState();
-      // Envoyer les données du formulaire à la base de données
-      try {
-        await fetch("/api/submit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        });
-      } catch (error) {
-        console.error("Erreur lors de la soumission du formulaire", error);
-      }
-    },
   }))
 );
 
