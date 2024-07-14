@@ -5,6 +5,7 @@ import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
 import QuickRadioYesNoWrapper from "@/src/components/QuickWrapper/QuickRadioYesNoWrapper";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
+import { questions } from "@/src/lib/Config/questions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { memo } from "react";
 import { useForm } from "react-hook-form";
@@ -59,27 +60,18 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
               backButton={true}
               onBackAction={scrollPrev}
             >
-              <QuickRadioYesNoWrapper
-                name={"q4"}
-                label={
-                  "Portez-vous des lentilles? (si oui, il est nécessaire de les enlever le temps de la prestation)"
-                }
-                idYes={"option-yes-4"}
-                idNo={"option-no-4"}
-              />
-
-              <QuickRadioYesNoWrapper
-                name={"q5"}
-                label={
-                  "Accepteriez-vous d'être prise en photo et/ou publiée sur les réseaux sociaux du Finest Beauty Studio ?"
-                }
-                idYes={"option-yes-5"}
-                idNo={"option-no-5"}
-              />
-
+              {questions.map(
+                (question, i) =>
+                  i < 6 && (
+                    <QuickRadioYesNoWrapper
+                      name={question.id}
+                      label={question.label}
+                    />
+                  )
+              )}
               <QuickCheckboxWrapper
-                name={"q6"}
-                label={"Acceptez-vous de suivre le règlement intérieur ?"}
+                name={questions[6].id}
+                label={questions[6].label}
               />
             </QuickFormWrapper>
           </CardContent>

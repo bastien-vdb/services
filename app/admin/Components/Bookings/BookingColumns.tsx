@@ -128,10 +128,6 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
           id: "q8",
           question: "Acceptez-vous de suivre le règlement intérieur ?",
         },
-        {
-          id: "employee",
-          question: "Employée ? ",
-        },
       ];
       //@ts-ignore
       const values = Object.values(row.getValue("form")).map((p) => p);

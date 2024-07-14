@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/src/components/ui/card";
 import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
 import { memo } from "react";
 import { z } from "zod";
+import { questions } from "@/src/lib/Config/questions";
 
 const RadioButtonRuleForm = (obligatoire = true) => {
   if (!obligatoire) {
@@ -45,26 +46,12 @@ const Step3 = memo(({ api }: { userId: string; api: CarouselApi }) => {
               backButton={true}
               onBackAction={scrollPrev}
             >
-              <QuickRadioYesNoWrapper
-                name={"q1"}
-                label={"Avez-vous déjà porté des extensions de cil ?"}
-                idYes={"option-yes-1"}
-                idNo={"option-no-1"}
-              />
-              <QuickRadioYesNoWrapper
-                name={"q2"}
-                label={
-                  "Avez-vous déjà eu une réaction allergique due à des extensions de cils ?"
-                }
-                idYes={"option-yes-2"}
-                idNo={"option-no-2"}
-              />
-              <QuickRadioYesNoWrapper
-                name={"q3"}
-                label={"Êtes-vous enceinte?"}
-                idYes={"option-yes-3"}
-                idNo={"option-no-3"}
-              />
+              {questions.map((question) => (
+                <QuickRadioYesNoWrapper
+                  name={question.id}
+                  label={question.label}
+                />
+              ))}
             </QuickFormWrapper>
           </CardContent>
         </Card>

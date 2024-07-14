@@ -12,16 +12,12 @@ import { UseFormReturn } from "react-hook-form";
 type QuickRadioYesNoWrapperProps = {
   name: string;
   label: string;
-  idYes: string;
-  idNo: string;
 };
 
-const QuickRadioYesNoWrapper = <T,>({
+const QuickRadioYesNoWrapper = ({
   form,
   name,
   label,
-  idYes,
-  idNo,
 }: QuickRadioYesNoWrapperProps & {
   form?: UseFormReturn<any, any, undefined>;
 }) => {
@@ -40,12 +36,12 @@ const QuickRadioYesNoWrapper = <T,>({
               onValueChange={field.onChange}
             >
               <div className="flex items-center space-x-1">
-                <RadioGroupItem value="true" id={idYes} />
-                <Label htmlFor={idYes}>Oui</Label>
+                <RadioGroupItem value="true" id={`${name}-true`} />
+                <Label htmlFor={`${name}-true`}>Oui</Label>
               </div>
               <div className="flex items-center space-x-1">
-                <RadioGroupItem value="false" id={idNo} />
-                <Label htmlFor={idNo}>Non</Label>
+                <RadioGroupItem value="false" id={`${name}-false`} />
+                <Label htmlFor={`${name}-false`}>Non</Label>
               </div>
             </RadioGroup>
           </FormControl>
