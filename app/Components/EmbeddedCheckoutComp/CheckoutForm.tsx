@@ -10,12 +10,12 @@ import React, { useState } from "react";
 
 type CheckoutFormProps = {
   clientSecret: string | undefined;
-  setPaypmentValided: (value: boolean) => void;
+  setPaymentValided: (value: boolean) => void;
 };
 
 export default function CheckoutForm({
   clientSecret,
-  setPaypmentValided,
+  setPaymentValided,
 }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -103,7 +103,7 @@ export default function CheckoutForm({
         setMessage("An unexpected error occurred.");
       }
     } else {
-      setPaypmentValided(true);
+      setPaymentValided(true);
     }
 
     setIsLoading(false);

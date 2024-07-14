@@ -1,11 +1,11 @@
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Calendar } from "@/src/components/ui/calendar";
 import { useCarousel } from "@/src/components/ui/carousel";
-import { memo, useEffect, useState } from "react";
-import SelectBooking from "../SelectBooking/SelectBooking";
-import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import useServerData from "@/src/hooks/useServerData";
 import { Availability } from "@prisma/client";
-import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
+import { memo, useEffect, useState } from "react";
+import SelectBooking from "../SelectBooking/SelectBooking";
 
 const Step2 = memo(({ userId }: { userId: string }) => {
   const daySelectedManager = useState<Date | undefined>(undefined);

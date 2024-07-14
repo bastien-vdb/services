@@ -13,12 +13,12 @@ export default function PayPalButton({
   bookingSelectedPaypal,
   deposit,
   prixFixDeposit,
-  setPaypmentValided,
+  setPaymentValided,
 }: {
   bookingSelectedPaypal: Booking;
   deposit: boolean;
   prixFixDeposit: { stripePriceId: string; price: number };
-  setPaypmentValided: (value: boolean) => void;
+  setPaymentValided: (value: boolean) => void;
 }) {
   const { serviceSelected } = useServiceStore();
   const { optionSelected } = useServiceStore();
@@ -122,7 +122,7 @@ export default function PayPalButton({
         }}
         onApprove={(data, actions) => {
           if (!actions.order) throw new Error("Paiement échoué");
-          return actions.order?.capture().then(() => setPaypmentValided(true));
+          return actions.order?.capture().then(() => setPaymentValided(true));
         }}
       />
     </PayPalScriptProvider>

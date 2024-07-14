@@ -1,17 +1,16 @@
 "use client";
 import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import AlertDialogControlled from "@/src/components/Modal/AlertDialogControlled";
+import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
 import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
-import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
+import { Card, CardContent } from "@/src/components/ui/card";
 import { useCarousel } from "@/src/components/ui/carousel";
 import { Service } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
-import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
-import { Card, CardContent } from "@/src/components/ui/card";
-import AlertDialogControlled from "@/src/components/Modal/AlertDialogControlled";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (

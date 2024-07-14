@@ -1,84 +1,184 @@
-import useFormStore from "@/app/Components/SelectService/useFormStore";
+import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
-import QuickCheckboxWrapper from "@/src/components/QuickWrapper/QuickCheckboxWrapper";
-import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
-import QuickRadioYesNoWrapper from "@/src/components/QuickWrapper/QuickRadioYesNoWrapper";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { CarouselApi, useCarousel } from "@/src/components/ui/carousel";
-import { questions } from "@/src/lib/Config/questions";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { memo } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useCarousel } from "@/src/components/ui/carousel";
+import { Label } from "@/src/components/ui/label";
+import { LoadingSpinner } from "@/src/components/ui/loader";
+import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
+import { toast } from "@/src/components/ui/use-toast";
+import { Booking } from "@prisma/client";
+import { loadStripe } from "@stripe/stripe-js";
+import { memo, useEffect, useState } from "react";
+import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
+import PayPalButton from "../Paypal/PaypalButton";
+import useFormStore from "./useFormStore";
+import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
+import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 
-const RadioButtonRuleForm = (obligatoire = true) => {
-  if (!obligatoire) {
-    return z.string().optional();
-  }
-  return z.string().refine((val) => val.length > 0, {
-    message: "*",
-  });
-};
+if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  throw new Error("stripe PK missing");
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
-const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
+const prixFixDeposit = {
+  stripePriceId: "price_1PERuILYOIXZwhPrff0n8CbE",
+  price: 2000,
+}; //TODO mettre dans un fichier settings
+
+const Step4 = memo(({ userId }: { userId: string }) => {
+  const { optionSelected } = useServiceStore();
+  const { formData } = useFormStore();
+
+  console.log("formData", formData);
+
+  const [clientSecret, setClientSecret] = useState("");
+  const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
+  const [paypmentValided, setPaymentValided] = useState(false);
+
+  //TODO useState pour paypal uniquement mais refactoriser le code asap
+  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
+  const [deposit, setDeposit] = useState(false);
+
+  const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
-  const { formData, setFormData } = useFormStore(); // Use Zustand store
-  const { scrollNext, scrollPrev } = useCarousel();
+  const { employeeSelected } = useEmployeeStore();
 
-  // Définition du schéma du formulaire
-  const FormSchema = z.object({
-    q4: RadioButtonRuleForm(false),
-    q5: RadioButtonRuleForm(false),
-    q6: z.boolean().refine((val) => val === true, {
-      message: "*",
-    }),
-  });
+  const { scrollPrev } = useCarousel();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: formData, // Use data from the store
-  });
+  const handleCreatePayment = async (
+    booking: Booking,
+    deposit: boolean = false
+  ) => {
+    if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
+    setClientSecret("");
+    setBookingSelectedPaypal(booking);
+    setDeposit(deposit);
 
-  function onSubmit({ q4, q5, q6 }: z.infer<typeof FormSchema>) {
-    setFormData({ q4, q5, q6 }); // Update store with form data
-    // nextStep();
+    try {
+      const paymentPage = await fetch(
+        `${process.env.NEXT_PUBLIC_HOST}/api/create-payment-intent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            stripePriceId: deposit
+              ? prixFixDeposit.stripePriceId
+              : serviceSelected?.stripePriceId,
+            amount: deposit ? prixFixDeposit.price : serviceSelected?.price,
+            deposit,
+            startTime: booking.startTime.toISOString(),
+            endTime: booking.endTime.toISOString(),
+            userId,
+            serviceId: serviceSelected?.id,
+            serviceName: serviceSelected?.name,
+            addedOption: optionSelected,
+            formData,
+            employeeId: employeeSelected?.id,
+            employeeName: employeeSelected?.name,
+          }),
+        }
+      );
+      const paymentPageJson = await paymentPage.json();
+      setClientSecret(paymentPageJson.clientSecret);
+    } catch (error) {
+      console.error("error: ", error);
+      toast({
+        variant: "destructive",
+        title: "Le rendez-vous est déjà en cours de réservation",
+        description:
+          "Il serait préférable de sélectionner un autre créneau disponible",
+      });
+    }
+  };
 
-    scrollNext();
+  useEffect(() => {
+    setClientSecret("");
+    bookingSelected && handleCreatePayment(bookingSelected);
+  }, [bookingSelected, serviceSelected, optionSelected]);
+
+  if (paypmentValided) {
+    return (
+      <div className="py-10 flex flex-col justify-center text-center gap-10">
+        <span className="text-xs sm:text-base font-bold  text-red-400 ">
+          🎉 Votre rendez-vous booké avec success! 🎉
+        </span>
+
+        <span className="text-xs">
+          Vous recevrez un email de confirmation dans quelques minutes...
+        </span>
+      </div>
+    );
   }
 
   return (
-    <div className="flex justify-center">
-      {api?.selectedScrollSnap() === 3 && ( //TODO: very important to make it reusable PLEASE ! because we can change the order of the steps
-        //it's not chatGPT code :)
-        //Moreover, i'm using this to avoid mount a big form that allow to scroll down even on the other steps because of this form that is long
-        <Card>
-          <CardContent>
-            <QuickFormWrapper
-              FormSchema={FormSchema}
-              onSubmit={onSubmit}
-              defaultValues={formData}
-              backButton={true}
-              onBackAction={scrollPrev}
-            >
-              {questions.map(
-                (question, i) =>
-                  i > 2 &&
-                  i < 6 && (
-                    <QuickRadioYesNoWrapper
-                      name={question.id}
-                      label={question.label}
-                    />
-                  )
-              )}
-              <QuickCheckboxWrapper
-                name={questions[6].id}
-                label={questions[6].label}
+    <>
+      <div className="flex justify-center items-center flex-col gap-2">
+        {fullOrDepotDisplayed && (
+          <RadioGroup className="flex" defaultValue="option-one">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  onClick={() => {
+                    setClientSecret("");
+                    bookingSelectedPaypal &&
+                      handleCreatePayment(bookingSelectedPaypal);
+                  }}
+                  value="option-one"
+                  id="option-one"
+                />
+                <Label htmlFor="option-one">Paiement en 1 fois</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem
+                  onClick={() => {
+                    setClientSecret("");
+                    bookingSelectedPaypal &&
+                      handleCreatePayment(bookingSelectedPaypal, true);
+                  }}
+                  value="option-two"
+                  id="option-two"
+                />
+                <Label htmlFor="option-two">Dépot: 20€</Label>
+              </div>
+            </div>
+            {/* {clientSecret && bookingSelectedPaypal && ( */}
+            {bookingSelected && (
+              <PayPalButton
+                bookingSelectedPaypal={bookingSelected}
+                deposit={deposit}
+                prixFixDeposit={prixFixDeposit}
+                setPaymentValided={setPaymentValided}
               />
-            </QuickFormWrapper>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+            )}
+          </RadioGroup>
+        )}
+
+        {clientSecret && bookingSelectedPaypal ? (
+          <EmbeddedCheckoutComp
+            stripePromise={stripePromise}
+            clientSecret={clientSecret}
+            setPaymentValided={setPaymentValided}
+          />
+        ) : (
+          <LoadingSpinner className="w-12 h-12 animate-spin" />
+        )}
+      </div>
+      <div className="flex justify-center gap-2 m-2 gap-10">
+        <div className="flex gap-2 m-2">
+          <TextRevealButton
+            onClick={() => {
+              scrollPrev();
+              window.scrollTo(0, 0);
+            }}
+            arrowPosition="left"
+          >
+            Retour
+          </TextRevealButton>
+        </div>
+      </div>
+    </>
   );
 });
 

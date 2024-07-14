@@ -15,6 +15,10 @@ export const questions = [
   },
   {
     id: "q7",
-    label: "Acceptez-vous de suivre le règlement intérieur ?",
+    label: "Avez-vous lu et acceptez-vous le règlement intérieur ?",
+  },
+  {
+    id: "employee",
+    label: "Collaborateur: ",
   },
 ];

@@ -12,7 +12,8 @@ type formData = {
   q3?: string | undefined;
   q4?: string | undefined;
   q5?: string | undefined;
-  q6?: boolean;
+  q6?: string | undefined;
+  q7?: string | undefined;
   employee?: string | undefined;
 };
 

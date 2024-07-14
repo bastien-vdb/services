@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 import Step2 from "./SelectService/Step2";
 import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
-import Step6 from "./SelectService/Step5";
 
 export default function StepperService({
   services,
@@ -64,11 +63,8 @@ export default function StepperService({
           <CarouselItem>
             <Step3 userId={userId} api={api} />
           </CarouselItem>
-          {/* <CarouselItem>
-            <Step4 userId={userId} api={api} />
-          </CarouselItem> */}
           <CarouselItem>
-            <Step6 userId={userId} />
+            <Step4 userId={userId} />
           </CarouselItem>
         </CarouselContent>
       </Carousel>

@@ -117,6 +117,21 @@ function Bookings() {
                   description:
                     "Réservation confirmée: Email de confirmation envoyé",
                 });
+                //For the collaborator
+                //get the email from the form
+                const { employee: employeeEmail } = JSON.parse(
+                  booking.form as string
+                );
+                await actionSendConfirmationEmail({
+                  from: "Finest lash <no-answer@quickreserve.app>",
+                  to: [employeeEmail],
+                  subject: `Confirmation de réservation avec ${booking.customer.name}`,
+                  customerName: booking.customer.name,
+                  bookingStartTime: momentTz
+                    .utc(booking.startTime)
+                    .tz("Europe/Paris")
+                    .format("YYYY-MM-DD HH:mm:ss"),
+                });
               } else {
                 toast({
                   variant: "destructive",

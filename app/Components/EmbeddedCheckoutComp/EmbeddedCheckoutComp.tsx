@@ -5,11 +5,11 @@ import CheckoutForm from "./CheckoutForm";
 const EmbeddedCheckoutComp = ({
   stripePromise,
   clientSecret,
-  setPaypmentValided,
+  setPaymentValided,
 }: {
   stripePromise: Promise<Stripe | null>;
   clientSecret: string | undefined;
-  setPaypmentValided: (value: boolean) => void;
+  setPaymentValided: (value: boolean) => void;
 }) => {
   const appearance = {
     theme: "stripe",
@@ -21,7 +21,7 @@ const EmbeddedCheckoutComp = ({
     <Elements options={options} stripe={stripePromise}>
       <CheckoutForm
         clientSecret={clientSecret}
-        setPaypmentValided={setPaypmentValided}
+        setPaymentValided={setPaymentValided}
       />
     </Elements>
   );
