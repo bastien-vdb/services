@@ -62,6 +62,7 @@ const Step4 = memo(({ userId, api }: { userId: string; api: CarouselApi }) => {
             >
               {questions.map(
                 (question, i) =>
+                  i > 2 &&
                   i < 6 && (
                     <QuickRadioYesNoWrapper
                       name={question.id}

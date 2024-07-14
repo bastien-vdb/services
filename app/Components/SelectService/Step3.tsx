@@ -46,12 +46,16 @@ const Step3 = memo(({ api }: { userId: string; api: CarouselApi }) => {
               backButton={true}
               onBackAction={scrollPrev}
             >
-              {questions.map((question) => (
-                <QuickRadioYesNoWrapper
-                  name={question.id}
-                  label={question.label}
-                />
-              ))}
+              {questions.map(
+                (question, i) => (
+                  // i < 3 && (
+                  <QuickRadioYesNoWrapper
+                    name={question.id}
+                    label={question.label}
+                  />
+                )
+                // )
+              )}
             </QuickFormWrapper>
           </CardContent>
         </Card>
