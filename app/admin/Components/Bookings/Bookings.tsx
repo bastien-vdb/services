@@ -30,24 +30,6 @@ function Bookings() {
     UserId && getBookings(UserId);
   }, []);
 
-  // const handleActiveBooking = (bookingId: string) => {
-  //   changeStatus(bookingId, "AVAILABLE");
-  //   toast({
-  //     variant: "success",
-  //     title: "Rendez-vous activé",
-  //     description: "Le rendez-vous est maintenant disponible",
-  //   });
-  // };
-
-  // const handleCancelBooking = (bookingId: string) => {
-  //   changeStatus(bookingId, "CANCELLED");
-  //   toast({
-  //     variant: "success",
-  //     title: "Rendez-vous désactivé",
-  //     description: "Le rendez-vous n'est plus disponible",
-  //   });
-  // };g
-
   const handleDeleteBooking = async (bookingId: string) => {
     if (!bookingId) return;
     await deleteBooking(bookingId);
@@ -123,6 +105,7 @@ function Bookings() {
                   booking.form as string
                 );
                 await actionSendConfirmationEmail({
+                  forCollaborator: true,
                   from: "Finest lash <no-answer@quickreserve.app>",
                   to: [employeeEmail],
                   subject: `Confirmation de réservation avec ${booking.customer.name}`,

@@ -49,7 +49,6 @@ const Step3 = memo(({ api }: { userId: string; api: CarouselApi }) => {
     q7,
   }: z.infer<typeof FormSchema>) {
     window.scrollTo(0, 0);
-    console.log("q:", q1, q2, q3, q4, q5, q6, q7);
     setFormData({ q1, q2, q3, q4, q5, q6, q7 }); // Update store with form data
     scrollNext();
   }

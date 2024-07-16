@@ -89,10 +89,8 @@ function SelectService({ services }: { services: Service[] }) {
     const serviceSelectedFull = services.find(
       (s) => s.id === serviceIdSelectedLive
     );
-    if (serviceSelectedFull && serviceSelectedFull.name.includes("Fox eyes")) {
-      console.log("on passe setModalVisilbe à true");
+    if (serviceSelectedFull && serviceSelectedFull.name.includes("Fox eyes"))
       setModalVisible(true);
-    }
   }, [serviceIdSelectedLive]);
 
   return (

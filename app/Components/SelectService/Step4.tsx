@@ -29,8 +29,6 @@ const Step4 = memo(({ userId }: { userId: string }) => {
   const { optionSelected } = useServiceStore();
   const { formData } = useFormStore();
 
-  console.log("formData", formData);
-
   const [clientSecret, setClientSecret] = useState("");
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
   const [paypmentValided, setPaymentValided] = useState(false);
@@ -96,7 +94,7 @@ const Step4 = memo(({ userId }: { userId: string }) => {
   useEffect(() => {
     setClientSecret("");
     bookingSelected && handleCreatePayment(bookingSelected);
-  }, [bookingSelected, serviceSelected, optionSelected]);
+  }, [bookingSelected, serviceSelected, optionSelected, formData]);
 
   if (paypmentValided) {
     return (

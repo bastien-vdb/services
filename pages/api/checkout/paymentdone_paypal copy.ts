@@ -27,7 +27,6 @@ export default async function handler(
     const webhookEvent = JSON.parse(rawBody);
 
     if (webhookEvent.event_type === "PAYMENT.CAPTURE.COMPLETED") {
-      console.log("webhookEvent res ==>", webhookEvent.resource);
       const { email_address: customerEmail } = webhookEvent.resource.payee;
       const { custom_id: bookingId } = webhookEvent.resource;
 

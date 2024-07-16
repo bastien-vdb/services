@@ -136,8 +136,6 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
       // ];
       //@ts-ignore
       const values = Object.values(row.getValue("form")).map((p) => p);
-      console.log("values", values);
-      console.log("question", questions);
       return (
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
@@ -152,7 +150,9 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
                         <b key={i}>{value as string}</b>
                       ) : (
                         <b key={i}>
-                          {value === "false" || "no" || !value ? "non" : "oui"}
+                          {value === "false" || value === "no" || !value
+                            ? "non"
+                            : "oui"}
                         </b>
                       )}
                       <br />

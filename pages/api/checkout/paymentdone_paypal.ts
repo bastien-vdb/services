@@ -46,9 +46,6 @@ export default async function handler(
         webhookEvent.resource.purchase_units[0].items[0].description
       ) as paypalDescriptionItemType;
 
-      console.log("startTime ==>", startTime);
-      console.log("endTime ==>", endTime);
-
       const startDateTmz = moment
         .utc(startTime)
         .tz("Europe/Paris")
