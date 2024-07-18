@@ -81,7 +81,7 @@ export const EmailConfirmed = ({
             </Text>
             <Text style={paragraph}>
               Une fois arrivé(e), vous pourrez m&apos;envoyer un message ou
-              m&apos;appeler au 0783639738 pour m&apos;informer de votre
+              m&apos;appeler au +33 7 88 18 30 51 pour m&apos;informer de votre
               arrivée. (attention, il ne faut pas sonner !)
             </Text>
             <Text style={paragraph}>
