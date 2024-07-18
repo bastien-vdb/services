@@ -19,7 +19,6 @@ type FormData = z.infer<typeof FormSchema>;
 type FormStoreType = {
   formData: FormData;
   setFormData: (data: Partial<FormData>) => void;
-  resetFormData: () => void;
 };
 
 const useFormStore = create<FormStoreType>()(
@@ -36,19 +35,6 @@ const useFormStore = create<FormStoreType>()(
     },
     setFormData: (data) =>
       set((state) => ({ formData: { ...state.formData, ...data } })),
-    resetFormData: () =>
-      set({
-        formData: {
-          q1: "",
-          q2: "",
-          q3: "",
-          q4: "",
-          q5: "",
-          q6: "",
-          q7: "",
-          employee: "",
-        },
-      }),
   }))
 );
 

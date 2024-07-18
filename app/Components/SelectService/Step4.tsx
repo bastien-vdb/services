@@ -142,7 +142,8 @@ const Step4 = memo(({ userId }: { userId: string }) => {
               </div>
             </div>
             {/* {clientSecret && bookingSelectedPaypal && ( */}
-            {bookingSelected && (
+            {/* TODO: check sur la coche de validation du formulaire forcément à true mais step simplifier d'urgence */}
+            {bookingSelected && formData.q7 && (
               <PayPalButton
                 bookingSelectedPaypal={bookingSelected}
                 deposit={deposit}
