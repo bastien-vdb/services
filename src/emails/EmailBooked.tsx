@@ -90,7 +90,8 @@ export const EmailRdvBooked = ({
           />
           <Text style={footer}>36 chemin des Huats</Text>
           <Text style={footer}>93000 Bobigny</Text>
-          <Text style={footer}>+33783639738</Text>
+          {/* TODO: urgent modifier ce code pour être réutilisable */}
+          <Text style={footer}>+33 7 88 18 30 51</Text>
           <Text style={footer}>https://www.finestlash.studio</Text>
           <Text style={footer}>https://www.quickreserve.app</Text>
         </Container>

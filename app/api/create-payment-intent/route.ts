@@ -62,8 +62,6 @@ export async function POST(req: Request, res: NextApiResponse) {
 
   if (addedOption && !deposit) totalAmount = totalAmount + addedOption.price;
 
-  console.log("stringformData,", JSON.stringify(formData));
-
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalAmount, //alculateOrderAmount(items),
