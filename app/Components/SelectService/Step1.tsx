@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
+import { useParams } from "next/navigation";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -32,6 +33,7 @@ function SelectService({ services }: { services: Service[] }) {
   const session = useSession();
   const openCtr = useState(false);
   const [, setModalVisible] = openCtr;
+  const { userId } = useParams() as { userId: string };
 
   const FormSchema = z.object({
     service: z.string({
@@ -75,8 +77,9 @@ function SelectService({ services }: { services: Service[] }) {
   }
 
   useEffect(() => {
-    getEmployees(session.data?.user.id!);
-  }, []);
+    if (!userId && !session.data?.user.id) return;
+    getEmployees(userId ?? session.data?.user.id);
+  }, [userId, session.data?.user.id]);
 
   useEffect(() => {
     const employeeSelectedFull = employees.find(

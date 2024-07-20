@@ -1,6 +1,6 @@
 import { prisma } from "@/src/db/prisma";
 import Steps from "@/app/Components/Steps";
-import { Booking, Service } from "@prisma/client";
+import { Booking, Service, User } from "@prisma/client";
 
 async function Business({ params }: { params: { userId: string } }) {
   const { userId } = params;
