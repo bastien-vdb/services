@@ -3,7 +3,7 @@ import Bookings from "@/app/admin/Components/Bookings/Bookings";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import useServerData from "@/src/hooks/useServerData";
-import { Booking } from "@prisma/client";
+import { Booking, PrismaClient } from "@prisma/client";
 import Login from "@/app/Components/Login/Login";
 import {
   Accordion,
@@ -16,13 +16,23 @@ import Calendar from "./Components/Calendar/Calendar";
 import actionGetBooking from "./Components/Bookings/action-getBooking";
 import BookingsHistory from "./Components/Bookings/BookingsHistory";
 import Employees from "./Components/Employee/Employees";
+const prisma = new PrismaClient();
 
 async function Admin() {
   const session = await getServerSession(authOptions);
   const userId = session?.user.id;
 
   const services = await useServerData("service", { createdById: userId });
-  const employees = await useServerData("employee", { createdById: userId });
+  // const employees = await useServerData("employee", { userId });
+  const employees = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+    include: {
+      employeeProfile: true,
+    },
+  });
+  console.log("employee", employees);
 
   if (!session) return <Login />;
 
@@ -75,7 +85,7 @@ async function Admin() {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <Employees employees={employees} />
+            {/* <Employees employees={employees} /> */}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

@@ -32,7 +32,9 @@ const useEmployeeStore = create<EmployeeStoreType>((set) => ({
     set({ employeeAdminSideSelectedId: employeeId }),
   changeEmployeeSelected: (employee) => set({ employeeSelected: employee }),
   getEmployees: async (userId) => {
-    const employees = await useServerData("employee", { createdById: userId });
+    console.log("try get userId", userId);
+    const employees = await useServerData("employee", { userId });
+    console.log("got r", employees);
     set({ employees });
   },
   addEmployee: async (employee) => {

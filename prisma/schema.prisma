@@ -38,28 +38,27 @@ model Service {
   duration      Int
   Booking       Booking[]
   stripePriceId String?   @map("stripe_price_id")
-  Employee      Employee? @relation(fields: [employeeId], references: [id])
-  employeeId    String?   @db.ObjectId
+  userId        String?
 }
 
 model User {
-  address         Address?
-  booked          Booking[]
-  servicesCreated Service[]
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  name            String?
-  email           String?        @unique
-  emailVerified   DateTime?      @map("email_verified")
-  image           String?
-  accounts        Account[]
-  sessions        Session[]
-  stripeAccount   String?
-  availability    Availability[]
-  role            String         @default("OWNER")
-  ownerId         String?        @db.ObjectId
-  owner           User?          @relation("UserToOwner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  employees       User[]         @relation("UserToOwner")
-  employeeProfile Employee?
+  address       Address?
+  booked        Booking[]
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?
+  firstname     String
+  email         String?        @unique
+  emailVerified DateTime?      @map("email_verified")
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  stripeAccount String?
+  availability  Availability[]
+  role          String         @default("OWNER")
+  ownerId       String?        @db.ObjectId
+  owner         User?          @relation("UserToOwner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  employees     User[]         @relation("UserToOwner")
+  services      Service[]
 
   @@map("users")
 }
@@ -80,8 +79,6 @@ model Booking {
   customerId  String?       @db.ObjectId
   amountPayed Int?
   form        Json?
-  employee    Employee?     @relation(fields: [employeeId], references: [id])
-  employeeId  String?       @db.ObjectId
 }
 
 model Customer {
@@ -95,28 +92,14 @@ model Customer {
   Booking   Booking[]
 }
 
-model Employee {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  name            String
-  firstname       String
-  email           String
-  userId          String         @unique @db.ObjectId
-  user            User           @relation(fields: [userId], references: [id])
-  Booking         Booking[]
-  Availability    Availability[]
-  servicesCreated Service[]
-}
-
 model Availability {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  startTime  DateTime
-  endTime    DateTime
-  user       User      @relation(fields: [userId], references: [id])
-  userId     String    @db.ObjectId
-  employee   Employee? @relation(fields: [employeeId], references: [id])
-  employeeId String?   @db.ObjectId
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  startTime DateTime
+  endTime   DateTime
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Account {
