@@ -12,7 +12,6 @@ async function actionCreateBooking({
   amountPayed,
   form,
   customerInfo,
-  employeeId,
 }: {
   startTime: Date;
   endTime: Date;
@@ -21,7 +20,6 @@ async function actionCreateBooking({
   amountPayed;
   form: string;
   customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
-  employeeId: string;
 }) {
   try {
     // Chercher la première disponibilité qui chevauche la réservation
@@ -33,7 +31,6 @@ async function actionCreateBooking({
         endTime: {
           gte: startTime,
         },
-        employeeId,
       },
     });
 
@@ -50,7 +47,6 @@ async function actionCreateBooking({
             startTime: availability.startTime,
             endTime: startTime,
             userId: availability.userId,
-            employeeId,
           },
         });
       }
@@ -62,7 +58,6 @@ async function actionCreateBooking({
             startTime: endTime,
             endTime: availability.endTime,
             userId: availability.userId,
-            employeeId,
           },
         });
       }
@@ -109,7 +104,6 @@ async function actionCreateBooking({
           amountPayed,
           form,
           customerId: customer.id,
-          employeeId: employeeId,
         },
       });
     });

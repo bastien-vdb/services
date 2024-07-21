@@ -11,7 +11,6 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
-import useEmployeeStore from "../Employee/useEmpoyeesStore";
 
 function Bookings() {
   const {
@@ -21,7 +20,6 @@ function Bookings() {
     deleteBooking,
     loadingBookings,
   } = useBookingsStore();
-  const { employeeAdminSideSelectedId } = useEmployeeStore();
 
   const { data: session } = useSession();
   const UserId = session?.user.id;
@@ -41,7 +39,6 @@ function Bookings() {
   const toDay = useMemo(() => new Date(), []);
 
   const formatDataToServiceTableBody = bookings
-    .filter((booking) => booking.employeeId === employeeAdminSideSelectedId)
     .filter((booking) => booking.endTime >= toDay)
     .map((booking: Booking & { service: Service; customer: Customer }) => {
       return {

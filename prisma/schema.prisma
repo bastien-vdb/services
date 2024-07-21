@@ -46,7 +46,7 @@ model User {
   booked        Booking[]
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   name          String?
-  firstname     String
+  firstname     String?
   email         String?        @unique
   emailVerified DateTime?      @map("email_verified")
   image         String?

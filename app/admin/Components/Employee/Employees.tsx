@@ -14,21 +14,16 @@ import {
 import { Input } from "@/src/components/ui/input";
 import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Employee } from "@prisma/client";
+import { User } from "@prisma/client";
 import { Trash2 } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import useEmployeeStore from "./useEmpoyeesStore";
+import actionCreateUser from "../Users/action-createUser";
+import { useSession } from "next-auth/react";
 
-function Employees({ employees }: { employees: Employee[] }) {
-  const {
-    employees: employeesFromStore,
-    removeEmployee,
-    initialiseEmployees,
-    addEmployee,
-    loadingEmployee,
-  } = useEmployeeStore();
+function Employees({ users }: { users: User[] }) {
+  const { data: session } = useSession();
+  const userId = session?.user.id;
 
   const formatDataToTableHeader = [
     { className: "w-20", text: "Nom", tooltip: "Nom" },
@@ -41,28 +36,29 @@ function Employees({ employees }: { employees: Employee[] }) {
     },
   ];
 
-  const formatDataToTableBody = employeesFromStore.map((employee) => [
+  const formatDataToTableBody = users.map((user) => [
     {
       className: "font-medium w-40",
-      text: employee.name.charAt(0).toUpperCase() + employee.name.slice(1),
+      text: user.name && user.name.charAt(0).toUpperCase() + user.name.slice(1),
     }, //Pour mettre en majuscule
     {
       className: "font-medium w-40",
       text:
-        employee.firstname.charAt(0).toUpperCase() +
-        employee.firstname.slice(1),
+        user.firstname &&
+        user.firstname.charAt(0).toUpperCase() + user.firstname.slice(1),
     }, //Pour mettre en majuscule
     {
       className: "font-medium w-40",
-      text: employee.email.charAt(0).toUpperCase() + employee.email.slice(1),
+      text:
+        user.email && user.email.charAt(0).toUpperCase() + user.email.slice(1),
     }, //Pour mettre en majuscule
     {
       className: "text-right",
       text: (
         <Button
           title="Supprimer"
-          onClick={() => handleDeleteEmployee(employee)}
-          disabled={loadingEmployee}
+          onClick={() => handleDeleteEmployee(user)}
+          // disabled={loadingEmployee}
           variant="outline"
         >
           <Trash2 className="text-destructive" />
@@ -71,12 +67,7 @@ function Employees({ employees }: { employees: Employee[] }) {
     },
   ]);
 
-  useEffect(() => {
-    initialiseEmployees(employees);
-  }, []);
-
-  const handleDeleteEmployee = async (employee: Employee) => {
-    removeEmployee(employee); //Optimistic update
+  const handleDeleteEmployee = async (employee: User) => {
     toast({
       description: "Collaborateur supprimé",
     });
@@ -117,9 +108,17 @@ function Employees({ employees }: { employees: Employee[] }) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("values", values);
     // ✅ This will be type-safe and validated.
 
-    addEmployee(values).then(() => {
+    if (!userId) return;
+
+    actionCreateUser({
+      name: values.name,
+      firstname: values.firstname,
+      email: values.email,
+      ownerId: userId,
+    }).then((r) => {
       form.reset();
       toast({
         description: "Profil collabotateur créé avec succès",

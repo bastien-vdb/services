@@ -14,7 +14,7 @@ import {
 import { Input } from "@/src/components/ui/input";
 import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Service } from "@prisma/client";
+import { Service, User } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -28,9 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import useEmployeeStore from "../Employee/useEmpoyeesStore";
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
 
-function Services({ services }: { services: Service[] }) {
+function Services({ services, users }: { services: Service[]; users: User[] }) {
   const {
     services: servicesFromStore,
     removeService,
@@ -38,7 +39,6 @@ function Services({ services }: { services: Service[] }) {
     addService,
     loadingService,
   } = useServiceStore();
-  const { employees } = useEmployeeStore();
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -68,7 +68,7 @@ function Services({ services }: { services: Service[] }) {
     },
     {
       className: "text-right",
-      text: employees.find((e) => e.id === service.employeeId)?.name,
+      text: "la",
     },
     {
       className: "text-right",
@@ -122,7 +122,7 @@ function Services({ services }: { services: Service[] }) {
       .refine((value) => value <= 1440, {
         message: "Durée maximum inférieure à 1440 minutes.",
       }),
-    employeeId: z.string().min(1, "Champ obligatoire."),
+    userId: z.string().min(1, "Champ obligatoire."),
   });
 
   // 1. Define your form.
@@ -132,12 +132,14 @@ function Services({ services }: { services: Service[] }) {
       name: "",
       price: String(0) as unknown as number,
       duration: String(0) as unknown as number,
-      employeeId: "",
+      userId: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // ✅ This will be type-safe and validated.
+
+    console.log("values==>", values);
 
     addService(values).then(() => {
       form.reset();
@@ -212,7 +214,7 @@ function Services({ services }: { services: Service[] }) {
             />
             <FormField
               control={form.control}
-              name="employeeId"
+              name="userId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Collaborateur</FormLabel>
@@ -228,7 +230,7 @@ function Services({ services }: { services: Service[] }) {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {employees.map((e) => (
+                          {users.map((e) => (
                             <SelectItem value={e.id}>{e.name}</SelectItem>
                           ))}
                         </SelectGroup>

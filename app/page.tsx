@@ -13,6 +13,8 @@ async function Home() {
 
   const userId = session?.user.id;
 
+  console.log("user", userId);
+
   //**** Si l'utilisateur n'est pas connecté à l'app (visiteur) ****
   if (userId === undefined)
     return (
