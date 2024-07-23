@@ -58,7 +58,7 @@ export default function StepperService({ userId }: { userId: string }) {
             <Step3 userId={userId} api={api} />
           </CarouselItem>
           <CarouselItem>
-            <Step4 userId={userId} />
+            <Step4 />
           </CarouselItem>
         </CarouselContent>
       </Carousel>
