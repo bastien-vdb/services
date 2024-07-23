@@ -1,8 +1,10 @@
 import { prisma } from "@/src/db/prisma";
 import Steps from "@/app/Components/Steps";
-import { Booking, Service, User } from "@prisma/client";
+import { Booking, Service } from "@prisma/client";
 
-async function Business({ userId }: { userId: string }) {
+async function Business({ params }: { params: { userId: string } }) {
+  const { userId } = params;
+
   let services: Service[] = [];
   let bookings: Booking[] = [];
 
@@ -20,7 +22,7 @@ async function Business({ userId }: { userId: string }) {
   try {
     const res = await prisma.booking.findMany({
       where: {
-        userId,
+        userId: userId,
       },
     });
     bookings.push(...res);
