@@ -7,6 +7,7 @@ import {
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { Booking } from "@prisma/client";
 import useFormStore from "../SelectService/useFormStore";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 
 export default function PayPalButton({
   bookingSelectedPaypal,
@@ -22,7 +23,7 @@ export default function PayPalButton({
   const { serviceSelected } = useServiceStore();
   const { optionSelected } = useServiceStore();
   const { formData } = useFormStore();
-  const { employeeSelected } = useEmployeeStore();
+  const { userSelectedFront } = useUsersStore();
 
   if (!process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID) {
     throw new Error("Paypal client ID missing");
@@ -60,7 +61,7 @@ export default function PayPalButton({
             : serviceSelected.price +
               (optionSelected?.price ? optionSelected.price : 0);
 
-          if (!employeeSelected) throw new Error("No employee Selected");
+          if (!userSelectedFront) throw new Error("No employee Selected");
 
           return actions.order.create({
             intent: "CAPTURE", // Ajoutez cette ligne,
@@ -70,8 +71,8 @@ export default function PayPalButton({
                 custom_id: JSON.stringify({
                   userId: bookingSelectedPaypal.userId,
                   formData,
-                  employeeId: employeeSelected.id,
-                  employeeName: employeeSelected?.name,
+                  employeeId: userSelectedFront.id,
+                  employeeName: String(userSelectedFront?.name),
                 } satisfies paypalCustomIdType),
                 amount: {
                   value: String(totalPrice / 100), // Montant du paiement

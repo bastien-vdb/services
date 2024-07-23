@@ -12,7 +12,8 @@ import EmbeddedCheckoutComp from "../EmbeddedCheckoutComp/EmbeddedCheckoutComp";
 import PayPalButton from "../Paypal/PaypalButton";
 import useFormStore from "./useFormStore";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
-import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
+import { useParams } from "next/navigation";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -25,7 +26,7 @@ const prixFixDeposit = {
   price: 2000,
 }; //TODO mettre dans un fichier settings
 
-const Step4 = memo(({ userId }: { userId: string }) => {
+const Step4 = memo(() => {
   const { optionSelected } = useServiceStore();
   const { formData } = useFormStore();
 
@@ -39,7 +40,9 @@ const Step4 = memo(({ userId }: { userId: string }) => {
 
   const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
-  const { employeeSelected } = useEmployeeStore();
+  const { userSelectedFront } = useUsersStore();
+
+  const { userId } = useParams() as { userId: string };
 
   const { scrollPrev } = useCarousel();
 
@@ -73,8 +76,8 @@ const Step4 = memo(({ userId }: { userId: string }) => {
             serviceName: serviceSelected?.name,
             addedOption: optionSelected,
             formData,
-            employeeId: employeeSelected?.id,
-            employeeName: employeeSelected?.name,
+            employeeId: userSelectedFront?.id,
+            employeeName: userSelectedFront?.name,
           }),
         }
       );

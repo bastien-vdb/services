@@ -2,9 +2,7 @@ import { prisma } from "@/src/db/prisma";
 import Steps from "@/app/Components/Steps";
 import { Booking, Service, User } from "@prisma/client";
 
-async function Business({ params }: { params: { userId: string } }) {
-  const { userId } = params;
-
+async function Business({ userId }: { userId: string }) {
   let services: Service[] = [];
   let bookings: Booking[] = [];
 
@@ -22,7 +20,7 @@ async function Business({ params }: { params: { userId: string } }) {
   try {
     const res = await prisma.booking.findMany({
       where: {
-        userId: userId,
+        userId,
       },
     });
     bookings.push(...res);
@@ -30,7 +28,7 @@ async function Business({ params }: { params: { userId: string } }) {
     throw new Error("Data cannot be reach from the db");
   }
 
-  return <Steps services={services} userId={userId} />;
+  return <Steps userId={userId} />;
 }
 
 export default Business;

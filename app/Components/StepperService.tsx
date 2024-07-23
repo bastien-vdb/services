@@ -13,13 +13,7 @@ import Step2 from "./SelectService/Step2";
 import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
 
-export default function StepperService({
-  services,
-  userId,
-}: {
-  services: Service[];
-  userId: string;
-}) {
+export default function StepperService({ userId }: { userId: string }) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -55,7 +49,7 @@ export default function StepperService({
         </div>
         <CarouselContent>
           <CarouselItem>
-            <Step1 services={services} />
+            <Step1 />
           </CarouselItem>
           <CarouselItem>
             <Step2 userId={userId} />

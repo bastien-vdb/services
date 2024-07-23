@@ -1,3 +1,4 @@
+import { use } from "react";
 import useServerData from "@/src/hooks/useServerData";
 import { Availability } from "@prisma/client";
 import { create } from "zustand";
@@ -9,7 +10,7 @@ type useAvailabilityStoreType = {
   availabilities: Availability[];
   loadingAvailability: boolean;
   initialiseAvailabilities: (availabilities: Availability[]) => void;
-  createAvailability: (start: Date, end: Date) => void;
+  createAvailability: (start: Date, end: Date, userId: string) => void;
   getAvailabilities: (userId: string, daySelected?: Date) => void;
   deleteAvailability: (availabilityId: string) => void;
 };
@@ -18,10 +19,11 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
   availabilities: [],
   loadingAvailability: false,
   initialiseAvailabilities: (availabilities) => set({ availabilities }),
-  createAvailability: async (startTime, endTime) => {
+  createAvailability: async (startTime, endTime, userId) => {
     const result = await actionCreateAvailability({
       startTime,
       endTime,
+      userId,
     });
     set((state) => ({
       availabilities: [...state.availabilities, result],

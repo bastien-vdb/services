@@ -93,7 +93,12 @@ const Calendar = ({ users }: { users: User[] }) => {
         end: selectInfo.endStr,
       },
     ]);
-    await createAvailability(selectInfo.startStr, selectInfo.endStr);
+    userSelected &&
+      (await createAvailability(
+        selectInfo.startStr,
+        selectInfo.endStr,
+        userSelected
+      ));
   };
 
   return (

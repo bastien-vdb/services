@@ -1,6 +1,7 @@
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
 import {
@@ -13,7 +14,7 @@ import {
   DrawerTitle,
 } from "@/src/components/ui/drawer";
 import { LoadingSpinner } from "@/src/components/ui/loader";
-import { Availability, Booking, Service } from "@prisma/client";
+import { Availability, Booking, Service, User } from "@prisma/client";
 import { addMinutes, isAfter } from "date-fns";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -34,25 +35,28 @@ const SelectBooking = ({
     useAvailabilityStore();
   const { serviceSelected } = useServiceStore();
   const { setBookingSelected } = useBookingsStore();
+  const { userSelectedFront } = useUsersStore();
 
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   const [slots, setSlots] = useState<Booking[]>([]);
 
   useEffect(() => {
-    daySelected && getAvailabilities(userId, daySelected);
+    daySelected &&
+      userSelectedFront &&
+      getAvailabilities(userSelectedFront.id, daySelected);
     if (daySelected) setIsOpened(true);
   }, [daySelected]);
 
   useEffect(() => {
-    if (!serviceSelected || !employeeSelected) return;
+    if (!serviceSelected || !userSelectedFront) return;
     const cuttedBookings = availabilities
-      .filter((e) => e.employeeId === employeeSelected.id)
+      .filter((e) => e.userId === userSelectedFront.id)
       .flatMap((avaibility) =>
         splitBookingIntoServiceDuration({
           avaibility,
           serviceSelected,
-          employeeSelected,
+          employeeSelected: userSelectedFront,
         })
       );
     setSlots(cuttedBookings); // Directement un tableau simple
@@ -124,7 +128,7 @@ function splitBookingIntoServiceDuration({
 }: {
   avaibility: Availability;
   serviceSelected: Service;
-  employeeSelected: Employee;
+  employeeSelected: User;
 }) {
   const slots: Booking[] = [];
   let currentTime = new Date(avaibility.startTime);
@@ -148,7 +152,6 @@ function splitBookingIntoServiceDuration({
         customerId: "",
         amountPayed: 0,
         form: "",
-        employeeId: employeeSelected.id ?? "",
       });
     }
 

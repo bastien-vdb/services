@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
 import { useParams } from "next/navigation";
+import useServerData from "@/src/hooks/useServerData";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 
 export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   return (
@@ -20,11 +22,13 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
   );
 };
 
-function SelectService({ services }: { services: Service[] }) {
+function SelectService() {
   const [employeeSelectedLive, setEmployeeSelectedLive] = useState();
   const [serviceIdSelectedLive, setServiceIdSelectedLive] = useState<string>();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
-  const { changeOptionSelected } = useServiceStore();
+  const { changeOptionSelected, getServices, services } = useServiceStore();
+  const { users, getUsers, changeUserSelectedFront, userSelectedFront } =
+    useUsersStore();
   const { setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext } = useCarousel();
   const session = useSession();
@@ -57,10 +61,16 @@ function SelectService({ services }: { services: Service[] }) {
   }: z.infer<typeof FormSchema>) {
     const serviceSelected = services?.find((s) => s.id === service);
 
-    setFormData({ employee: employeeSelected?.email }); // Update store with form data
+    const employeeEmail = users.find((u) => u.id === employeeId)?.email;
+    setFormData({
+      employee: employeeEmail !== null ? employeeEmail : undefined,
+    }); // Update store with form data
 
     serviceSelected && changeServiceSelected(serviceSelected);
-    employeeSelected && changeEmployeeSelected(employeeSelected);
+    const employeeSelectedFull = users.find(
+      (e) => e.id === employeeSelectedLive
+    );
+    employeeSelectedFull && changeUserSelectedFront(employeeSelectedFull);
 
     if (option === "option-avec-depose") {
       changeOptionSelected({
@@ -73,15 +83,18 @@ function SelectService({ services }: { services: Service[] }) {
   }
 
   useEffect(() => {
-    if (!userId && !session.data?.user.id) return;
-    getEmployees(userId ?? session.data?.user.id);
-  }, [userId, session.data?.user.id]);
+    getUsers(userId);
+  }, []);
 
   useEffect(() => {
-    const employeeSelectedFull = employees.find(
+    employeeSelectedLive && getServices(employeeSelectedLive);
+  }, [employeeSelectedLive]);
+
+  useEffect(() => {
+    const employeeSelectedFull = users.find(
       (e) => e.id === employeeSelectedLive
     );
-    employeeSelectedFull && changeEmployeeSelected(employeeSelectedFull);
+    employeeSelectedFull && changeUserSelectedFront(employeeSelectedFull);
   }, [employeeSelectedLive]);
 
   useEffect(() => {
@@ -113,7 +126,7 @@ function SelectService({ services }: { services: Service[] }) {
               name="employeeId"
               label="Choisir son artiste"
               className="w-[250px] sm:w-[800px]"
-              values={employees}
+              values={users}
               renderFn={(e) => (
                 <>
                   {e.name}{" "}
@@ -129,7 +142,7 @@ function SelectService({ services }: { services: Service[] }) {
               label="Choisir sa prestation"
               className="w-[250px] sm:w-[800px]"
               values={services?.filter(
-                (s) => s.employeeId === employeeSelectedLive
+                (s) => s.userId === employeeSelectedLive
               )}
               renderFn={(s) => (
                 <>

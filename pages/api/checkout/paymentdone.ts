@@ -1,4 +1,3 @@
-import { Employee } from "@prisma/client";
 import { metadata } from "./../../../app/layout";
 import { NextApiRequest, NextApiResponse } from "next";
 import type { Readable } from "node:stream";
@@ -72,7 +71,6 @@ export default async function handler(
           serviceName,
           addedOption,
           formData,
-          employeeId,
           employeeName,
         } = metadata;
 
@@ -90,7 +88,6 @@ export default async function handler(
           startTime: new Date(startTime),
           endTime: new Date(endTime),
           serviceId,
-          employeeId,
           userId,
           amountPayed: webhookEvent.data.object.amount_captured / 100,
           form: formData,
