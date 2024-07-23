@@ -16,7 +16,7 @@ import { toast } from "@/src/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Service, User } from "@prisma/client";
 import { Trash2 } from "lucide-react";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import useServiceStore from "./useServicesStore";
@@ -28,17 +28,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { getServerSession } from "next-auth";
-import { useSession } from "next-auth/react";
+import useUsersStore from "../Users/useUsersStore";
 
 function Services({ services, users }: { services: Service[]; users: User[] }) {
   const {
     services: servicesFromStore,
     removeService,
-    initialiseServices,
+    getServices,
     addService,
     loadingService,
   } = useServiceStore();
+  const { userSelected } = useUsersStore();
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -86,8 +86,8 @@ function Services({ services, users }: { services: Service[]; users: User[] }) {
   ]);
 
   useEffect(() => {
-    initialiseServices(services);
-  }, []);
+    userSelected && getServices(userSelected);
+  }, [userSelected]);
 
   const handleDeleteService = async (service: Service) => {
     removeService(service); //Optimistic update

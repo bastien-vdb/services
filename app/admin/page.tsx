@@ -21,12 +21,12 @@ async function Admin() {
 
   const services = await useServerData("service", { userId });
   const users = await useServerData("user", { ownerId: userId }); //TODO: attention car recherche plusieurs user avec id;
-  console.log("les users==>", users);
+  session && users.push(session.user); //Pour ajouter le user connecté à la liste des users
   if (!session) return <Login />;
 
   return (
     <main className="flex flex-col mt-10 p-6 gap-6">
-      <Calendar />
+      <Calendar users={users} />
 
       <Accordion type="multiple">
         <AccordionItem value={"Bookings"}>

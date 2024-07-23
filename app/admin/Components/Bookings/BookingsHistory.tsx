@@ -9,34 +9,16 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
+import useUsersStore from "../Users/useUsersStore";
 
 function BookingsHistory() {
   const { bookings, getBookings, deleteBooking, loadingBookings } =
     useBookingsStore();
-  const { data: session } = useSession();
-  const UserId = session?.user.id;
+  const { userSelected } = useUsersStore();
 
   useEffect(() => {
-    UserId && getBookings(UserId);
-  }, []);
-
-  // const handleActiveBooking = (bookingId: string) => {
-  //   changeStatus(bookingId, "AVAILABLE");
-  //   toast({
-  //     variant: "success",
-  //     title: "Rendez-vous activé",
-  //     description: "Le rendez-vous est maintenant disponible",
-  //   });
-  // };
-
-  // const handleCancelBooking = (bookingId: string) => {
-  //   changeStatus(bookingId, "CANCELLED");
-  //   toast({
-  //     variant: "success",
-  //     title: "Rendez-vous désactivé",
-  //     description: "Le rendez-vous n'est plus disponible",
-  //   });
-  // };g
+    userSelected && getBookings(userSelected);
+  }, [userSelected]);
 
   const handleDeleteBooking = async (bookingId: string) => {
     if (!bookingId) return;

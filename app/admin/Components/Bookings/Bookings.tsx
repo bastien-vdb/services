@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
+import useUsersStore from "../Users/useUsersStore";
 
 function Bookings() {
   const {
@@ -20,13 +21,11 @@ function Bookings() {
     deleteBooking,
     loadingBookings,
   } = useBookingsStore();
-
-  const { data: session } = useSession();
-  const UserId = session?.user.id;
+  const { userSelected } = useUsersStore();
 
   useEffect(() => {
-    UserId && getBookings(UserId);
-  }, []);
+    userSelected && getBookings(userSelected);
+  }, [userSelected]);
 
   const handleDeleteBooking = async (bookingId: string) => {
     if (!bookingId) return;
@@ -36,7 +35,7 @@ function Bookings() {
     });
   };
 
-  const toDay = useMemo(() => new Date(), []);
+  const toDay = useMemo(() => new Date(), []); //TODO: plutôt mettre début de journée
 
   const formatDataToServiceTableBody = bookings
     .filter((booking) => booking.endTime >= toDay)

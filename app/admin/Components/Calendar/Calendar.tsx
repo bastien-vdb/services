@@ -1,13 +1,5 @@
 "use client";
 
-import FullCalendar from "@fullcalendar/react";
-import interactionPlugin from "@fullcalendar/interaction";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
-import useAvailabilityStore from "./useAvailabilityStore";
-import { v4 as uuidv4 } from "uuid";
-import useBookingsStore from "../Bookings/useBookingsStore";
 import {
   Select,
   SelectContent,
@@ -16,9 +8,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import useEmployeeStore from "../Employee/useEmpoyeesStore";
+import interactionPlugin from "@fullcalendar/interaction";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { useEffect, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import useBookingsStore from "../Bookings/useBookingsStore";
+import useAvailabilityStore from "./useAvailabilityStore";
+import useUsersStore from "../Users/useUsersStore";
 
-const Calendar = () => {
+const Calendar = ({ users }: { users: User[] }) => {
   const {
     availabilities,
     getAvailabilities,
@@ -26,12 +27,7 @@ const Calendar = () => {
     deleteAvailability,
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
-  // const {
-  //   employees,
-  //   getEmployees,
-  //   changeEmployeeAdminSideSelectedId,
-  //   employeeAdminSideSelectedId,
-  // } = useEmployeeStore();
+  const { userSelected, changeUserSelected } = useUsersStore();
   const today = useMemo(() => new Date(), []);
   const session = useSession();
   const [events, setEvents] = useState<
@@ -44,17 +40,14 @@ const Calendar = () => {
   >([]);
 
   useEffect(() => {
-    if (!session.data?.user) return;
-    getAvailabilities(session.data?.user.id!);
-    getBookings(session.data?.user.id!);
-    // getEmployees(session.data?.user.id!);
-  }, [session.data?.user]);
+    session.data && changeUserSelected(session.data?.user.id);
+  }, [session.data]);
 
-  // useEffect(() => {
-  //   //Pour avoir la 1ère valeur de la liste des collaborateurs par default à l'ouverture
-  //   if (!employeeAdminSideSelectedId && employees.length > 0)
-  //     changeEmployeeAdminSideSelectedId(employees[0].id);
-  // }, [employees]);
+  useEffect(() => {
+    if (!session.data?.user) return;
+    userSelected && getAvailabilities(userSelected);
+    userSelected && getBookings(userSelected);
+  }, [userSelected]);
 
   useEffect(() => {
     const bookingsEvents = bookings.map((booking) => ({
@@ -105,6 +98,20 @@ const Calendar = () => {
 
   return (
     <>
+      {userSelected && (
+        <Select onValueChange={changeUserSelected} defaultValue={userSelected}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Collaborateur" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {users.map((e) => (
+                <SelectItem value={e.id}>{e.name}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      )}
       <FullCalendar
         plugins={[timeGridPlugin, interactionPlugin]}
         initialView="timeGridWeek"
@@ -140,24 +147,6 @@ const Calendar = () => {
         selectable // Assurez-vous que cette propriété soit définie
         select={(selectInfo) => handleDateSelect(selectInfo)} // Fonction pour gérer les nouvelles sélections
       />
-
-      {/* <Select
-            onValueChange={changeEmployeeAdminSideSelectedId}
-            defaultValue={employees[0].id ?? undefined}
-          > */}
-      {/* <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Collaborateur" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {employees.map((e) => (
-                  <SelectItem value={e.id}>{e.name}</SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select> */}
-
-      {/* )} */}
     </>
   );
 };

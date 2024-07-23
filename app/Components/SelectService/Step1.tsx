@@ -1,5 +1,4 @@
 "use client";
-import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import AlertDialogControlled from "@/src/components/Modal/AlertDialogControlled";
 import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
@@ -24,8 +23,6 @@ export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
 function SelectService({ services }: { services: Service[] }) {
   const [employeeSelectedLive, setEmployeeSelectedLive] = useState();
   const [serviceIdSelectedLive, setServiceIdSelectedLive] = useState<string>();
-  const { employees, getEmployees, changeEmployeeSelected } =
-    useEmployeeStore();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected } = useServiceStore();
   const { setFormData } = useFormStore(); // Use Zustand store
@@ -59,7 +56,6 @@ function SelectService({ services }: { services: Service[] }) {
     option,
   }: z.infer<typeof FormSchema>) {
     const serviceSelected = services?.find((s) => s.id === service);
-    const employeeSelected = employees?.find((e) => e.id === employeeId);
 
     setFormData({ employee: employeeSelected?.email }); // Update store with form data
 

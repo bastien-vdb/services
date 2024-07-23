@@ -1,6 +1,5 @@
 import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useAvailabilityStore from "@/app/admin/Components/Calendar/useAvailabilityStore";
-import useEmployeeStore from "@/app/admin/Components/Employee/useEmpoyeesStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 import { Button } from "@/src/components/ui/button";
 import { useCarousel } from "@/src/components/ui/carousel";
@@ -14,7 +13,7 @@ import {
   DrawerTitle,
 } from "@/src/components/ui/drawer";
 import { LoadingSpinner } from "@/src/components/ui/loader";
-import { Availability, Booking, Employee, Service } from "@prisma/client";
+import { Availability, Booking, Service } from "@prisma/client";
 import { addMinutes, isAfter } from "date-fns";
 import moment from "moment";
 import { useEffect, useState } from "react";
@@ -35,7 +34,6 @@ const SelectBooking = ({
     useAvailabilityStore();
   const { serviceSelected } = useServiceStore();
   const { setBookingSelected } = useBookingsStore();
-  const { employeeSelected } = useEmployeeStore();
 
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 

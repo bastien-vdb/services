@@ -9,7 +9,7 @@ type useAvailabilityStoreType = {
   availabilities: Availability[];
   loadingAvailability: boolean;
   initialiseAvailabilities: (availabilities: Availability[]) => void;
-  createAvailability: (start: Date, end: Date, employeeId: string) => void;
+  createAvailability: (start: Date, end: Date) => void;
   getAvailabilities: (userId: string, daySelected?: Date) => void;
   deleteAvailability: (availabilityId: string) => void;
 };
@@ -18,11 +18,10 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
   availabilities: [],
   loadingAvailability: false,
   initialiseAvailabilities: (availabilities) => set({ availabilities }),
-  createAvailability: async (startTime, endTime, employeeId) => {
+  createAvailability: async (startTime, endTime) => {
     const result = await actionCreateAvailability({
       startTime,
       endTime,
-      employeeId,
     });
     set((state) => ({
       availabilities: [...state.availabilities, result],

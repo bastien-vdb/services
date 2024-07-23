@@ -108,7 +108,6 @@ function Employees({ users }: { users: User[] }) {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("values", values);
     // ✅ This will be type-safe and validated.
 
     if (!userId) return;

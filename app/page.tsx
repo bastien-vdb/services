@@ -26,7 +26,7 @@ async function Home() {
 
   //**** Si l'utilisateur est connecté à l'app mais n'a pas commencé ou finalisé son inscription à Stripe ****
   const stripe = useCheckStripe();
-  const user: User[] = await useServerData("user", { id: userId });
+  const user: User = await useServerData("user", { id: userId });
 
   const { stripeAccount } = user[0];
 
@@ -34,7 +34,7 @@ async function Home() {
     ? (await stripe.accounts.retrieve(stripeAccount)).details_submitted
     : null;
 
-  if (!statusAccount)
+  if (!statusAccount && user.role === "OWNER")
     return <Subscribe userId={userId} stripeAccount={stripeAccount} />;
 
   //**** Si l'utilisateur est connecté et a finalisé son inscription à Stripe ****
