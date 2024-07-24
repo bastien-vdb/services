@@ -117,12 +117,18 @@ function Employees({ users }: { users: User[] }) {
       firstname: values.firstname,
       email: values.email,
       ownerId: userId,
-    }).then((r) => {
-      form.reset();
-      toast({
-        description: "Profil collabotateur créé avec succès",
+    })
+      .then((r) => {
+        form.reset();
+        toast({
+          description: "Profil collabotateur créé avec succès",
+        });
+      })
+      .catch((e) => {
+        toast({
+          description: e.message,
+        });
       });
-    });
   }
 
   return (

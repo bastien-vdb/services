@@ -31,6 +31,7 @@ async function actionCreateBooking({
         endTime: {
           gte: startTime,
         },
+        userId,
       },
     });
 

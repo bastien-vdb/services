@@ -18,6 +18,17 @@ async function actionCreateUser({
   const session = await getServerSession(authOptions);
 
   if (!session) throw new Error("Session is not defined");
+  const userRole = await prisma.user
+    .findFirst({
+      where: {
+        id: session.user.id,
+      },
+    })
+    .then((user) => user?.role);
+
+  if (userRole !== "OWNER") {
+    throw new Error("User is not an admin");
+  }
 
   try {
     return await prisma.$transaction(async (prisma) => {
