@@ -63,6 +63,8 @@ export default function PayPalButton({
                 (optionSelected?.price ? optionSelected.price : 0);
 
             if (!userSelectedFront) throw new Error("No employee Selected");
+            if (!bookingSelected.serviceId)
+              throw new Error("No booking Selected");
 
             return actions.order.create({
               intent: "CAPTURE", // Ajoutez cette ligne,
