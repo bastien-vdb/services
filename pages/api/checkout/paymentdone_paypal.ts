@@ -51,7 +51,9 @@ export default async function handler(
         .tz("Europe/Paris")
         .format("YYYY-MM-DD HH:mm:ss");
 
-      const { employee: employeeEmail } = formData;
+      const userEmployee = await prisma.user.findFirst({
+        where: { id: employeeId },
+      });
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
@@ -117,10 +119,10 @@ export default async function handler(
           }),
         });
 
-        employeeEmail &&
+        userEmployee?.email &&
           (await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [employeeEmail],
+            to: [userEmployee.email],
             subject: `Vous avez un Rendez-vous ${service?.name} en attente.`,
             react: EmailPaymentReceived({
               customerName:

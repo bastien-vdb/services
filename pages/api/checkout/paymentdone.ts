@@ -9,6 +9,8 @@ import actionCreateBooking from "@/app/admin/Components/Bookings/action-createBo
 import moment from "moment-timezone";
 import { J } from "@fullcalendar/core/internal-common";
 import EmailPaymentReceived from "@/src/emails/EmailPaymentReceived";
+import useServerData from "@/src/hooks/useServerData";
+import { PrismaClient } from "@prisma/client";
 
 export const config = {
   api: {
@@ -28,6 +30,8 @@ type metadataType = {
   employeeId: string;
   employeeName: string;
 };
+
+const prisma = new PrismaClient();
 
 async function buffer(readable: Readable) {
   const chunks: any = [];
@@ -75,7 +79,9 @@ export default async function handler(
           employeeName,
         } = metadata;
 
-        const { employee: employeeEmail } = JSON.parse(formData);
+        const userEmployee = await prisma.user.findFirst({
+          where: { id: employeeId },
+        });
 
         const startTime = JSON.parse(dates)[0];
         const endTime = JSON.parse(dates)[1];
@@ -133,18 +139,19 @@ export default async function handler(
             }),
           });
 
-          await useSendEmail({
-            from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [employeeEmail],
-            subject: `Vous avez un Rendez-vous ${serviceName} en attente.`,
-            react: EmailPaymentReceived({
-              customerName: customerDetails.name ?? "",
-              bookingStartTime: startDateTmz,
-              serviceName,
-              employeeName,
-              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
-            }),
-          });
+          userEmployee?.email &&
+            (await useSendEmail({
+              from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
+              to: [userEmployee.email],
+              subject: `Vous avez un Rendez-vous ${serviceName} en attente.`,
+              react: EmailPaymentReceived({
+                customerName: customerDetails.name ?? "",
+                bookingStartTime: startDateTmz,
+                serviceName,
+                employeeName,
+                businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
+              }),
+            }));
         }
         if (!bookingCreated && customerDetails?.email) {
           await useSendEmail({
