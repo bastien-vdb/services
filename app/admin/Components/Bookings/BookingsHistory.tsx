@@ -1,11 +1,9 @@
 "use client";
 import AlertModal from "@/src/components/Modal/AlertModal";
 import { DataTable } from "@/src/components/bookings_data_table/data-table";
-import { toast } from "@/src/components/ui/use-toast";
 import { Booking, Customer, Service } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import moment from "moment";
-import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
@@ -19,14 +17,6 @@ function BookingsHistory() {
   useEffect(() => {
     userSelected && getBookings(userSelected);
   }, [userSelected]);
-
-  const handleDeleteBooking = async (bookingId: string) => {
-    if (!bookingId) return;
-    await deleteBooking(bookingId);
-    toast({
-      description: "Réservation supprimée",
-    });
-  };
 
   const toDay = useMemo(() => new Date(), []);
 
@@ -62,9 +52,9 @@ function BookingsHistory() {
         supprimer: (
           <AlertModal
             disabled={loadingBookings}
-            onAction={() => handleDeleteBooking(booking.id)}
+            onAction={() => deleteBooking(booking.id)}
           >
-            <Trash2 className="text-destructive"></Trash2>
+            <Trash2 />
           </AlertModal>
         ),
       };

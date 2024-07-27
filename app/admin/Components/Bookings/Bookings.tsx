@@ -7,11 +7,10 @@ import { Booking, Customer, Service } from "@prisma/client";
 import { Check, Trash2 } from "lucide-react";
 import moment from "moment";
 import momentTz from "moment-timezone";
-import { useSession } from "next-auth/react";
 import { useEffect, useMemo } from "react";
+import useUsersStore from "../Users/useUsersStore";
 import { BookingColumns } from "./BookingColumns";
 import useBookingsStore from "./useBookingsStore";
-import useUsersStore from "../Users/useUsersStore";
 
 function Bookings() {
   const {
@@ -30,9 +29,6 @@ function Bookings() {
   const handleDeleteBooking = async (bookingId: string) => {
     if (!bookingId) return;
     await deleteBooking(bookingId);
-    toast({
-      description: "Réservation supprimée",
-    });
   };
 
   const toDay = useMemo(() => new Date(), []); //TODO: plutôt mettre début de journée
@@ -131,7 +127,7 @@ function Bookings() {
             disabled={loadingBookings}
             onAction={() => handleDeleteBooking(booking.id)}
           >
-            <Trash2 className="text-destructive"></Trash2>
+            <Trash2 />
           </AlertModal>
         ),
       };

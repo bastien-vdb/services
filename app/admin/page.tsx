@@ -13,20 +13,16 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import BookingsHistory from "./Components/Bookings/BookingsHistory";
 import Calendar from "./Components/Calendar/Calendar";
-import Employees from "./Components/Employee/Employees";
+import Users from "./Components/Users/Users";
 
 async function Admin() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user.id;
+  const userSession = await getServerSession(authOptions);
 
-  const services = await useServerData("service", { userId });
-  const users = await useServerData("user", { ownerId: userId }); //TODO: attention car recherche plusieurs user avec id;
-  session && users.push(session.user); //Pour ajouter le user connecté à la liste des users
-  if (!session) return <Login />;
+  if (!userSession) return <Login />;
 
   return (
     <main className="flex flex-col mt-10 p-6 gap-6">
-      <Calendar users={users} />
+      <Calendar />
 
       <Accordion type="multiple">
         <AccordionItem value={"Bookings"}>
@@ -61,7 +57,7 @@ async function Admin() {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <Services services={services} users={users} />
+            <Services />
           </AccordionContent>
         </AccordionItem>
 
@@ -73,7 +69,7 @@ async function Admin() {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <Employees users={users} />
+            <Users />
           </AccordionContent>
         </AccordionItem>
       </Accordion>

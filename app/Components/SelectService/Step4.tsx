@@ -27,21 +27,16 @@ const prixFixDeposit = {
 }; //TODO mettre dans un fichier settings
 
 const Step4 = memo(() => {
-  const { optionSelected } = useServiceStore();
-  const { formData } = useFormStore();
-
   const [clientSecret, setClientSecret] = useState("");
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
   const [paypmentValided, setPaymentValided] = useState(false);
-
-  //TODO useState pour paypal uniquement mais refactoriser le code asap
-  const [bookingSelectedPaypal, setBookingSelectedPaypal] = useState<Booking>();
   const [deposit, setDeposit] = useState(false);
 
+  const { optionSelected } = useServiceStore();
+  const { formData } = useFormStore();
   const { bookingSelected } = useBookingsStore();
   const { serviceSelected } = useServiceStore();
   const { userSelectedFront } = useUsersStore();
-
   const { userId } = useParams() as { userId: string };
 
   const { scrollPrev } = useCarousel();
@@ -52,7 +47,6 @@ const Step4 = memo(() => {
   ) => {
     if (!fullOrDepotDisplayed) setFullOrDepotDisplayed(true);
     setClientSecret("");
-    setBookingSelectedPaypal(booking);
     setDeposit(deposit);
 
     try {
@@ -123,8 +117,7 @@ const Step4 = memo(() => {
                 <RadioGroupItem
                   onClick={() => {
                     setClientSecret("");
-                    bookingSelectedPaypal &&
-                      handleCreatePayment(bookingSelectedPaypal);
+                    bookingSelected && handleCreatePayment(bookingSelected);
                   }}
                   value="option-one"
                   id="option-one"
@@ -135,8 +128,8 @@ const Step4 = memo(() => {
                 <RadioGroupItem
                   onClick={() => {
                     setClientSecret("");
-                    bookingSelectedPaypal &&
-                      handleCreatePayment(bookingSelectedPaypal, true);
+                    bookingSelected &&
+                      handleCreatePayment(bookingSelected, true);
                   }}
                   value="option-two"
                   id="option-two"
@@ -144,20 +137,15 @@ const Step4 = memo(() => {
                 <Label htmlFor="option-two">Dépot: 20€</Label>
               </div>
             </div>
-            {/* {clientSecret && bookingSelectedPaypal && ( */}
-            {/* TODO: check sur la coche de validation du formulaire forcément à true mais step simplifier d'urgence */}
-            {bookingSelected && formData.q7 && (
-              <PayPalButton
-                bookingSelectedPaypal={bookingSelected}
-                deposit={deposit}
-                prixFixDeposit={prixFixDeposit}
-                setPaymentValided={setPaymentValided}
-              />
-            )}
+            <PayPalButton
+              deposit={deposit}
+              prixFixDeposit={prixFixDeposit}
+              setPaymentValided={setPaymentValided}
+            />
           </RadioGroup>
         )}
 
-        {clientSecret && bookingSelectedPaypal ? (
+        {clientSecret && bookingSelected ? (
           <EmbeddedCheckoutComp
             stripePromise={stripePromise}
             clientSecret={clientSecret}

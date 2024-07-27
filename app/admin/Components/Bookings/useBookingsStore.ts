@@ -1,4 +1,4 @@
-import { set } from "date-fns";
+import { toast } from "@/src/components/ui/use-toast";
 import { Booking, BookingStatus } from "@prisma/client";
 import { create } from "zustand";
 import actionDeleteBooking from "./action-deleteBooking";
@@ -54,9 +54,15 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
         set((state) => ({
           bookings: state.bookings.filter((b) => b.id !== bookingId),
         }));
+        toast({
+          description: "Réservation supprimée",
+        });
       })
       .catch((error) => {
-        console.error(error);
+        toast({
+          variant: "destructive",
+          description: error,
+        });
       })
       .finally(() => set({ loadingBookings: false }));
   },

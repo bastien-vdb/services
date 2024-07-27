@@ -1,6 +1,3 @@
-import { Service } from "@prisma/client";
-import Step1 from "./SelectService/Step1";
-
 import { Badge } from "@/src/components/ui/badge";
 import {
   Carousel,
@@ -9,11 +6,12 @@ import {
   CarouselItem,
 } from "@/src/components/ui/carousel";
 import { useEffect, useState } from "react";
+import Step1 from "./SelectService/Step1";
 import Step2 from "./SelectService/Step2";
 import Step3 from "./SelectService/Step3";
 import Step4 from "./SelectService/Step4";
 
-export default function StepperService({ userId }: { userId: string }) {
+export default function StepperService() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
@@ -52,10 +50,10 @@ export default function StepperService({ userId }: { userId: string }) {
             <Step1 />
           </CarouselItem>
           <CarouselItem>
-            <Step2 userId={userId} />
+            <Step2 />
           </CarouselItem>
           <CarouselItem>
-            <Step3 userId={userId} api={api} />
+            <Step3 api={api} />
           </CarouselItem>
           <CarouselItem>
             <Step4 />

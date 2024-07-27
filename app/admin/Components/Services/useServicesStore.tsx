@@ -3,13 +3,13 @@ import { create } from "zustand";
 import useServerData from "@/src/hooks/useServerData";
 import actionCreateService from "./action-createService";
 import actionDeleteService from "./action-deleteService";
+import { toast } from "@/src/components/ui/use-toast";
 
 type ServiceStoreType = {
   services: Service[];
   serviceSelected: Service | null;
   optionSelected: { name: string; price: number } | undefined;
   loadingService: boolean;
-  initialiseServices: (services: Service[]) => void;
   changeServiceSelected: (service: Service | null) => void;
   changeOptionSelected: (
     option: { name: string; price: number } | undefined
@@ -29,7 +29,6 @@ const useServiceStore = create<ServiceStoreType>((set) => ({
   serviceSelected: null,
   optionSelected: undefined,
   loadingService: false,
-  initialiseServices: (services) => set({ services }),
   changeServiceSelected: (service) => set({ serviceSelected: service }),
   changeOptionSelected: (option) => set({ optionSelected: option }),
   getServices: async (userId) => {
@@ -55,6 +54,15 @@ const useServiceStore = create<ServiceStoreType>((set) => ({
         set((state) => ({
           services: state.services.filter((service) => service.id !== s.id),
         }));
+        toast({
+          description: "Service supprimé",
+        });
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
       })
       .finally(() => set({ loadingService: false }));
   },

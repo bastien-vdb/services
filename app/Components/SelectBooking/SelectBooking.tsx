@@ -21,10 +21,8 @@ import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const SelectBooking = ({
-  userId,
   daySelectedManager,
 }: {
-  userId: string;
   daySelectedManager: [Date | undefined, (date: Date | undefined) => void];
 }) => {
   const [daySelected, setDaySelected] = daySelectedManager;

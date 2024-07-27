@@ -2,6 +2,7 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { prisma } from "@/src/db/prisma";
 import useCheckStripe from "@/src/hooks/useCheckStripe";
+import { isOwner } from "@/src/utils/isOwner";
 import { getServerSession } from "next-auth/next";
 
 async function actionCreateService({
@@ -20,6 +21,9 @@ async function actionCreateService({
   if (!session) throw new Error("Session is not defined");
 
   try {
+    //Abstraction de vérification du role Owner
+    await isOwner(session.user.id);
+
     const stripe = useCheckStripe();
     const service = await stripe.products.create({
       name,
@@ -44,7 +48,7 @@ async function actionCreateService({
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Service cannot be created");
+    throw new Error(error);
   }
 }
 

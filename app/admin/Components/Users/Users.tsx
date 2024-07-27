@@ -18,12 +18,15 @@ import { User } from "@prisma/client";
 import { Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import actionCreateUser from "../Users/action-createUser";
 import { useSession } from "next-auth/react";
+import AlertModal from "@/src/components/Modal/AlertModal";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
+import { useEffect } from "react";
 
-function Employees({ users }: { users: User[] }) {
+function Users() {
   const { data: session } = useSession();
-  const userId = session?.user.id;
+  const userSessionId = session?.user.id;
+  const { addUser, getUsers, users } = useUsersStore();
 
   const formatDataToTableHeader = [
     { className: "w-20", text: "Nom", tooltip: "Nom" },
@@ -55,19 +58,17 @@ function Employees({ users }: { users: User[] }) {
     {
       className: "text-right",
       text: (
-        <Button
-          title="Supprimer"
-          onClick={() => handleDeleteEmployee(user)}
-          // disabled={loadingEmployee}
-          variant="outline"
+        <AlertModal
+          disabled={false} //TODO ajouter un loader
+          onAction={() => handleDeleteUserEmployee(user)}
         >
-          <Trash2 className="text-destructive" />
-        </Button>
+          <Trash2 />
+        </AlertModal>
       ),
     },
   ]);
 
-  const handleDeleteEmployee = async (employee: User) => {
+  const handleDeleteUserEmployee = async (user: User) => {
     toast({
       description: "Collaborateur supprimé",
     });
@@ -110,26 +111,22 @@ function Employees({ users }: { users: User[] }) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // ✅ This will be type-safe and validated.
 
-    if (!userId) return;
-
-    actionCreateUser({
+    if (!userSessionId) return;
+    addUser({
       name: values.name,
       firstname: values.firstname,
       email: values.email,
-      ownerId: userId,
-    })
-      .then((r) => {
-        form.reset();
-        toast({
-          description: "Profil collabotateur créé avec succès",
-        });
-      })
-      .catch((e) => {
-        toast({
-          description: e.message,
-        });
-      });
+      ownerId: userSessionId,
+    }).then(() => {
+      form.reset();
+    });
   }
+
+  useEffect(() => {
+    if (userSessionId) {
+      getUsers(userSessionId);
+    }
+  }, []);
 
   return (
     <>
@@ -198,4 +195,4 @@ function Employees({ users }: { users: User[] }) {
   );
 }
 
-export default Employees;
+export default Users;

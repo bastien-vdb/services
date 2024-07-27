@@ -35,7 +35,7 @@ const FormSchema = z.object({
   q7: RadioButtonRuleForm(true, true),
 });
 
-const Step3 = memo(({ api }: { userId: string; api: CarouselApi }) => {
+const Step3 = memo(({ api }: { api: CarouselApi }) => {
   const { formData, setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext, scrollPrev } = useCarousel();
 

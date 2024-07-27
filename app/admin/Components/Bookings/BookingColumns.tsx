@@ -195,7 +195,7 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
   },
   {
     accessorKey: "supprimer",
-    header: () => <span>Supprimer</span>,
+    header: () => <span>{""}</span>,
     cell: ({ row }) => row.getValue("supprimer"),
   },
 ];

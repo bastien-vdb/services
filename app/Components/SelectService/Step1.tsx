@@ -1,26 +1,15 @@
 "use client";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 import AlertDialogControlled from "@/src/components/Modal/AlertDialogControlled";
 import QuickFormWrapper from "@/src/components/QuickWrapper/QuickFormWrapper";
 import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { useCarousel } from "@/src/components/ui/carousel";
-import { Service } from "@prisma/client";
-import { useSession } from "next-auth/react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import useFormStore from "./useFormStore";
-import { useParams } from "next/navigation";
-import useServerData from "@/src/hooks/useServerData";
-import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
-
-export const HeaderWithIcon = (Icon: JSX.Element, text: string) => {
-  return (
-    <div className="flex items-center gap-4">
-      <span>{text}</span> {Icon}
-    </div>
-  );
-};
 
 function SelectService() {
   const [employeeSelectedLive, setEmployeeSelectedLive] = useState();
@@ -31,10 +20,9 @@ function SelectService() {
     useUsersStore();
   const { setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext } = useCarousel();
-  const session = useSession();
   const openCtr = useState(false);
   const [, setModalVisible] = openCtr;
-  const { userId } = useParams() as { userId: string };
+  const { userId: userParamId } = useParams() as { userId: string };
 
   const FormSchema = z.object({
     service: z.string({
@@ -61,9 +49,9 @@ function SelectService() {
   }: z.infer<typeof FormSchema>) {
     const serviceSelected = services?.find((s) => s.id === service);
 
-    const employeeEmail = users.find((u) => u.id === employeeId)?.email;
+    const employeeName = users.find((u) => u.id === employeeId)?.name;
     setFormData({
-      employee: employeeEmail !== null ? employeeEmail : undefined,
+      employee: employeeName !== null ? employeeName : undefined,
     }); // Update store with form data
 
     serviceSelected && changeServiceSelected(serviceSelected);
@@ -83,14 +71,12 @@ function SelectService() {
   }
 
   useEffect(() => {
-    getUsers(userId);
+    getUsers(userParamId);
   }, []);
 
   useEffect(() => {
     employeeSelectedLive && getServices(employeeSelectedLive);
-  }, [employeeSelectedLive]);
 
-  useEffect(() => {
     const employeeSelectedFull = users.find(
       (e) => e.id === employeeSelectedLive
     );

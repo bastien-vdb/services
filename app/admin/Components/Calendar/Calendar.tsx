@@ -19,7 +19,7 @@ import useBookingsStore from "../Bookings/useBookingsStore";
 import useAvailabilityStore from "./useAvailabilityStore";
 import useUsersStore from "../Users/useUsersStore";
 
-const Calendar = ({ users }: { users: User[] }) => {
+const Calendar = () => {
   const {
     availabilities,
     getAvailabilities,
@@ -28,8 +28,9 @@ const Calendar = ({ users }: { users: User[] }) => {
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
   const { userSelected, changeUserSelected } = useUsersStore();
-  const today = useMemo(() => new Date(), []);
   const session = useSession();
+  const { users, getUsers } = useUsersStore();
+  const today = useMemo(() => new Date(), []);
   const [events, setEvents] = useState<
     {
       id: string;
@@ -41,6 +42,7 @@ const Calendar = ({ users }: { users: User[] }) => {
 
   useEffect(() => {
     session.data && changeUserSelected(session.data?.user.id);
+    session.data && getUsers(session.data?.user.id);
   }, [session.data]);
 
   useEffect(() => {

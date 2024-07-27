@@ -1,7 +1,4 @@
-import { co } from "@fullcalendar/core/internal-common";
-import { Availability, Customer, PrismaClient } from "@prisma/client";
-import { th } from "date-fns/locale";
-import { custom } from "zod";
+import { Customer, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function actionCreateBooking({

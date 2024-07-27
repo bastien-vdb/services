@@ -54,7 +54,7 @@ const Steps = ({ userId }: { userId: string }) => {
               />
             </div>
           )}
-          {!infoTemporaireVisible && <StepperService userId={userId} />}
+          {!infoTemporaireVisible && <StepperService />}
         </CardContent>
       </Card>
     </main>

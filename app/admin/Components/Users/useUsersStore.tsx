@@ -1,6 +1,8 @@
 import useServerData from "@/src/hooks/useServerData";
 import { User } from "@prisma/client";
 import { create } from "zustand";
+import actionCreateUser from "./action-createUser";
+import { toast } from "@/src/components/ui/use-toast";
 
 type useUsersStoreType = {
   userSelected: string | undefined;
@@ -9,6 +11,7 @@ type useUsersStoreType = {
   changeUserSelected: (userId: string) => void;
   changeUserSelectedFront: (userSelectedFront: User) => void;
   getUsers: (userId: string) => Promise<void>;
+  addUser: (user: Partial<User>) => Promise<void>;
 };
 
 const useUsersStore = create<useUsersStoreType>((set) => ({
@@ -21,11 +24,30 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
   changeUserSelected: async (userId) => {
     set({ userSelected: userId });
   },
-  getUsers: async (userId) => {
-    const users = await useServerData("user", { ownerId: userId });
-    //Pour ajouter aussi l'utilisateur principal (celui dont l'ID est userId)
-    const user = await useServerData("user", { id: userId });
-    set({ users: [...users, ...user] });
+  getUsers: async (ownerId) => {
+    const users = await useServerData("user", { ownerId });
+    set({ users });
+  },
+  addUser: async (user) => {
+    if (!user.ownerId || !user.name || !user.firstname || !user.email) return;
+    actionCreateUser({
+      name: user.name,
+      firstname: user.firstname,
+      email: user.email,
+      ownerId: user.ownerId,
+    })
+      .then((user) => {
+        set((state) => ({ users: [...state.users, user] }));
+        toast({
+          description: "Profil collabotateur créé avec succès",
+        });
+      })
+      .catch((e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      });
   },
 }));
 

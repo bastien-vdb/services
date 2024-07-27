@@ -1,4 +1,5 @@
 "use client";
+import AlertModal from "@/src/components/Modal/AlertModal";
 import TableMain from "@/src/components/Table/TableMain";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
@@ -12,14 +13,6 @@ import {
   FormMessage,
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
-import { toast } from "@/src/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Service, User } from "@prisma/client";
-import { Trash2 } from "lucide-react";
-import { use, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import useServiceStore from "./useServicesStore";
 import {
   Select,
   SelectContent,
@@ -28,9 +21,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { toast } from "@/src/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Service } from "@prisma/client";
+import { Trash2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import useUsersStore from "../Users/useUsersStore";
+import useServiceStore from "./useServicesStore";
 
-function Services({ services, users }: { services: Service[]; users: User[] }) {
+function Services() {
   const {
     services: servicesFromStore,
     removeService,
@@ -38,7 +39,7 @@ function Services({ services, users }: { services: Service[]; users: User[] }) {
     addService,
     loadingService,
   } = useServiceStore();
-  const { userSelected } = useUsersStore();
+  const { userSelected, users, getUsers } = useUsersStore();
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -73,14 +74,12 @@ function Services({ services, users }: { services: Service[]; users: User[] }) {
     {
       className: "text-right",
       text: (
-        <Button
-          title="Supprimer"
-          onClick={() => handleDeleteService(service)}
+        <AlertModal
           disabled={loadingService}
-          variant="outline"
+          onAction={() => handleDeleteService(service)}
         >
-          <Trash2 className="text-destructive" />
-        </Button>
+          <Trash2 />
+        </AlertModal>
       ),
     },
   ]);
@@ -90,10 +89,7 @@ function Services({ services, users }: { services: Service[]; users: User[] }) {
   }, [userSelected]);
 
   const handleDeleteService = async (service: Service) => {
-    removeService(service); //Optimistic update
-    toast({
-      description: "Service supprimé",
-    });
+    removeService(service);
   };
 
   const formSchema = z.object({

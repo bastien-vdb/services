@@ -1,7 +1,7 @@
 "use server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { prisma } from "@/src/db/prisma";
-import useCheckStripe from "@/src/hooks/useCheckStripe";
+import { isOwner } from "@/src/utils/isOwner";
 import { getServerSession } from "next-auth/next";
 
 async function actionCreateUser({
@@ -16,39 +16,25 @@ async function actionCreateUser({
   ownerId: string;
 }) {
   const session = await getServerSession(authOptions);
-
   if (!session) throw new Error("Session is not defined");
-  const userRole = await prisma.user
-    .findFirst({
-      where: {
-        id: session.user.id,
-      },
-    })
-    .then((user) => user?.role);
-
-  if (userRole !== "OWNER") {
-    throw new Error("User is not an admin");
-  }
 
   try {
-    return await prisma.$transaction(async (prisma) => {
-      // Créer un utilisateur avec le rôle EMPLOYEE et le relier à son employeur
-      const user = await prisma.user.create({
-        data: {
-          name,
-          firstname,
-          email,
-          role: "EMPLOYEE",
-          ownerId, // Assigner l'ID de l'employeur ici
-          image: "/images/newArrivant.jpg",
-        },
-      });
+    //Abstraction de vérification du role Owner
+    await isOwner(session.user.id);
 
-      return user;
+    return await prisma.user.create({
+      data: {
+        name,
+        firstname,
+        email,
+        role: "EMPLOYEE",
+        ownerId, // Assigner l'ID de l'employeur ici
+        image: "/images/newArrivant.jpg",
+      },
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Service cannot be created");
+    throw new Error(error);
   }
 }
 

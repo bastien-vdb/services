@@ -38,10 +38,6 @@ async function Home({ params }: { params: { userId: string } }) {
 
   //**** Si l'utilisateur est connecté et a finalisé son inscription à Stripe ou qu'il n'est pas Owner mais employé -->****
 
-  // const services: Service[] = await useServerData("service", {
-  //   createdById: userId,
-  // });
-
   //Pour empêcher d'accéder à l'app sans id en paramètre car cela n'a pas de sens fonctionnelement et provoque des erreurs
   if (!userIdInParams)
     return (

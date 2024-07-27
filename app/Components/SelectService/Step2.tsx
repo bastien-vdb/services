@@ -1,3 +1,4 @@
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import { Calendar } from "@/src/components/ui/calendar";
 import { useCarousel } from "@/src/components/ui/carousel";
@@ -5,24 +6,23 @@ import useServerData from "@/src/hooks/useServerData";
 import { Availability } from "@prisma/client";
 import { memo, useEffect, useState } from "react";
 import SelectBooking from "../SelectBooking/SelectBooking";
-import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 
-const Step2 = memo(({ userId }: { userId: string }) => {
+const Step2 = memo(() => {
   const daySelectedManager = useState<Date | undefined>(undefined);
   const [, setDaySelected] = daySelectedManager;
   const [allAvailabilities, setAllAvailabilities] = useState<Availability[]>();
   const { scrollPrev } = useCarousel();
   const { userSelectedFront } = useUsersStore();
 
-  useEffect(() => {
-    userSelectedFront &&
-      getAllAvailabilities(userSelectedFront.id).then(setAllAvailabilities);
-  }, [userSelectedFront]);
-
   const getAllAvailabilities = async (userId: string) =>
     await useServerData("availability", {
       userId,
     });
+
+  useEffect(() => {
+    userSelectedFront &&
+      getAllAvailabilities(userSelectedFront.id).then(setAllAvailabilities);
+  }, [userSelectedFront]);
 
   return (
     <>
@@ -51,7 +51,7 @@ const Step2 = memo(({ userId }: { userId: string }) => {
           </TextRevealButton>
         </div>
       </div>
-      <SelectBooking userId={userId} daySelectedManager={daySelectedManager} />
+      <SelectBooking daySelectedManager={daySelectedManager} />
     </>
   );
 });
