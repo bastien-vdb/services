@@ -38,7 +38,7 @@ export default async function handler(
     const webhookEvent = JSON.parse(rawBody) as paypalCheckoutOrderApprovedType; //TODO à vérifier avec ZOD
 
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
-      const { userId, formData, employeeName } = JSON.parse(
+      const { userId, formData, employeeName, employeeId } = JSON.parse(
         webhookEvent.resource.purchase_units[0].custom_id
       ) as paypalCustomIdType;
       const serviceId = webhookEvent.resource.purchase_units[0].description;
@@ -57,7 +57,7 @@ export default async function handler(
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         serviceId,
-        userId,
+        userId: employeeId,
         amountPayed: Number(
           webhookEvent.resource.purchase_units[0].amount.value
         ),

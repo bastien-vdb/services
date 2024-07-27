@@ -71,6 +71,7 @@ export default async function handler(
           serviceName,
           addedOption,
           formData,
+          employeeId,
           employeeName,
         } = metadata;
 
@@ -88,7 +89,7 @@ export default async function handler(
           startTime: new Date(startTime),
           endTime: new Date(endTime),
           serviceId,
-          userId,
+          userId: employeeId,
           amountPayed: webhookEvent.data.object.amount_captured / 100,
           form: formData,
           customerInfo: {
