@@ -56,7 +56,7 @@ export const authOptions: NextAuthOptions = {
       }
       // Vérifiez si l'utilisateur existe déjà
       const existingUser = await prisma.user.findUnique({
-        where: { email: email },
+        where: { email },
       });
 
       if (!existingUser) {
@@ -64,7 +64,7 @@ export const authOptions: NextAuthOptions = {
         const newUser = await prisma.user.create({
           data: {
             email: email,
-            name: user.name || "",
+            name: user.name || email,
             image: user.image || "",
             ownerId: null,
             role: "OWNER", // Rôle par défaut
