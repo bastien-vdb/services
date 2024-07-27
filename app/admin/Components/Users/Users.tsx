@@ -26,7 +26,7 @@ import { useEffect } from "react";
 function Users() {
   const { data: session } = useSession();
   const userSessionId = session?.user.id;
-  const { addUser, getUsers, users } = useUsersStore();
+  const { addUser, getUsers, users, deleteUser } = useUsersStore();
 
   const formatDataToTableHeader = [
     { className: "w-20", text: "Nom", tooltip: "Nom" },
@@ -60,19 +60,13 @@ function Users() {
       text: (
         <AlertModal
           disabled={false} //TODO ajouter un loader
-          onAction={() => handleDeleteUserEmployee(user)}
+          onAction={() => deleteUser(user.id)}
         >
           <Trash2 />
         </AlertModal>
       ),
     },
   ]);
-
-  const handleDeleteUserEmployee = async (user: User) => {
-    toast({
-      description: "Collaborateur supprimé",
-    });
-  };
 
   const formSchema = z.object({
     name: z

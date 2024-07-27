@@ -3,6 +3,7 @@ import { User } from "@prisma/client";
 import { create } from "zustand";
 import actionCreateUser from "./action-createUser";
 import { toast } from "@/src/components/ui/use-toast";
+import actionDeleteUser from "./action-deleteUser";
 
 type useUsersStoreType = {
   userSelected: string | undefined;
@@ -12,6 +13,7 @@ type useUsersStoreType = {
   changeUserSelectedFront: (userSelectedFront: User) => void;
   getUsers: (userId: string) => Promise<void>;
   addUser: (user: Partial<User>) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 };
 
 const useUsersStore = create<useUsersStoreType>((set) => ({
@@ -25,8 +27,7 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
     set({ userSelected: userId });
   },
   getUsers: async (ownerId) => {
-    const users = await useServerData("user", { ownerId });
-    set({ users });
+    set({ users: await useServerData("user", { ownerId }) });
   },
   addUser: async (user) => {
     if (!user.ownerId || !user.name || !user.firstname || !user.email) return;
@@ -46,6 +47,23 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
         toast({
           variant: "destructive",
           description: e.message,
+        });
+      });
+  },
+  deleteUser: async (userId) => {
+    await actionDeleteUser(userId)
+      .then(() => {
+        set((state) => ({
+          users: state.users.filter((user) => user.id !== userId),
+        }));
+        toast({
+          description: "Collaborateur supprimé",
+        });
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          description: error.message,
         });
       });
   },

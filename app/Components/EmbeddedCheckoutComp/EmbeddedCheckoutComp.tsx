@@ -11,9 +11,6 @@ const EmbeddedCheckoutComp = ({
   clientSecret: string | undefined;
   setPaymentValided: (value: boolean) => void;
 }) => {
-  const appearance = {
-    theme: "stripe",
-  };
   const options = {
     clientSecret,
   };
