@@ -9,6 +9,7 @@ type useUsersStoreType = {
   userSelected: string | undefined;
   userSelectedFront: User | undefined;
   users: User[];
+  findUser: (userId: string) => Promise<User> | never;
   changeUserSelected: (userId: string) => void;
   changeUserSelectedFront: (userSelectedFront: User) => void;
   getUsers: (userId: string) => Promise<void>;
@@ -20,6 +21,13 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
   userSelected: undefined,
   userSelectedFront: undefined,
   users: [],
+  findUser: async (userId) => {
+    try {
+      return await useServerData("user", { id: userId });
+    } catch (error) {
+      throw new Error("Erreur lors de la récupération de l'utilisateur");
+    }
+  },
   changeUserSelectedFront: async (userSelectedFront) => {
     set({ userSelectedFront });
   },

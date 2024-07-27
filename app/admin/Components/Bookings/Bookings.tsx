@@ -20,7 +20,7 @@ function Bookings() {
     deleteBooking,
     loadingBookings,
   } = useBookingsStore();
-  const { userSelected } = useUsersStore();
+  const { userSelected, findUser } = useUsersStore();
 
   useEffect(() => {
     userSelected && getBookings(userSelected);
@@ -93,13 +93,19 @@ function Bookings() {
                 });
                 //For the collaborator
                 //get the email from the form
-                const { employee: employeeEmail } = JSON.parse(
-                  booking.form as string
-                );
+                const userEmployee = await findUser(booking.userId);
+                if (!userEmployee.email) {
+                  toast({
+                    variant: "destructive",
+                    description: `Erreur lors de la confirmation de la réservation: Email Collaborateur non trouvé`,
+                  });
+                  return;
+                }
+
                 await actionSendConfirmationEmail({
                   forCollaborator: true,
                   from: "Finest lash <no-answer@quickreserve.app>",
-                  to: [employeeEmail],
+                  to: [userEmployee.email],
                   subject: `Confirmation de réservation avec ${booking.customer.name}`,
                   customerName: booking.customer.name,
                   bookingStartTime: momentTz
