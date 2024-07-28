@@ -18,6 +18,7 @@ interface EmailPaymentReceivedProps {
   serviceName: string;
   employeeName: string;
   businessPhysicalAddress: string;
+  phone: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
@@ -30,6 +31,7 @@ export const EmailPaymentReceived = ({
   serviceName,
   employeeName,
   businessPhysicalAddress,
+  phone,
 }: EmailPaymentReceivedProps) => {
   const bookingStartTimeFormatted = new Date(bookingStartTime);
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -89,11 +91,12 @@ export const EmailPaymentReceived = ({
               margin: "20px 0",
             }}
           />
-          <Text style={footer}>36 chemin des Huats</Text>
-          <Text style={footer}>93000 Bobigny</Text>
-          <Text style={footer}>+33783639738</Text>
+          <Text style={footer}>{businessPhysicalAddress}</Text>
+          <Text style={footer}>{phone}</Text>
           <Text style={footer}>https://www.finestlash.studio</Text>
-          <Text style={footer}>https://www.quickreserve.app</Text>
+          <Text className="text-xs" style={footer}>
+            https://www.quickreserve.app
+          </Text>
         </Container>
       </Body>
     </Html>

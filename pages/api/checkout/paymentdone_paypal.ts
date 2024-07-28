@@ -131,7 +131,8 @@ export default async function handler(
               bookingStartTime: startDateTmz,
               serviceName: service?.name ?? "",
               employeeName,
-              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
+              businessPhysicalAddress: `${userEmployee.address?.line1} ${userEmployee.address?.line2}, ${userEmployee.address?.city} ${userEmployee.address?.zip}`,
+              phone: String(userEmployee.phone),
             }),
           }));
       }
