@@ -24,6 +24,7 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
   findUser: async (userId) => {
     try {
       const [user] = await useServerData("user", { id: userId });
+      console.log("user found", user);
       return user;
     } catch (error) {
       throw new Error("Erreur lors de la récupération de l'utilisateur");

@@ -70,6 +70,7 @@ function Bookings() {
                 status: "CONFIRMED",
               });
               const userEmployee = await findUser(booking.userId);
+              console.log("local userEmployee", userEmployee);
               if (r.status === "CONFIRMED") {
                 const { error } = await actionSendConfirmationEmail({
                   from: "Finest lash <no-answer@quickreserve.app>",
