@@ -149,7 +149,7 @@ export default async function handler(
                 bookingStartTime: startDateTmz,
                 serviceName,
                 employeeName,
-                businessPhysicalAddress: `${userEmployee.address?.line1} ${userEmployee.address?.line2}, ${userEmployee.address?.city} ${userEmployee.address?.zip}`,
+                businessPhysicalAddress: userEmployee.address ?? "",
                 phone: String(userEmployee.phone),
               }),
             }));

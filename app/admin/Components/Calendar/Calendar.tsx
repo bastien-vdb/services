@@ -30,6 +30,7 @@ const Calendar = () => {
   const { userSelected, changeUserSelected } = useUsersStore();
   const session = useSession();
   const { users, getUsers } = useUsersStore();
+  console.log("users", users);
   const today = useMemo(() => new Date(), []);
   const [events, setEvents] = useState<
     {

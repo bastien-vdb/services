@@ -12,7 +12,7 @@ async function useServerData(
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Data cannot be reach from the db");
+    throw new Error(error);
   }
 }
 
