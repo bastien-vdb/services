@@ -59,6 +59,7 @@ model User {
   owner         User?          @relation("UserToOwner", fields: [ownerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   employees     User[]         @relation("UserToOwner")
   services      Service[]
+  phone         String?
 
   @@map("users")
 }
