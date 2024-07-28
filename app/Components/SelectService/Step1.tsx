@@ -108,19 +108,12 @@ function SelectService() {
           >
             <QuickSelectWrapper
               placeHolder={"Par qui ?"}
-              disabledValues={[1]}
+              disabledValues={[0]}
               name="employeeId"
               label="Choisir son artiste"
               className="w-[250px] sm:w-[800px]"
-              values={users}
-              renderFn={(e) => (
-                <>
-                  {e.name}{" "}
-                  {e.name === "Natacha" && (
-                    <span className="text-red-600">- complet</span>
-                  )}
-                </>
-              )}
+              values={users.reverse()}
+              renderFn={(e) => <>{e.name} </>}
             />
             <QuickSelectWrapper
               placeHolder={"Que souhaitez vous faire ?"}
