@@ -12,6 +12,8 @@ type actionSendConfirmationEmail = {
   customerName: string;
   bookingStartTime: string;
   forCollaborator?: boolean;
+  businessPhysicalAddress: string;
+  phone: string;
 };
 
 const actionSendConfirmationEmail = async ({
@@ -21,6 +23,8 @@ const actionSendConfirmationEmail = async ({
   customerName,
   bookingStartTime,
   forCollaborator = false,
+  businessPhysicalAddress,
+  phone,
 }: actionSendConfirmationEmail) => {
   if (!resendApiKey) throw new Error("No valid resend API key filled");
   const resend = new Resend(resendApiKey);
@@ -33,10 +37,14 @@ const actionSendConfirmationEmail = async ({
       ? EmailConfirmed({
           customerName,
           bookingStartTime,
+          businessPhysicalAddress,
+          phone,
         })
       : EmailConfirmedCollaborator({
           customerName,
           bookingStartTime,
+          businessPhysicalAddress,
+          phone,
         }),
   });
 };

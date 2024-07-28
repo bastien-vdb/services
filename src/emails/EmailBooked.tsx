@@ -18,6 +18,7 @@ interface EmailRdvBookedProps {
   serviceName: string;
   employeeName: string;
   businessPhysicalAddress: string;
+  phone: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
@@ -30,6 +31,7 @@ export const EmailRdvBooked = ({
   serviceName,
   employeeName,
   businessPhysicalAddress,
+  phone,
 }: EmailRdvBookedProps) => {
   const bookingStartTimeFormatted = new Date(bookingStartTime);
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -88,10 +90,8 @@ export const EmailRdvBooked = ({
               margin: "20px 0",
             }}
           />
-          <Text style={footer}>36 chemin des Huats</Text>
-          <Text style={footer}>93000 Bobigny</Text>
-          {/* TODO: urgent modifier ce code pour être réutilisable */}
-          <Text style={footer}>+33 7 88 18 30 51</Text>
+          <Text style={footer}>{businessPhysicalAddress}</Text>
+          <Text style={footer}>{phone}</Text>
           <Text style={footer}>https://www.finestlash.studio</Text>
           <Text style={footer}>https://www.quickreserve.app</Text>
         </Container>

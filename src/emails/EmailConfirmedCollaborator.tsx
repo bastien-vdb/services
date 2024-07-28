@@ -14,6 +14,8 @@ import * as React from "react";
 interface EmailConfirmedCollaboratorProps {
   customerName?: string;
   bookingStartTime: string;
+  businessPhysicalAddress: string;
+  phone: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
@@ -23,6 +25,8 @@ const baseUrl = process.env.NEXT_PUBLIC_HOST
 export const EmailConfirmedCollaborator = ({
   customerName,
   bookingStartTime,
+  businessPhysicalAddress,
+  phone,
 }: EmailConfirmedCollaboratorProps) => {
   const bookingStartTimeFormatted = new Date(bookingStartTime);
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -72,9 +76,8 @@ export const EmailConfirmedCollaborator = ({
               margin: "20px 0",
             }}
           />
-          <Text style={footer}>36 chemin des Huats</Text>
-          <Text style={footer}>93000 Bobigny</Text>
-          <Text style={footer}>+33783639738</Text>
+          <Text style={footer}>{businessPhysicalAddress}</Text>
+          <Text style={footer}>{phone}</Text>
           <Text style={footer}>http://www.finestlash.studio</Text>
         </Container>
       </Body>

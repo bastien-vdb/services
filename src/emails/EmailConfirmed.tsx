@@ -15,6 +15,8 @@ import * as React from "react";
 interface EmailRdvBookedProps {
   customerName?: string;
   bookingStartTime: string;
+  businessPhysicalAddress: string;
+  phone: string;
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_HOST
@@ -24,6 +26,8 @@ const baseUrl = process.env.NEXT_PUBLIC_HOST
 export const EmailConfirmed = ({
   customerName,
   bookingStartTime,
+  businessPhysicalAddress,
+  phone,
 }: EmailRdvBookedProps) => {
   const bookingStartTimeFormatted = new Date(bookingStartTime);
   const optionsForDate: Intl.DateTimeFormatOptions = {
@@ -77,12 +81,12 @@ export const EmailConfirmed = ({
               faudra impérativement régler le solde en ESPÈCES le jour J.
             </Text>
             <Text style={paragraph}>
-              Le studio se trouve au 36 chemin des Huats, 93000 Bobigny.
+              Le studio se trouve au {businessPhysicalAddress}.
             </Text>
             <Text style={paragraph}>
               Une fois arrivé(e), vous pourrez m&apos;envoyer un message ou
-              m&apos;appeler au +33 7 88 18 30 51 pour m&apos;informer de votre
-              arrivée. (attention, il ne faut pas sonner !)
+              m&apos;appeler au {phone} pour m&apos;informer de votre arrivée.
+              (attention, il ne faut pas sonner !)
             </Text>
             <Text style={paragraph}>
               Les accompagnateurs ne sont pas acceptés.
@@ -104,10 +108,8 @@ export const EmailConfirmed = ({
               margin: "20px 0",
             }}
           />
-          <Text style={footer}>36 chemin des Huats</Text>
-          <Text style={footer}>93000 Bobigny</Text>
-          {/* TODO: urgent modifier ce code pour être réutilisable */}
-          <Text style={footer}>+33 7 88 18 30 51</Text>
+          <Text style={footer}>{businessPhysicalAddress}</Text>
+          <Text style={footer}>{phone}</Text>
           <Text style={footer}>http://www.finestlash.studio</Text>
         </Container>
       </Body>

@@ -135,7 +135,8 @@ export default async function handler(
               bookingStartTime: startDateTmz,
               serviceName,
               employeeName,
-              businessPhysicalAddress: "36 chemin des huats, 93000 Bobigny",
+              businessPhysicalAddress: userEmployee?.address ?? "",
+              phone: String(userEmployee?.phone),
             }),
           });
 
