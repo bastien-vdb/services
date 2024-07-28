@@ -95,11 +95,12 @@ export default async function handler(
         webhookEvent.resource.id,
         accessToken
       );
-      const phoneNumber = orderDetails.payer.phone
-        ? orderDetails.payer.phone.phone_number.national_number
-        : "NC";
+      console.log("orderDetails ==>", orderDetails);
+      // const phoneNumber = orderDetails.payer.phone
+      //   ? orderDetails.payer.phone.phone_number.national_number
+      //   : "NC";
 
-      console.log("phoneNumber ==>", phoneNumber);
+      // console.log("phoneNumber ==>", phoneNumber);
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
