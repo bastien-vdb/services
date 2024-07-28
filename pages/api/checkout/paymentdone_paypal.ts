@@ -21,41 +21,6 @@ export const config = {
   },
 };
 
-async function getAccessToken() {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-  const response = await fetch(
-    "https://api.sandbox.paypal.com/v1/oauth2/token",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization:
-          "Basic " +
-          Buffer.from(clientId + ":" + clientSecret).toString("base64"),
-      },
-      body: "grant_type=client_credentials",
-    }
-  );
-  const data = await response.json();
-  return data.access_token;
-}
-
-async function getOrderDetails(orderId: string, accessToken: string) {
-  const response = await fetch(
-    `https://api.sandbox.paypal.com/v2/checkout/orders/${orderId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-  const data = await response.json();
-  return data;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -89,18 +54,6 @@ export default async function handler(
       const userEmployee = await prisma.user.findFirst({
         where: { id: employeeId },
       });
-
-      const accessToken = await getAccessToken();
-      const orderDetails = await getOrderDetails(
-        webhookEvent.resource.id,
-        accessToken
-      );
-      console.log("orderDetails ==>", orderDetails);
-      // const phoneNumber = orderDetails.payer.phone
-      //   ? orderDetails.payer.phone.phone_number.national_number
-      //   : "NC";
-
-      // console.log("phoneNumber ==>", phoneNumber);
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
