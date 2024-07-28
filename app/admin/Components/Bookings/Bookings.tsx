@@ -69,11 +69,14 @@ function Bookings() {
                 bookingId: booking.id,
                 status: "CONFIRMED",
               });
+              const userEmployee = await findUser(booking.userId);
               if (r.status === "CONFIRMED") {
                 const { error } = await actionSendConfirmationEmail({
                   from: "Finest lash <no-answer@quickreserve.app>",
                   to: [booking.customer.email],
                   subject: `${booking.customer.name} Confirmation de réservation`,
+                  businessPhysicalAddress: userEmployee.address ?? "",
+                  phone: String(userEmployee?.phone),
                   customerName: booking.customer.name,
                   bookingStartTime: momentTz
                     .utc(booking.startTime)
@@ -92,8 +95,6 @@ function Bookings() {
                     "Réservation confirmée: Email de confirmation envoyé",
                 });
                 //For the collaborator
-                //get the email from the form
-                const userEmployee = await findUser(booking.userId);
                 if (!userEmployee.email) {
                   toast({
                     variant: "destructive",
@@ -108,6 +109,8 @@ function Bookings() {
                   to: [userEmployee.email],
                   subject: `Confirmation de réservation avec ${booking.customer.name}`,
                   customerName: booking.customer.name,
+                  businessPhysicalAddress: userEmployee.address ?? "",
+                  phone: String(userEmployee?.phone),
                   bookingStartTime: momentTz
                     .utc(booking.startTime)
                     .tz("Europe/Paris")
