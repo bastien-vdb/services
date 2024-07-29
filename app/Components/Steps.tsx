@@ -27,7 +27,7 @@ const Steps = ({ userId }: { userId: string }) => {
               <div>
                 Louise a été formée par Natacha, s’est entraînée tous les jours
                 sans relâche pendant 2 mois et demi sous la supervision de la
-                lash experte du Finest Lash Studio, et peut à présent créer des
+                Lash experte du Finest Lash Studio, et peut à présent créer des
                 poses raffinées et élégantes.
               </div>
               <div>
