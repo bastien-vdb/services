@@ -18,6 +18,10 @@ import { v4 as uuidv4 } from "uuid";
 import useBookingsStore from "../Bookings/useBookingsStore";
 import useAvailabilityStore from "./useAvailabilityStore";
 import useUsersStore from "../Users/useUsersStore";
+import { type } from "os";
+import { EventClickArg } from "@fullcalendar/core";
+
+type typeEvent = "AVAILABILITY" | "BOOKING";
 
 const Calendar = () => {
   const {
@@ -30,13 +34,13 @@ const Calendar = () => {
   const { userSelected, changeUserSelected } = useUsersStore();
   const userSessionIdConnected = useSession().data?.user.id;
   const { users, getUsers } = useUsersStore();
-  const today = useMemo(() => new Date(), []);
   const [events, setEvents] = useState<
     {
       id: string;
       title: string;
       start: Date;
       end: Date;
+      type: typeEvent;
     }[]
   >([]);
 
@@ -60,6 +64,7 @@ const Calendar = () => {
       start: booking.startTime,
       end: booking.endTime,
       color: booking.status === "PENDING" ? "pink" : "green",
+      type: "BOOKING" as typeEvent,
     }));
 
     const availabilitiesEvents = availabilities.map((availability) => ({
@@ -67,12 +72,17 @@ const Calendar = () => {
       title: `Libre: ${users.find((e) => e.id === availability.userId)?.name}`,
       start: availability.startTime,
       end: availability.endTime,
+      type: "AVAILABILITY" as typeEvent,
     }));
 
     setEvents([...bookingsEvents, ...availabilitiesEvents]);
   }, [availabilities, bookings]);
 
-  const handleEventClick = (clickInfo) => {
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    if (clickInfo.event.extendedProps.type === "BOOKING")
+      return window.confirm(
+        `Action impossible, les rendez-vous peuvent être supprimés depuis la liste des rendez-vous uniquement`
+      );
     if (
       window.confirm(
         `Etes vous sûre de vouloir supprimer ?'${clickInfo.event.title}'`
@@ -95,6 +105,7 @@ const Calendar = () => {
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
+        type: "AVAILABILITY",
       },
     ]);
     userSelected &&
@@ -126,9 +137,6 @@ const Calendar = () => {
         initialView="timeGridWeek"
         locale="fr" // Définir le locale en français
         weekends
-        validRange={{
-          start: today,
-        }}
         events={events}
         duration={30}
         headerToolbar={{
