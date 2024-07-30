@@ -135,8 +135,6 @@ function Services() {
   function onSubmit(values: z.infer<typeof formSchema>) {
     // ✅ This will be type-safe and validated.
 
-    console.log("values==>", values);
-
     addService(values).then(() => {
       form.reset();
       toast({

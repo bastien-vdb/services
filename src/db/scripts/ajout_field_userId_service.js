@@ -11,10 +11,6 @@ async function updateServices() {
         userId: userId,
       },
     });
-
-    console.log(
-      `Updated ${updatedServices.count} services with userId: ${userId}`
-    );
   } catch (error) {
     console.error("Error updating services:", error);
   } finally {

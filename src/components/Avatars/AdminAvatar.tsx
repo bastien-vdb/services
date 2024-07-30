@@ -25,8 +25,6 @@ async function AdminAvatar() {
     id: session.user.id,
   });
 
-  console.log("connectedSessionUserFull", connectedSessionUserFull);
-
   return (
     <>
       <DropdownMenu>

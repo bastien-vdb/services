@@ -10,8 +10,6 @@ export const isOwner = async (id: string) => {
     })
     .then((user) => user?.role);
 
-  console.log("userRole", userRole);
-
   if (userRole !== "OWNER") {
     throw new Error("User is not an admin");
   }
