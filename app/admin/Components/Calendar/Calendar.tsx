@@ -28,7 +28,7 @@ const Calendar = () => {
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
   const { userSelected, changeUserSelected } = useUsersStore();
-  const session = useSession();
+  const userSessionIdConnected = useSession().data?.user.id;
   const { users, getUsers } = useUsersStore();
   const today = useMemo(() => new Date(), []);
   const [events, setEvents] = useState<
@@ -41,13 +41,12 @@ const Calendar = () => {
   >([]);
 
   useEffect(() => {
-    session.data && changeUserSelected(session.data?.user.id);
-    console.log("session.data", session.data);
-    session.data && getUsers(session.data?.user.id);
-  }, [session.data]);
+    userSessionIdConnected && changeUserSelected(userSessionIdConnected);
+    userSessionIdConnected && getUsers(userSessionIdConnected);
+  }, [userSessionIdConnected]);
 
   useEffect(() => {
-    if (!session.data?.user) return;
+    if (!userSessionIdConnected) return;
     userSelected && getAvailabilities(userSelected);
     userSelected && getBookings(userSelected);
   }, [userSelected]);
@@ -55,7 +54,9 @@ const Calendar = () => {
   useEffect(() => {
     const bookingsEvents = bookings.map((booking) => ({
       id: booking.id,
-      title: "Rendez-vous",
+      title: `Rendez-vous: ${
+        booking.status === "PENDING" ? "non confirmé" : "confirmé"
+      } ${users.find((e) => e.id === booking.userId)?.name}`,
       start: booking.startTime,
       end: booking.endTime,
       color: booking.status === "PENDING" ? "pink" : "green",
@@ -63,7 +64,7 @@ const Calendar = () => {
 
     const availabilitiesEvents = availabilities.map((availability) => ({
       id: availability.id,
-      title: "Disponibilité",
+      title: `Libre: ${users.find((e) => e.id === availability.userId)?.name}`,
       start: availability.startTime,
       end: availability.endTime,
     }));

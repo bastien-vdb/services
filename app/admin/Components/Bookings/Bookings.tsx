@@ -22,6 +22,8 @@ function Bookings() {
   } = useBookingsStore();
   const { userSelected, findUser } = useUsersStore();
 
+  console.log("Booking render");
+
   useEffect(() => {
     userSelected && getBookings(userSelected);
   }, [userSelected]);
