@@ -1,13 +1,13 @@
 {
     "functions": {
-      "/api/cron-delete-availability": {
+      "app/api/cron-delete-availability": {
         "memory": 128,
         "maxDuration": 10
       }
     },
     "crons": [
       {
-        "path": "/api/cron-delete-availability",
+        "path": "app/api/cron-delete-availability",
         "schedule": "50 19 * * *"
       }
     ]
