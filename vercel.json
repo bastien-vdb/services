@@ -1,7 +1,7 @@
 {
     "crons": [
       {
-        "path": "api/cron-delete-availability",
+        "path": "/api/cron-delete-availability",
         "schedule": "30 20 * * *"
       }
     ]
