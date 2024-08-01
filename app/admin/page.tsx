@@ -14,9 +14,15 @@ import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import BookingsHistory from "./Components/Bookings/BookingsHistory";
 import Calendar from "./Components/Calendar/Calendar";
 import Users from "./Components/Users/Users";
+import { User } from "@prisma/client";
 
 async function Admin() {
   const userSession = await getServerSession(authOptions);
+
+  if (!userSession) return <Login />;
+  const connectedSessionUserFull = (await useServerData("user", {
+    id: userSession.user.id,
+  })) as User;
 
   if (!userSession) return <Login />;
 
@@ -53,7 +59,7 @@ async function Admin() {
           <AccordionTrigger>
             <div className="flex items-center gap-4">
               <Gem />
-              <span>{"Gestion des prestations"}</span>
+              <span>{"Prestations"}</span>
             </div>
           </AccordionTrigger>
           <AccordionContent>
@@ -61,17 +67,19 @@ async function Admin() {
           </AccordionContent>
         </AccordionItem>
 
-        <AccordionItem value={"Employee"}>
-          <AccordionTrigger>
-            <div className="flex items-center gap-4">
-              <Gem />
-              <span>{"Gestion des collaborateurs"}</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Users />
-          </AccordionContent>
-        </AccordionItem>
+        {connectedSessionUserFull?.role === "OWNER" && (
+          <AccordionItem value={"Employee"}>
+            <AccordionTrigger>
+              <div className="flex items-center gap-4">
+                <Gem />
+                <span>{"Gestion des collaborateurs"}</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Users />
+            </AccordionContent>
+          </AccordionItem>
+        )}
       </Accordion>
     </main>
   );

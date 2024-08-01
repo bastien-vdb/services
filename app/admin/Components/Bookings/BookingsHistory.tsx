@@ -12,10 +12,10 @@ import useUsersStore from "../Users/useUsersStore";
 function BookingsHistory() {
   const { bookings, getBookings, deleteBooking, loadingBookings } =
     useBookingsStore();
-  const { userSelected } = useUsersStore();
+  const { userSelected, connectedSessionUserFull } = useUsersStore();
 
   useEffect(() => {
-    userSelected && getBookings(userSelected);
+    userSelected && getBookings(userSelected.id);
   }, [userSelected]);
 
   const toDay = useMemo(() => new Date(), []);
@@ -51,10 +51,18 @@ function BookingsHistory() {
 
         supprimer: (
           <AlertModal
-            disabled={loadingBookings}
+            disabled={
+              loadingBookings || connectedSessionUserFull?.role !== "OWNER"
+            }
             onAction={() => deleteBooking(booking.id)}
           >
-            <Trash2 />
+            <Trash2
+              className={
+                loadingBookings || connectedSessionUserFull?.role !== "OWNER"
+                  ? "text-gray-200"
+                  : ""
+              }
+            />
           </AlertModal>
         ),
       };

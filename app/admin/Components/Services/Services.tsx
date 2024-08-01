@@ -39,7 +39,7 @@ function Services() {
     addService,
     loadingService,
   } = useServiceStore();
-  const { userSelected, users, getUsers } = useUsersStore();
+  const { userSelected, users, connectedSessionUserFull } = useUsersStore();
 
   const formatDataToServiceTableHeader = [
     { className: "w-20", text: "Prestations", tooltip: "Prestations" },
@@ -75,17 +75,25 @@ function Services() {
       className: "text-right",
       text: (
         <AlertModal
-          disabled={loadingService}
+          disabled={
+            loadingService || connectedSessionUserFull?.role !== "OWNER"
+          }
           onAction={() => handleDeleteService(service)}
         >
-          <Trash2 />
+          <Trash2
+            className={
+              loadingService || connectedSessionUserFull?.role !== "OWNER"
+                ? "text-gray-200"
+                : ""
+            }
+          />
         </AlertModal>
       ),
     },
   ]);
 
   useEffect(() => {
-    userSelected && getServices(userSelected);
+    userSelected && getServices(userSelected.id);
   }, [userSelected]);
 
   const handleDeleteService = async (service: Service) => {
@@ -157,89 +165,91 @@ function Services() {
         rows={formatDataToServiceTableBody}
       />
 
-      <Form {...form}>
-        <div className="ml-2 flex w-full max-w-sm items-center space-x-2 my-6">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nom de service</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>Nom de la prestation</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Prix</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Prix de la prestation en euros
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Durée</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Durée de la prestation en minutes
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Collaborateur</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                      }}
-                      defaultValue={field.value}
-                    >
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Collaborateur" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {users.map((e) => (
-                            <SelectItem value={e.id}>{e.name}</SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormDescription>Nom du collaborateur</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Créer</Button>
-          </form>
-        </div>
-      </Form>
+      {connectedSessionUserFull?.role === "OWNER" && (
+        <Form {...form}>
+          <div className="ml-2 flex w-full max-w-sm items-center space-x-2 my-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom de service</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>Nom de la prestation</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Prix</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Prix de la prestation en euros
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="duration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Durée</FormLabel>
+                    <FormControl>
+                      <Input type="number" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Durée de la prestation en minutes
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="userId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Collaborateur</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Collaborateur" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {users.map((e) => (
+                              <SelectItem value={e.id}>{e.name}</SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormDescription>Nom du collaborateur</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Créer</Button>
+            </form>
+          </div>
+        </Form>
+      )}
     </>
   );
 }

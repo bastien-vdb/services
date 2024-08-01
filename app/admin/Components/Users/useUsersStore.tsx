@@ -6,9 +6,11 @@ import { toast } from "@/src/components/ui/use-toast";
 import actionDeleteUser from "./action-deleteUser";
 
 type useUsersStoreType = {
-  userSelected: string | undefined;
+  userSelected: User | undefined;
   userSelectedFront: User | undefined;
   users: User[];
+  connectedSessionUserFull: User | undefined;
+  setConnectedSessionUserFull: (userId: string) => void;
   findUser: (userId: string) => Promise<User> | never;
   changeUserSelected: (userId: string) => void;
   changeUserSelectedFront: (userSelectedFront: User) => void;
@@ -17,10 +19,15 @@ type useUsersStoreType = {
   deleteUser: (userId: string) => Promise<void>;
 };
 
-const useUsersStore = create<useUsersStoreType>((set) => ({
+const useUsersStore = create<useUsersStoreType>((set, get) => ({
   userSelected: undefined,
   userSelectedFront: undefined,
   users: [],
+  connectedSessionUserFull: undefined,
+  setConnectedSessionUserFull: async (userId) => {
+    const userFound = await get().findUser(userId);
+    set({ connectedSessionUserFull: userFound });
+  },
   findUser: async (userId) => {
     try {
       const [user] = await useServerData("user", { id: userId });
@@ -33,7 +40,8 @@ const useUsersStore = create<useUsersStoreType>((set) => ({
     set({ userSelectedFront });
   },
   changeUserSelected: async (userId) => {
-    set({ userSelected: userId });
+    const userFound = await get().findUser(userId);
+    set({ userSelected: userFound });
   },
   getUsers: async (ownerId) => {
     set({ users: await useServerData("user", { ownerId }) });

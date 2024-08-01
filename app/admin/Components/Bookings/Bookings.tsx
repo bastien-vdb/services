@@ -20,12 +20,12 @@ function Bookings() {
     deleteBooking,
     loadingBookings,
   } = useBookingsStore();
-  const { userSelected, findUser } = useUsersStore();
+  const { userSelected, findUser, connectedSessionUserFull } = useUsersStore();
 
   console.log("Booking render");
 
   useEffect(() => {
-    userSelected && getBookings(userSelected);
+    userSelected && getBookings(userSelected.id);
   }, [userSelected]);
 
   const handleDeleteBooking = async (bookingId: string) => {
@@ -135,10 +135,18 @@ function Bookings() {
         ),
         supprimer: (
           <AlertModal
-            disabled={loadingBookings}
+            disabled={
+              loadingBookings && connectedSessionUserFull?.role !== "OWNER"
+            }
             onAction={() => handleDeleteBooking(booking.id)}
           >
-            <Trash2 />
+            <Trash2
+              className={
+                loadingBookings || connectedSessionUserFull?.role !== "OWNER"
+                  ? "text-gray-200"
+                  : ""
+              }
+            />
           </AlertModal>
         ),
       };

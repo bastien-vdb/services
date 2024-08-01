@@ -31,7 +31,12 @@ const Calendar = () => {
     deleteAvailability,
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
-  const { userSelected, changeUserSelected } = useUsersStore();
+  const {
+    userSelected,
+    changeUserSelected,
+    setConnectedSessionUserFull,
+    connectedSessionUserFull,
+  } = useUsersStore();
   const userSessionIdConnected = useSession().data?.user.id;
   const { users, getUsers } = useUsersStore();
   const [events, setEvents] = useState<
@@ -45,14 +50,16 @@ const Calendar = () => {
   >([]);
 
   useEffect(() => {
+    userSessionIdConnected &&
+      setConnectedSessionUserFull(userSessionIdConnected);
     userSessionIdConnected && changeUserSelected(userSessionIdConnected);
     userSessionIdConnected && getUsers(userSessionIdConnected);
   }, [userSessionIdConnected]);
 
   useEffect(() => {
     if (!userSessionIdConnected) return;
-    userSelected && getAvailabilities(userSelected);
-    userSelected && getBookings(userSelected);
+    userSelected && getAvailabilities(userSelected.id);
+    userSelected && getBookings(userSelected.id);
   }, [userSelected]);
 
   useEffect(() => {
@@ -112,14 +119,17 @@ const Calendar = () => {
       (await createAvailability(
         selectInfo.startStr,
         selectInfo.endStr,
-        userSelected
+        userSelected.id
       ));
   };
 
   return (
     <>
-      {userSelected && (
-        <Select onValueChange={changeUserSelected} defaultValue={userSelected}>
+      {userSelected && connectedSessionUserFull?.role === "OWNER" && (
+        <Select
+          onValueChange={changeUserSelected}
+          defaultValue={userSelected.id}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Collaborateur" />
           </SelectTrigger>
