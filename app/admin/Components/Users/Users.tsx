@@ -26,7 +26,7 @@ import { useEffect } from "react";
 function Users() {
   const { data: session } = useSession();
   const userSessionId = session?.user.id;
-  const { addUser, getUsers, users, deleteUser } = useUsersStore();
+  const { addUser, getUsersByOwnerId, users, deleteUser } = useUsersStore();
 
   const formatDataToTableHeader = [
     { className: "w-20", text: "Nom", tooltip: "Nom" },
@@ -118,7 +118,7 @@ function Users() {
 
   useEffect(() => {
     if (userSessionId) {
-      getUsers(userSessionId);
+      getUsersByOwnerId(userSessionId);
     }
   }, []);
 

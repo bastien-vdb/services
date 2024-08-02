@@ -14,7 +14,7 @@ type useUsersStoreType = {
   findUser: (userId: string) => Promise<User> | never;
   changeUserSelected: (userId: string) => void;
   changeUserSelectedFront: (userSelectedFront: User) => void;
-  getUsers: (userId: string) => Promise<void>;
+  getUsersByOwnerId: (userId: string) => Promise<void>;
   addUser: (user: Partial<User>) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
 };
@@ -43,7 +43,7 @@ const useUsersStore = create<useUsersStoreType>((set, get) => ({
     const userFound = await get().findUser(userId);
     set({ userSelected: userFound });
   },
-  getUsers: async (ownerId) => {
+  getUsersByOwnerId: async (ownerId) => {
     set({ users: await useServerData("user", { ownerId }) });
   },
   addUser: async (user) => {

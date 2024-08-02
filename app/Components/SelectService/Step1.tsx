@@ -16,8 +16,12 @@ function SelectService() {
   const [serviceIdSelectedLive, setServiceIdSelectedLive] = useState<string>();
   const { changeServiceSelected, serviceSelected } = useServiceStore();
   const { changeOptionSelected, getServices, services } = useServiceStore();
-  const { users, getUsers, changeUserSelectedFront, userSelectedFront } =
-    useUsersStore();
+  const {
+    users,
+    getUsersByOwnerId,
+    changeUserSelectedFront,
+    userSelectedFront,
+  } = useUsersStore();
   const { setFormData } = useFormStore(); // Use Zustand store
   const { scrollNext } = useCarousel();
   const openCtr = useState(false);
@@ -71,7 +75,7 @@ function SelectService() {
   }
 
   useEffect(() => {
-    getUsers(userParamId);
+    getUsersByOwnerId(userParamId);
   }, []);
 
   useEffect(() => {

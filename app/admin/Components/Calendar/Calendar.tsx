@@ -11,7 +11,7 @@ import {
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { User } from "@prisma/client";
+import { Availability, Booking, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -22,6 +22,8 @@ import { type } from "os";
 import { EventClickArg } from "@fullcalendar/core";
 
 type typeEvent = "AVAILABILITY" | "BOOKING";
+export const isBooking = (x: any): x is Booking => x.status;
+export const isAvailability = (x: any): x is Availability => x.startTime;
 
 const Calendar = () => {
   const {
@@ -38,7 +40,7 @@ const Calendar = () => {
     connectedSessionUserFull,
   } = useUsersStore();
   const userSessionIdConnected = useSession().data?.user.id;
-  const { users, getUsers } = useUsersStore();
+  const { users, getUsersByOwnerId } = useUsersStore();
   const [events, setEvents] = useState<
     {
       id: string;
@@ -53,7 +55,7 @@ const Calendar = () => {
     userSessionIdConnected &&
       setConnectedSessionUserFull(userSessionIdConnected);
     userSessionIdConnected && changeUserSelected(userSessionIdConnected);
-    userSessionIdConnected && getUsers(userSessionIdConnected);
+    userSessionIdConnected && getUsersByOwnerId(userSessionIdConnected);
   }, [userSessionIdConnected]);
 
   useEffect(() => {
@@ -62,25 +64,52 @@ const Calendar = () => {
     userSelected && getBookings(userSelected.id);
   }, [userSelected]);
 
+  const setTitle = <T extends Availability | Booking>(
+    user: User,
+    object: T
+  ): string => {
+    if (user.role === "OWNER") {
+      if (isBooking(object)) {
+        return `Rendez-vous: ${
+          object.status === "PENDING" ? "non confirmé" : "confirmé"
+        } ${users.find((e) => e.id === object.userId)?.name}`;
+      } else {
+        return `Libre: ${users.find((e) => e.id === object.userId)?.name}`;
+      }
+    } else {
+      if (isBooking(object)) {
+        return `Rendez-vous: ${
+          object.status === "PENDING" ? "non confirmé" : "confirmé"
+        } ${user?.name}`;
+      } else {
+        return `Libre: ${user?.name}`;
+      }
+    }
+  };
+  //connectedSessionUserFull
   useEffect(() => {
     const bookingsEvents = bookings.map((booking) => ({
       id: booking.id,
-      title: `Rendez-vous: ${
-        booking.status === "PENDING" ? "non confirmé" : "confirmé"
-      } ${users.find((e) => e.id === booking.userId)?.name}`,
+      title: connectedSessionUserFull
+        ? setTitle(connectedSessionUserFull, booking)
+        : "",
       start: booking.startTime,
       end: booking.endTime,
       color: booking.status === "PENDING" ? "pink" : "green",
       type: "BOOKING" as typeEvent,
     }));
 
-    const availabilitiesEvents = availabilities.map((availability) => ({
-      id: availability.id,
-      title: `Libre: ${users.find((e) => e.id === availability.userId)?.name}`,
-      start: availability.startTime,
-      end: availability.endTime,
-      type: "AVAILABILITY" as typeEvent,
-    }));
+    const availabilitiesEvents = availabilities.map((availability) => {
+      return {
+        id: availability.id,
+        title: connectedSessionUserFull
+          ? setTitle(connectedSessionUserFull, availability)
+          : "",
+        start: availability.startTime,
+        end: availability.endTime,
+        type: "AVAILABILITY" as typeEvent,
+      };
+    });
 
     setEvents([...bookingsEvents, ...availabilitiesEvents]);
   }, [availabilities, bookings]);
