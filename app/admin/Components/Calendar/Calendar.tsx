@@ -20,6 +20,8 @@ import useAvailabilityStore from "./useAvailabilityStore";
 import useUsersStore from "../Users/useUsersStore";
 import { type } from "os";
 import { EventClickArg } from "@fullcalendar/core";
+import { LoadingSpinner } from "@/src/components/ui/loader";
+import Loading from "@/app/loading";
 
 type typeEvent = "AVAILABILITY" | "BOOKING";
 export const isBooking = (x: any): x is Booking => x.status;
@@ -31,6 +33,7 @@ const Calendar = () => {
     getAvailabilities,
     createAvailability,
     deleteAvailability,
+    loadingAvailability,
   } = useAvailabilityStore();
   const { bookings, getBookings } = useBookingsStore();
   const {
@@ -171,38 +174,42 @@ const Calendar = () => {
           </SelectContent>
         </Select>
       )}
-      <FullCalendar
-        plugins={[timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
-        locale="fr" // Définir le locale en français
-        weekends
-        events={events}
-        duration={30}
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "timeGridWeek,timeGridDay", // Boutons pour changer de vue
-        }}
-        slotLabelFormat={{
-          hour: "2-digit", // 2-digit, numeric
-          minute: "2-digit", // 2-digit, numeric
-          hour12: false, // false to display 24 hour format
-        }}
-        buttonText={{
-          today: "Aujourd'hui",
-          month: "Mois",
-          week: "Semaine",
-          day: "Jour",
-        }}
-        eventClick={handleEventClick}
-        slotDuration="00:30:00"
-        slotMinTime={"06:00:00"}
-        slotMaxTime={"22:00:00"}
-        firstDay={1}
-        editable
-        selectable // Assurez-vous que cette propriété soit définie
-        select={(selectInfo) => handleDateSelect(selectInfo)} // Fonction pour gérer les nouvelles sélections
-      />
+      {loadingAvailability ? (
+        <Loading />
+      ) : (
+        <FullCalendar
+          plugins={[timeGridPlugin, interactionPlugin]}
+          initialView="timeGridWeek"
+          locale="fr" // Définir le locale en français
+          weekends
+          events={events}
+          duration={30}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "timeGridWeek,timeGridDay", // Boutons pour changer de vue
+          }}
+          slotLabelFormat={{
+            hour: "2-digit", // 2-digit, numeric
+            minute: "2-digit", // 2-digit, numeric
+            hour12: false, // false to display 24 hour format
+          }}
+          buttonText={{
+            today: "Aujourd'hui",
+            month: "Mois",
+            week: "Semaine",
+            day: "Jour",
+          }}
+          eventClick={handleEventClick}
+          slotDuration="00:30:00"
+          slotMinTime={"06:00:00"}
+          slotMaxTime={"22:00:00"}
+          firstDay={1}
+          editable
+          selectable // Assurez-vous que cette propriété soit définie
+          select={(selectInfo) => handleDateSelect(selectInfo)} // Fonction pour gérer les nouvelles sélections
+        />
+      )}
     </>
   );
 };

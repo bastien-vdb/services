@@ -32,8 +32,10 @@ const useServiceStore = create<ServiceStoreType>((set) => ({
   changeServiceSelected: (service) => set({ serviceSelected: service }),
   changeOptionSelected: (option) => set({ optionSelected: option }),
   getServices: async (userId) => {
+    set({ loadingService: true });
     const services = await useServerData("service", { userId });
     set({ services });
+    set({ loadingService: false });
   },
   addService: async (service) => {
     set({ loadingService: true });

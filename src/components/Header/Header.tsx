@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import ModeToggle from "../Buttons/ModeToggle";
 import AdminAvatar from "../Avatars/AdminAvatar";
-import { Home } from "lucide-react";
+import { Eye, Home } from "lucide-react";
 import useServerData from "@/src/hooks/useServerData";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
@@ -26,10 +26,10 @@ async function Header() {
       />
       <div className="flex gap-4 m-4 items-center justify-end">
         <Link
-          title="Accueil"
-          href={`/integrate/${connectedSessionUserFull.id}`}
+          title="Voir"
+          href={`/integrate/${connectedSessionUserFull.ownerId}`}
         >
-          <Home size={32} />
+          <Eye size={32} />
         </Link>
         <ModeToggle />
         <AdminAvatar connectedSessionUserFull={connectedSessionUserFull} />

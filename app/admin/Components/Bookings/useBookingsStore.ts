@@ -10,7 +10,6 @@ type useBookingsStoreType = {
   loadingBookings: boolean;
   bookingSelected: Booking | undefined;
   setBookingSelected: (booking: Booking) => void;
-  initialiseBookings: (bookings: Booking[]) => void;
   changeStatusBooking: ({
     bookingId,
     status,
@@ -25,7 +24,6 @@ type useBookingsStoreType = {
 const useBookingsStore = create<useBookingsStoreType>((set) => ({
   bookings: [],
   loadingBookings: false,
-  initialiseBookings: (bookings) => set({ bookings }),
   bookingSelected: undefined,
   setBookingSelected: (booking) => set({ bookingSelected: booking }),
   changeStatusBooking: async ({ bookingId, status }) => {

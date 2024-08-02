@@ -9,7 +9,6 @@ import { endOfDay, startOfDay } from "date-fns";
 type useAvailabilityStoreType = {
   availabilities: Availability[];
   loadingAvailability: boolean;
-  initialiseAvailabilities: (availabilities: Availability[]) => void;
   createAvailability: (start: Date, end: Date, userId: string) => void;
   getAvailabilities: (userId: string, daySelected?: Date) => void;
   deleteAvailability: (availabilityId: string) => void;
@@ -18,8 +17,8 @@ type useAvailabilityStoreType = {
 const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
   availabilities: [],
   loadingAvailability: false,
-  initialiseAvailabilities: (availabilities) => set({ availabilities }),
   createAvailability: async (startTime, endTime, userId) => {
+    set({ loadingAvailability: true });
     const result = await actionCreateAvailability({
       startTime,
       endTime,
@@ -28,12 +27,15 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
     set((state) => ({
       availabilities: [...state.availabilities, result],
     }));
+    set({ loadingAvailability: false });
   },
   deleteAvailability: async (availabilityId) => {
+    set({ loadingAvailability: true });
     const result = await actionDeleteAvailability(availabilityId);
     set((state) => ({
       availabilities: state.availabilities.filter((b) => b.id !== result.id),
     }));
+    set({ loadingAvailability: false });
   },
   getAvailabilities: async (userId, daySelected) => {
     set({ loadingAvailability: true });
