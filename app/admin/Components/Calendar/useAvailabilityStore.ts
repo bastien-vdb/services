@@ -18,7 +18,6 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
   availabilities: [],
   loadingAvailability: false,
   createAvailability: async (startTime, endTime, userId) => {
-    set({ loadingAvailability: true });
     const result = await actionCreateAvailability({
       startTime,
       endTime,
@@ -27,7 +26,6 @@ const useAvailabilityStore = create<useAvailabilityStoreType>((set) => ({
     set((state) => ({
       availabilities: [...state.availabilities, result],
     }));
-    set({ loadingAvailability: false });
   },
   deleteAvailability: async (availabilityId) => {
     set({ loadingAvailability: true });

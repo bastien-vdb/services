@@ -155,7 +155,7 @@ function Services() {
   return (
     <>
       {loadingService ? (
-        <Loading />
+        <Loading opacity={false} />
       ) : (
         <>
           <Badge

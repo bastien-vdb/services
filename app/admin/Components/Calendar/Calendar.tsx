@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/app/loading";
 import {
   Select,
   SelectContent,
@@ -8,20 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
+import { EventClickArg } from "@fullcalendar/core";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { Availability, Booking, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import useBookingsStore from "../Bookings/useBookingsStore";
-import useAvailabilityStore from "./useAvailabilityStore";
 import useUsersStore from "../Users/useUsersStore";
-import { type } from "os";
-import { EventClickArg } from "@fullcalendar/core";
-import { LoadingSpinner } from "@/src/components/ui/loader";
-import Loading from "@/app/loading";
+import useAvailabilityStore from "./useAvailabilityStore";
+import QuickModal from "@/src/components/Modal/QuickModal";
 
 type typeEvent = "AVAILABILITY" | "BOOKING";
 export const isBooking = (x: any): x is Booking => x.status;
@@ -133,6 +132,7 @@ const Calendar = () => {
   };
 
   const handleDateSelect = async (selectInfo) => {
+    // <QuickModal onAction={() => {}}></QuickModal>;
     let title = "Disponibilité"; // prompt("Enter a new title for this event:");
     let calendarApi = selectInfo.view.calendar;
     calendarApi.unselect(); // clear date selection
@@ -157,6 +157,8 @@ const Calendar = () => {
 
   return (
     <>
+      {/* <QuickModal  onAction={()=>{}}/> */}
+
       {userSelected && connectedSessionUserFull?.role === "OWNER" && (
         <Select
           onValueChange={changeUserSelected}
@@ -175,7 +177,7 @@ const Calendar = () => {
         </Select>
       )}
       {loadingAvailability ? (
-        <Loading />
+        <Loading opacity={false} />
       ) : (
         <FullCalendar
           plugins={[timeGridPlugin, interactionPlugin]}
