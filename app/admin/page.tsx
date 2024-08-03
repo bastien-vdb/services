@@ -67,6 +67,7 @@ async function Admin() {
           </AccordionContent>
         </AccordionItem>
 
+        {connectedSessionUserFull?.role}
         {connectedSessionUserFull?.role === "OWNER" && (
           <AccordionItem value={"Employee"}>
             <AccordionTrigger>
