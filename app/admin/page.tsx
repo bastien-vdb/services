@@ -20,9 +20,9 @@ async function Admin() {
   const userSession = await getServerSession(authOptions);
 
   if (!userSession) return <Login />;
-  const connectedSessionUserFull = (await useServerData("user", {
+  const [connectedSessionUserFull] = (await useServerData("user", {
     id: userSession.user.id,
-  })) as User;
+  })) as User[];
 
   if (!userSession) return <Login />;
 
@@ -67,7 +67,6 @@ async function Admin() {
           </AccordionContent>
         </AccordionItem>
 
-        {connectedSessionUserFull?.role}
         {connectedSessionUserFull?.role === "OWNER" && (
           <AccordionItem value={"Employee"}>
             <AccordionTrigger>
