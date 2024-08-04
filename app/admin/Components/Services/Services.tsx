@@ -47,11 +47,6 @@ function Services() {
     { className: "text-right", text: "Prix", tooltip: "Prix" },
     { className: "text-right", text: "Durée", tooltip: "Durée" },
     {
-      className: "text-right",
-      text: "Collaborateur",
-      tooltip: "Collaborateur",
-    },
-    {
       className: "",
       text: "",
       tooltip: "",
@@ -67,10 +62,6 @@ function Services() {
     {
       className: "text-right",
       text: service.duration + " min",
-    },
-    {
-      className: "text-right",
-      text: "la",
     },
     {
       className: "text-right",
