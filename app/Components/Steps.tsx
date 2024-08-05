@@ -7,7 +7,7 @@ import ShineButton from "@/src/components/syntax-ui/ShineButton";
 import Image from "next/image";
 
 const Steps = ({ userId }: { userId: string }) => {
-  const [infoTemporaireVisible, setInfoTemporaireVisible] = useState(false);
+  const [infoTemporaireVisible, setInfoTemporaireVisible] = useState(true);
   return (
     <main className="flex flex-col p-2">
       <Card>
@@ -17,7 +17,7 @@ const Steps = ({ userId }: { userId: string }) => {
               <CalendarOff className="m-auto mb-2" size={28} color="red" />{" "}
               <div className="text-red-600">
                 Le planning de Natacha ( créatrice du Finest Lash Studio et lash
-                expert ) est complet pour le mois de juillet.
+                expert ) est complet pour le mois d'août .
               </div>
               <div>
                 Cependant, afin de pouvoir répondre à toutes les demandes, nous
