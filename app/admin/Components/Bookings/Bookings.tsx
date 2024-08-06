@@ -4,7 +4,7 @@ import { DataTable } from "@/src/components/bookings_data_table/data-table";
 import { toast } from "@/src/components/ui/use-toast";
 import actionSendConfirmationEmail from "@/src/emails/action-send-confirmation-email";
 import { Booking, Customer, Service } from "@prisma/client";
-import { Check, Trash2 } from "lucide-react";
+import { Check, IterationCcw, Trash2 } from "lucide-react";
 import moment from "moment";
 import momentTz from "moment-timezone";
 import { useEffect, useMemo } from "react";
@@ -65,12 +65,15 @@ function Bookings() {
         ),
         confirmer: (
           <AlertModal
-            disabled={loadingBookings || booking.status !== "PENDING"}
+            disabled={loadingBookings}
             onAction={async () => {
-              const r = await changeStatusBooking({
-                bookingId: booking.id,
-                status: "CONFIRMED",
-              });
+              const r =
+                booking.status === "PENDING"
+                  ? await changeStatusBooking({
+                      bookingId: booking.id,
+                      status: "CONFIRMED",
+                    })
+                  : booking;
               const userEmployee = await findUser(booking.userId);
               if (r.status === "CONFIRMED") {
                 const { error } = await actionSendConfirmationEmail({
@@ -126,11 +129,13 @@ function Bookings() {
               }
             }}
           >
-            <Check
-              className={`${
-                booking.status === "CONFIRMED" ? "hidden" : "text-success"
-              }`}
-            ></Check>
+            {booking.status === "PENDING" ? (
+              <Check className={`${"text-success"}`} />
+            ) : (
+              <div title="Envoyer à nouveau">
+                <IterationCcw className={`${"text-success"}`} />
+              </div>
+            )}
           </AlertModal>
         ),
         supprimer: (
