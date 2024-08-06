@@ -141,7 +141,7 @@ function Bookings() {
         supprimer: (
           <AlertModal
             disabled={
-              loadingBookings && connectedSessionUserFull?.role !== "OWNER"
+              loadingBookings || connectedSessionUserFull?.role !== "OWNER"
             }
             onAction={() => handleDeleteBooking(booking.id)}
           >
