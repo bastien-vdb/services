@@ -6,6 +6,8 @@ import useServerData from "@/src/hooks/useServerData";
 import { Availability } from "@prisma/client";
 import { memo, useEffect, useState } from "react";
 import SelectBooking from "../SelectBooking/SelectBooking";
+import { differenceInMinutes } from "date-fns";
+import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
 
 const Step2 = memo(() => {
   const daySelectedManager = useState<Date | undefined>(undefined);
@@ -13,6 +15,7 @@ const Step2 = memo(() => {
   const [allAvailabilities, setAllAvailabilities] = useState<Availability[]>();
   const { scrollPrev } = useCarousel();
   const { userSelectedFront } = useUsersStore();
+  const { serviceSelected } = useServiceStore();
 
   const getAllAvailabilities = async (userId: string) =>
     await useServerData("availability", {
@@ -27,23 +30,30 @@ const Step2 = memo(() => {
   return (
     <>
       <div className="flex justify-center flex-col justify-center items-center">
-        <Calendar
-          modifiers={{
-            available: allAvailabilities
-              ? allAvailabilities
-                  .filter((a) => a.userId === userSelectedFront?.id)
-                  .map((availability) => availability.startTime)
-              : [],
-          }}
-          fromDate={new Date()}
-          mode="single"
-          selected={undefined}
-          onSelect={(d) => {
-            setDaySelected(d);
-            window.scrollTo(0, 0);
-          }}
-          className="p-10"
-        />
+        {serviceSelected && (
+          <Calendar
+            modifiers={{
+              available: allAvailabilities
+                ? allAvailabilities
+                    .filter((a) => a.userId === userSelectedFront?.id)
+                    .filter(
+                      (a) =>
+                        differenceInMinutes(a.endTime, a.startTime) >= //filtre permettant de ne pas afficher les disponibilités trop courtes
+                          serviceSelected?.duration && a.startTime > new Date() //filtre permettant de ne pas afficher les disponibilités passées
+                    )
+                    .map((availability) => availability.startTime)
+                : [],
+            }}
+            fromDate={new Date()}
+            mode="single"
+            selected={undefined}
+            onSelect={(d) => {
+              setDaySelected(d);
+              window.scrollTo(0, 0);
+            }}
+            className="p-10"
+          />
+        )}
 
         <div className="flex gap-10 m-2">
           <TextRevealButton onClick={() => scrollPrev()} arrowPosition="left">
