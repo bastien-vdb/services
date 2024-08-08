@@ -82,15 +82,13 @@ export default function PayPalButton({
                 {
                   description: bookingSelected.serviceId,
                   custom_id: JSON.stringify({
-                    allUserInfo: {
+                    customer: {
                       name,
                       firstName,
                       email,
                       phone,
                     },
                     formData,
-                    employeeId: userSelectedFront.id,
-                    employeeName: String(userSelectedFront?.name),
                   } satisfies paypalCustomIdType),
                   amount: {
                     value: String(totalPrice / 100), // Montant du paiement

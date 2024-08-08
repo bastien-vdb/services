@@ -8,7 +8,7 @@ import {
   paypalCustomIdType,
   paypalDescriptionItemType,
 } from "@/src/types/paypal";
-import { PrismaClient, Service } from "@prisma/client";
+import { PrismaClient, Service, User } from "@prisma/client";
 import { buffer } from "micro";
 import moment from "moment-timezone";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -38,29 +38,46 @@ export default async function handler(
     const webhookEvent = JSON.parse(rawBody) as paypalCheckoutOrderApprovedType; //TODO à vérifier avec ZOD
 
     if (webhookEvent.event_type === "CHECKOUT.ORDER.APPROVED") {
-      const { allUserInfo, formData, employeeName, employeeId } = JSON.parse(
+      const { customer, formData } = JSON.parse(
         webhookEvent.resource.purchase_units[0].custom_id
       ) as paypalCustomIdType;
-      const { name, firstName: firstname, email, phone } = allUserInfo;
+      const { name, firstName: firstname, email, phone } = customer;
       const serviceId = webhookEvent.resource.purchase_units[0].description;
       const { startTime, endTime } = JSON.parse(
         webhookEvent.resource.purchase_units[0].items[0].description
       ) as paypalDescriptionItemType;
+
+      let serviceAndEmployeeAssociated:
+        | (Service & { createdBy: User | null })
+        | null;
+      try {
+        serviceAndEmployeeAssociated = await prisma.service.findFirst({
+          where: { id: serviceId },
+          include: {
+            createdBy: true,
+          },
+        });
+      } catch (error) {
+        console.error("Erreur lors de la recherche du service:", error);
+        return res.status(400).send("Erreur lors de la recherche du service");
+      }
 
       const startDateTmz = moment
         .utc(startTime)
         .tz("Europe/Paris")
         .format("YYYY-MM-DD HH:mm:ss");
 
-      const userEmployee = await prisma.user.findFirst({
-        where: { id: employeeId },
-      });
+      if (
+        !serviceAndEmployeeAssociated?.createdBy?.id ||
+        !serviceAndEmployeeAssociated.createdBy?.name
+      )
+        throw new Error("Employee not found");
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         serviceId,
-        userId: employeeId,
+        userId: serviceAndEmployeeAssociated?.createdBy?.id,
         amountPayed: Number(
           webhookEvent.resource.purchase_units[0].amount.value
         ),
@@ -93,54 +110,46 @@ export default async function handler(
         },
       });
 
-      let service: Service | null;
-      try {
-        service = await prisma.service.findFirst({
-          where: { id: serviceId },
-        });
-      } catch (error) {
-        console.error("Erreur lors de la recherche du service:", error);
-        return res.status(400).send("Erreur lors de la recherche du service");
-      }
-
-      if (bookingCreated && webhookEvent.resource.payer.email_address) {
+      if (bookingCreated && email) {
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-          to: [webhookEvent.resource.payer.email_address],
-          subject: `Rendez-vous ${service?.name} en attente.`,
+          to: [email],
+          subject: `Rendez-vous ${serviceAndEmployeeAssociated?.name} en attente.`,
           react: EmailRdvBooked({
             customerName:
               webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
               "",
             bookingStartTime: startDateTmz,
-            serviceName: service?.name ?? "",
-            employeeName,
-            businessPhysicalAddress: userEmployee?.address ?? "",
-            phone: String(userEmployee?.phone),
+            serviceName: serviceAndEmployeeAssociated?.name ?? "",
+            employeeName: serviceAndEmployeeAssociated.createdBy.name,
+            businessPhysicalAddress:
+              serviceAndEmployeeAssociated?.createdBy?.address ?? "",
+            phone: String(serviceAndEmployeeAssociated?.createdBy?.phone),
           }),
         });
 
-        userEmployee?.email &&
+        serviceAndEmployeeAssociated?.createdBy?.email &&
           (await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [userEmployee.email],
-            subject: `Vous avez un Rendez-vous ${service?.name} en attente.`,
+            to: [serviceAndEmployeeAssociated?.createdBy?.email],
+            subject: `Vous avez un Rendez-vous ${serviceAndEmployeeAssociated?.name} en attente.`,
             react: EmailPaymentReceived({
               customerName:
                 webhookEvent.resource.purchase_units[0].shipping.name
                   .full_name ?? "",
               bookingStartTime: startDateTmz,
-              serviceName: service?.name ?? "",
-              employeeName,
-              businessPhysicalAddress: userEmployee.address ?? "",
-              phone: String(userEmployee.phone),
+              serviceName: serviceAndEmployeeAssociated?.name ?? "",
+              employeeName: serviceAndEmployeeAssociated.createdBy.name,
+              businessPhysicalAddress:
+                serviceAndEmployeeAssociated.createdBy.address ?? "",
+              phone: String(serviceAndEmployeeAssociated.createdBy.phone),
             }),
           }));
       }
-      if (!bookingCreated && webhookEvent.resource.payer.email_address) {
+      if (!bookingCreated && email) {
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-          to: [webhookEvent.resource.payer.email_address],
+          to: [email],
           subject: `${webhookEvent.resource.purchase_units[0].shipping.name.full_name} Votre n'a pas pu être réservé`,
           react: EmailNotBooked({
             customerName:
