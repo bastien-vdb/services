@@ -11,20 +11,23 @@ import React, { useState } from "react";
 type CheckoutFormProps = {
   clientSecret: string | undefined;
   setPaymentValided: (value: boolean) => void;
+  name: string;
+  email: string;
+  phone: string;
 };
 
 export default function CheckoutForm({
   clientSecret,
   setPaymentValided,
+  name,
+  email,
+  phone,
 }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
 
   const [message, setMessage] = React.useState<string | undefined | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
   const [paymentIntent, setPaymentIntent] = useState<PaymentIntent>();
 
   React.useEffect(() => {
@@ -122,35 +125,6 @@ export default function CheckoutForm({
         }}
         id="payment-element"
       />
-
-      <div className="grid w-full max-w-sm items-center gap-1.5 mt-2.5 Label">
-        <Input
-          className="text-[1.1rem]"
-          onChange={(e) => setName(e.target.value)}
-          type="name"
-          id="name"
-          placeholder="Nom*"
-        />
-      </div>
-
-      <div className="grid w-full max-w-sm items-center gap-1.5 mt-2.5">
-        <Input
-          className="text-[1.1rem]"
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          id="email"
-          placeholder="Email*"
-        />
-      </div>
-      <div className="grid w-full max-w-sm items-center gap-1.5 my-2.5">
-        <Input
-          className="text-[1.1rem]"
-          onChange={(e) => setPhone(e.target.value)}
-          type="tel"
-          id="tel"
-          placeholder="(+33)"
-        />
-      </div>
 
       {/* Show any error or success messages */}
       <span className="m-auto my-2">

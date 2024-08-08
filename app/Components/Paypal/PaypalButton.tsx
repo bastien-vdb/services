@@ -1,23 +1,30 @@
 "use client";
+import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 import useServiceStore from "@/app/admin/Components/Services/useServicesStore";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 import {
   paypalCustomIdType,
   paypalDescriptionItemType,
 } from "@/src/types/paypal";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { Booking } from "@prisma/client";
 import useFormStore from "../SelectService/useFormStore";
-import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
-import useBookingsStore from "@/app/admin/Components/Bookings/useBookingsStore";
 
 export default function PayPalButton({
   deposit,
   prixFixDeposit,
   setPaymentValided,
+  name,
+  firstName,
+  email,
+  phone,
 }: {
   deposit: boolean;
   prixFixDeposit: { stripePriceId: string; price: number };
   setPaymentValided: (value: boolean) => void;
+  name: string;
+  firstName: string;
+  email: string;
+  phone: string;
 }) {
   const { serviceSelected } = useServiceStore();
   const { optionSelected } = useServiceStore();
@@ -52,9 +59,9 @@ export default function PayPalButton({
           ]}
           style={{
             layout: "horizontal",
-            tagline: false,
+            tagline: true,
             shape: "rect",
-            color: "white",
+            color: "gold",
           }} // il faut aussi ce bout de code css pour voir le bouton ... très étrange mais fonctionnel
           createOrder={(data, actions) => {
             const totalPrice = deposit
@@ -65,6 +72,9 @@ export default function PayPalButton({
             if (!userSelectedFront) throw new Error("No employee Selected");
             if (!bookingSelected.serviceId)
               throw new Error("No booking Selected");
+            if (!name || !firstName || !email || !phone) {
+              throw new Error("Missing user info");
+            }
 
             return actions.order.create({
               intent: "CAPTURE", // Ajoutez cette ligne,
@@ -72,7 +82,12 @@ export default function PayPalButton({
                 {
                   description: bookingSelected.serviceId,
                   custom_id: JSON.stringify({
-                    userId: bookingSelected.userId,
+                    allUserInfo: {
+                      name,
+                      firstName,
+                      email,
+                      phone,
+                    },
                     formData,
                     employeeId: userSelectedFront.id,
                     employeeName: String(userSelectedFront?.name),

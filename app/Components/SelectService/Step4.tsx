@@ -14,6 +14,8 @@ import useFormStore from "./useFormStore";
 import TextRevealButton from "@/src/components/syntax-ui/TextRevealButton";
 import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
 import { useParams } from "next/navigation";
+import { Input } from "@/src/components/ui/input";
+import { set } from "date-fns";
 
 if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
   throw new Error("stripe PK missing");
@@ -26,11 +28,19 @@ const prixFixDeposit = {
   price: 2000,
 }; //TODO mettre dans un fichier settings
 
+type typePayment = "STRIPE" | "PAYPAL";
+
 const Step4 = memo(() => {
   const [clientSecret, setClientSecret] = useState("");
   const [fullOrDepotDisplayed, setFullOrDepotDisplayed] = useState(false);
   const [paypmentValided, setPaymentValided] = useState(false);
   const [deposit, setDeposit] = useState(false);
+  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [typePaymentSelected, setTypePaymentSelected] =
+    useState<typePayment>("STRIPE");
 
   const { optionSelected } = useServiceStore();
   const { formData } = useFormStore();
@@ -137,20 +147,116 @@ const Step4 = memo(() => {
                 <Label htmlFor="option-two">Dépot: 20€</Label>
               </div>
             </div>
-            <PayPalButton
-              deposit={deposit}
-              prixFixDeposit={prixFixDeposit}
-              setPaymentValided={setPaymentValided}
-            />
           </RadioGroup>
         )}
+        <div>
+          <RadioGroup
+            defaultValue="stripePayment"
+            className="grid grid-cols-2 gap-4"
+          >
+            <div>
+              <RadioGroupItem
+                value="stripePayment"
+                id="stripePayment"
+                className="peer sr-only"
+                onClick={() => setTypePaymentSelected("STRIPE")}
+              />
+              <Label
+                htmlFor="stripePayment"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              >
+                <img
+                  src="/images/credit-card-svgrepo-com.svg"
+                  width="40"
+                  height="40"
+                  alt="Stripe"
+                  className="mb-3 w-16"
+                  style={{ aspectRatio: "80/60", objectFit: "contain" }}
+                />
+                Stripe
+              </Label>
+            </div>
+            <div>
+              <RadioGroupItem
+                value="paypalPayment"
+                id="paypalPayment"
+                className="peer sr-only"
+                onClick={() => setTypePaymentSelected("PAYPAL")}
+              />
+              <Label
+                htmlFor="paypalPayment"
+                className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+              >
+                <img
+                  src="/images/PayPal.svg"
+                  width="40"
+                  height="40"
+                  alt="PayPal"
+                  className="mb-3 w-16"
+                  style={{ aspectRatio: "80/60", objectFit: "contain" }}
+                />
+                PayPal
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <Input
+            className="text-[1.1rem]"
+            onChange={(e) => setName(e.target.value)}
+            type="name"
+            id="name"
+            placeholder="Nom*"
+          />
+          <Input
+            className="text-[1.1rem]"
+            onChange={(e) => setFirstName(e.target.value)}
+            type="firstName"
+            id="firstName"
+            placeholder="Prénom*"
+          />
+
+          <Input
+            className="text-[1.1rem]"
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            id="email"
+            placeholder="Email*"
+          />
+
+          <Input
+            className="text-[1.1rem]"
+            onChange={(e) => setPhone(e.target.value)}
+            type="tel"
+            id="tel"
+            placeholder="(+33)"
+          />
+        </div>
 
         {clientSecret && bookingSelected ? (
-          <EmbeddedCheckoutComp
-            stripePromise={stripePromise}
-            clientSecret={clientSecret}
-            setPaymentValided={setPaymentValided}
-          />
+          <>
+            {typePaymentSelected === "STRIPE" ? (
+              <EmbeddedCheckoutComp
+                stripePromise={stripePromise}
+                clientSecret={clientSecret}
+                setPaymentValided={setPaymentValided}
+                name={name}
+                email={email}
+                phone={phone}
+              />
+            ) : (
+              <PayPalButton
+                deposit={deposit}
+                prixFixDeposit={prixFixDeposit}
+                setPaymentValided={setPaymentValided}
+                name={name}
+                firstName={firstName}
+                email={email}
+                phone={phone}
+              />
+            )}
+          </>
         ) : (
           <LoadingSpinner className="w-12 h-12 animate-spin" />
         )}

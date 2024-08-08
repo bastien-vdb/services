@@ -1,9 +1,14 @@
 //types créé par bastien vdb et non par paypal directement
 export type paypalCustomIdType = {
-  userId: string;
   formData: formData;
   employeeId: string;
   employeeName: string;
+  allUserInfo: {
+    name: string;
+    firstName: string;
+    email: string;
+    phone: string;
+  };
 };
 
 type formData = {
