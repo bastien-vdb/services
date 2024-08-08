@@ -41,7 +41,7 @@ export default async function handler(
       const { allUserInfo, formData, employeeName, employeeId } = JSON.parse(
         webhookEvent.resource.purchase_units[0].custom_id
       ) as paypalCustomIdType;
-      const { name, firstName, email, phone } = allUserInfo;
+      const { name, firstName: firstname, email, phone } = allUserInfo;
       const serviceId = webhookEvent.resource.purchase_units[0].description;
       const { startTime, endTime } = JSON.parse(
         webhookEvent.resource.purchase_units[0].items[0].description
@@ -67,7 +67,7 @@ export default async function handler(
         form: JSON.stringify(formData),
         customerInfo: {
           name,
-          prenom: firstName,
+          firstname,
           email,
           phone,
           address: {

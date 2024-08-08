@@ -102,7 +102,7 @@ export default async function handler(
             name: customerDetails?.name ? customerDetails.name : "NC",
             email: customerDetails?.email ? customerDetails.email : "NC",
             phone: customerDetails?.phone ? customerDetails.phone : "NC",
-            prenom: "wait", //TODO: to be changed immediately
+            firstname: "wait", //TODO: to be changed immediately
             address: {
               city: customerDetails?.address?.city
                 ? customerDetails.address.city

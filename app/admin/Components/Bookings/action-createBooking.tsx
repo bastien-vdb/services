@@ -16,7 +16,7 @@ async function actionCreateBooking({
   userId: string;
   amountPayed;
   form: string;
-  customerInfo: Omit<Customer, "createdAt" | "id" | "updatedAt">;
+  customerInfo: Partial<Customer>;
 }) {
   try {
     // Chercher la première disponibilité qui chevauche la réservation
@@ -73,16 +73,16 @@ async function actionCreateBooking({
       if (!customer) {
         customer = await prisma.customer.create({
           data: {
-            name: customerInfo.name, // Assurez-vous que les champs nécessaires sont fournis
-            email: customerInfo.email,
-            phone: customerInfo.phone,
+            name: customerInfo.name ?? "", // Assurez-vous que les champs nécessaires sont fournis
+            email: customerInfo.email ?? "",
+            phone: customerInfo.phone ?? "",
             address: {
-              city: customerInfo.address.city,
-              state: customerInfo.address.state,
-              zip: customerInfo.address.zip,
-              country: customerInfo.address.country,
-              line1: customerInfo.address.line1,
-              line2: customerInfo.address.line2 || "", // `line2` peut être facultatif
+              city: customerInfo.address?.city ?? "",
+              state: customerInfo.address?.state ?? "",
+              zip: customerInfo.address?.zip ?? "",
+              country: customerInfo.address?.country ?? "",
+              line1: customerInfo.address?.line1 ?? "",
+              line2: customerInfo.address?.line2 || "", // `line2` peut être facultatif
             },
           },
         });
