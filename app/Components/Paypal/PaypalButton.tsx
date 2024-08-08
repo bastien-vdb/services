@@ -56,6 +56,10 @@ export default function PayPalButton({
             deposit,
             serviceSelected,
             optionSelected,
+            name,
+            firstName,
+            email,
+            phone,
           ]}
           style={{
             layout: "horizontal",

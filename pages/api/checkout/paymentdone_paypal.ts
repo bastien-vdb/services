@@ -150,7 +150,7 @@ export default async function handler(
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
           to: [email],
-          subject: `${webhookEvent.resource.purchase_units[0].shipping.name.full_name} Votre n'a pas pu être réservé`,
+          subject: `${webhookEvent.resource.purchase_units[0].shipping.name.full_name} Votre rendez-vous n'a pas pu être réservé`,
           react: EmailNotBooked({
             customerName:
               webhookEvent.resource.purchase_units[0].items[0].name ?? "",
