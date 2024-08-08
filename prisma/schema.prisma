@@ -85,6 +85,7 @@ model Booking {
 model Customer {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
+  firstname String?
   email     String
   phone     String
   address   Address
