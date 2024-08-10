@@ -73,6 +73,8 @@ export default async function handler(
       )
         throw new Error("Employee not found");
 
+      console.log("serviceAndEmployeeAssociated", serviceAndEmployeeAssociated);
+
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
         endTime: new Date(endTime),
