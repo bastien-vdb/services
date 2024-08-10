@@ -18,6 +18,8 @@ async function actionCreateBooking({
   form: string;
   customerInfo: Partial<Customer>;
 }) {
+  console.log("startTime", startTime);
+  console.log("endTime", endTime);
   try {
     // Chercher la première disponibilité qui chevauche la réservation
     const availability = await prisma.availability.findFirst({
@@ -31,6 +33,7 @@ async function actionCreateBooking({
         userId,
       },
     });
+    console.log("availability", availability);
 
     if (!availability) {
       throw new Error("No availability found");
