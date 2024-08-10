@@ -86,6 +86,7 @@ const SelectBooking = ({
                   ?.sort(
                     (a, b) => a.startTime.getTime() - b.startTime.getTime()
                   )
+                  .filter((booking) => booking.startTime > new Date())
                   ?.map((booking, key) => (
                     <li key={key}>
                       <Button

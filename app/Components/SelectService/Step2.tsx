@@ -38,8 +38,8 @@ const Step2 = memo(() => {
                     .filter((a) => a.userId === userSelectedFront?.id)
                     .filter(
                       (a) =>
-                        differenceInMinutes(a.endTime, a.startTime) >= //filtre permettant de ne pas afficher les disponibilités trop courtes
-                          serviceSelected?.duration && a.startTime > new Date() //filtre permettant de ne pas afficher les disponibilités passées
+                        differenceInMinutes(a.endTime, a.startTime) >=
+                          serviceSelected?.duration && a.endTime > new Date()
                     )
                     .map((availability) => availability.startTime)
                 : [],
