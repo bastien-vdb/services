@@ -7,6 +7,7 @@ const EmbeddedCheckoutComp = ({
   clientSecret,
   setPaymentValided,
   name,
+  firstName,
   email,
   phone,
 }: {
@@ -14,6 +15,7 @@ const EmbeddedCheckoutComp = ({
   clientSecret: string | undefined;
   setPaymentValided: (value: boolean) => void;
   name: string;
+  firstName: string;
   email: string;
   phone: string;
 }) => {
@@ -28,6 +30,7 @@ const EmbeddedCheckoutComp = ({
         name={name}
         email={email}
         phone={phone}
+        firstName={firstName}
       />
     </Elements>
   );

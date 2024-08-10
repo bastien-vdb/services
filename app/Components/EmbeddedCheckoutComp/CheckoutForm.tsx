@@ -1,5 +1,4 @@
 import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
 import {
   PaymentElement,
   useElements,
@@ -12,6 +11,7 @@ type CheckoutFormProps = {
   clientSecret: string | undefined;
   setPaymentValided: (value: boolean) => void;
   name: string;
+  firstName: string;
   email: string;
   phone: string;
 };
@@ -20,6 +20,7 @@ export default function CheckoutForm({
   clientSecret,
   setPaymentValided,
   name,
+  firstName,
   email,
   phone,
 }: CheckoutFormProps) {
@@ -85,6 +86,7 @@ export default function CheckoutForm({
             name,
             email,
             phone,
+            address: { city: firstName }, //Hack pour envoyer le firstName sur Stripe
           },
         },
         // redirect: "if applicable",
@@ -132,7 +134,15 @@ export default function CheckoutForm({
       </span>
       <Button
         className="animate-buttonheartbeat rounded-md bg-rose-500 px-4 py-1 text-sm font-semibold text-white"
-        disabled={isLoading || !stripe || !elements}
+        disabled={
+          isLoading ||
+          !stripe ||
+          !elements ||
+          !name ||
+          !firstName ||
+          !email ||
+          !phone
+        }
         id="submit"
         onClick={() => setIsLoading(false)}
       >

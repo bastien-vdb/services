@@ -51,6 +51,9 @@ export default function PayPalButton({
     >
       {bookingSelected && (
         <PayPalButtons
+          disabled={
+            name === "" || firstName === "" || email === "" || phone === ""
+          }
           forceReRender={[
             bookingSelected?.id,
             deposit,

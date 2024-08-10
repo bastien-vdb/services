@@ -102,27 +102,7 @@ export default async function handler(
             name: customerDetails?.name ? customerDetails.name : "NC",
             email: customerDetails?.email ? customerDetails.email : "NC",
             phone: customerDetails?.phone ? customerDetails.phone : "NC",
-            firstname: "wait", //TODO: to be changed immediately
-            address: {
-              city: customerDetails?.address?.city
-                ? customerDetails.address.city
-                : "NC",
-              country: customerDetails?.address?.country
-                ? customerDetails.address.country
-                : "NC",
-              state: customerDetails?.address?.state
-                ? customerDetails.address.state
-                : "NC",
-              zip: customerDetails?.address?.postal_code
-                ? customerDetails.address.postal_code
-                : "NC",
-              line1: customerDetails?.address?.line1
-                ? customerDetails.address.line1
-                : "NC",
-              line2: customerDetails?.address?.line2
-                ? customerDetails.address.line2
-                : "NC",
-            },
+            firstname: customerDetails.address?.city, //TODO: hack pour récupe le firstname avec Stripe (solution la plus simple pour le moment)
           },
         });
 
@@ -132,7 +112,7 @@ export default async function handler(
             to: [customerDetails.email],
             subject: `Rendez-vous ${serviceName} en attente.`,
             react: EmailRdvBooked({
-              customerName: customerDetails.name ?? "",
+              customerName: customerDetails.address?.city ?? "",
               bookingStartTime: startDateTmz,
               serviceName,
               employeeName,
@@ -147,7 +127,7 @@ export default async function handler(
               to: [userEmployee.email],
               subject: `Vous avez un Rendez-vous ${serviceName} en attente.`,
               react: EmailPaymentReceived({
-                customerName: customerDetails.name ?? "",
+                customerName: `${customerDetails.address?.city} ${customerDetails.name}`,
                 bookingStartTime: startDateTmz,
                 serviceName,
                 employeeName,
@@ -160,7 +140,7 @@ export default async function handler(
           await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
             to: [String(customerDetails.email)],
-            subject: `${customerDetails.name} Votre n'a pas pu être réservé`,
+            subject: `${customerDetails.address?.city} Votre n'a pas pu être réservé`,
             react: EmailNotBooked({
               customerName: customerDetails.name ?? "",
               bookingStartTime: startDateTmz,

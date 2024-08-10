@@ -230,7 +230,7 @@ const Step4 = memo(() => {
             onChange={(e) => setPhone(e.target.value)}
             type="tel"
             id="tel"
-            placeholder="(+33)"
+            placeholder="(+33)*"
           />
         </div>
 
@@ -242,6 +242,7 @@ const Step4 = memo(() => {
                 clientSecret={clientSecret}
                 setPaymentValided={setPaymentValided}
                 name={name}
+                firstName={firstName}
                 email={email}
                 phone={phone}
               />
