@@ -8,7 +8,7 @@ import {
   paypalCustomIdType,
   paypalDescriptionItemType,
 } from "@/src/types/paypal";
-import { PrismaClient, Service, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { buffer } from "micro";
 import moment from "moment-timezone";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -47,39 +47,30 @@ export default async function handler(
         webhookEvent.resource.purchase_units[0].items[0].description
       ) as paypalDescriptionItemType;
 
-      let serviceAndEmployeeAssociated:
-        | (Service & { createdBy: User | null })
-        | null;
-      try {
-        serviceAndEmployeeAssociated = await prisma.service.findFirst({
-          where: { id: serviceId },
-          include: {
-            createdBy: true,
-          },
-        });
-      } catch (error) {
-        console.error("Erreur lors de la recherche du service:", error);
-        return res.status(400).send("Erreur lors de la recherche du service");
-      }
+      const service = await prisma.service.findFirst({
+        where: { id: serviceId },
+      });
+
+      if (!service || !service.userId) throw new Error("Service not found");
+
+      const userEmployee = await prisma.user.findFirst({
+        where: { id: service.userId },
+      });
 
       const startDateTmz = moment
         .utc(startTime)
         .tz("Europe/Paris")
         .format("YYYY-MM-DD HH:mm:ss");
 
-      if (
-        !serviceAndEmployeeAssociated?.createdBy?.id ||
-        !serviceAndEmployeeAssociated.createdBy?.name
-      )
-        throw new Error("Employee not found");
+      if (!userEmployee) throw new Error("Employee not found");
 
-      console.log("serviceAndEmployeeAssociated", serviceAndEmployeeAssociated);
+      console.log("serviceAndEmployeeAssociated", userEmployee);
 
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         serviceId,
-        userId: serviceAndEmployeeAssociated?.createdBy?.id,
+        userId: userEmployee.id,
         amountPayed: Number(
           webhookEvent.resource.purchase_units[0].amount.value
         ),
@@ -116,35 +107,33 @@ export default async function handler(
         await useSendEmail({
           from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
           to: [email],
-          subject: `Rendez-vous ${serviceAndEmployeeAssociated?.name} en attente.`,
+          subject: `Rendez-vous ${service?.name} en attente.`,
           react: EmailRdvBooked({
             customerName:
               webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
               "",
             bookingStartTime: startDateTmz,
-            serviceName: serviceAndEmployeeAssociated?.name ?? "",
-            employeeName: serviceAndEmployeeAssociated.createdBy.name,
-            businessPhysicalAddress:
-              serviceAndEmployeeAssociated?.createdBy?.address ?? "",
-            phone: String(serviceAndEmployeeAssociated?.createdBy?.phone),
+            serviceName: service?.name ?? "",
+            employeeName: userEmployee.name ?? "",
+            businessPhysicalAddress: userEmployee?.address ?? "",
+            phone: String(userEmployee?.phone),
           }),
         });
 
-        serviceAndEmployeeAssociated?.createdBy?.email &&
+        userEmployee.email &&
           (await useSendEmail({
             from: "Finest lash - Quickreserve.app <no-answer@quickreserve.app>",
-            to: [serviceAndEmployeeAssociated?.createdBy?.email],
-            subject: `Vous avez un Rendez-vous ${serviceAndEmployeeAssociated?.name} en attente.`,
+            to: [userEmployee.email],
+            subject: `Vous avez un Rendez-vous ${service.name} en attente.`,
             react: EmailPaymentReceived({
               customerName:
                 webhookEvent.resource.purchase_units[0].shipping.name
                   .full_name ?? "",
               bookingStartTime: startDateTmz,
-              serviceName: serviceAndEmployeeAssociated?.name ?? "",
-              employeeName: serviceAndEmployeeAssociated.createdBy.name,
-              businessPhysicalAddress:
-                serviceAndEmployeeAssociated.createdBy.address ?? "",
-              phone: String(serviceAndEmployeeAssociated.createdBy.phone),
+              serviceName: service?.name ?? "",
+              employeeName: userEmployee.name ?? "",
+              businessPhysicalAddress: userEmployee.address ?? "",
+              phone: String(userEmployee?.phone),
             }),
           }));
       }
