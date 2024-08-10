@@ -64,8 +64,6 @@ export default async function handler(
 
       if (!userEmployee) throw new Error("Employee not found");
 
-      console.log("serviceAndEmployeeAssociated", userEmployee);
-
       const bookingCreated = await actionCreateBooking({
         startTime: new Date(startTime),
         endTime: new Date(endTime),
@@ -80,26 +78,6 @@ export default async function handler(
           firstname,
           email,
           phone,
-          address: {
-            city:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .admin_area_2 ?? "NC",
-            country:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .country_code ?? "NC",
-            state:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .admin_area_1 ?? "NC",
-            zip:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .postal_code ?? "NC",
-            line1:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .address_line_1 ?? "NC",
-            line2:
-              webhookEvent.resource.purchase_units[0].shipping.address
-                .admin_area_1 ?? "NC",
-          },
         },
       });
 
@@ -109,9 +87,7 @@ export default async function handler(
           to: [email],
           subject: `Rendez-vous ${service?.name} en attente.`,
           react: EmailRdvBooked({
-            customerName:
-              webhookEvent.resource.purchase_units[0].shipping.name.full_name ??
-              "",
+            customerName: firstname,
             bookingStartTime: startDateTmz,
             serviceName: service?.name ?? "",
             employeeName: userEmployee.name ?? "",
@@ -126,9 +102,7 @@ export default async function handler(
             to: [userEmployee.email],
             subject: `Vous avez un Rendez-vous ${service.name} en attente.`,
             react: EmailPaymentReceived({
-              customerName:
-                webhookEvent.resource.purchase_units[0].shipping.name
-                  .full_name ?? "",
+              customerName: `${firstname} ${name}`,
               bookingStartTime: startDateTmz,
               serviceName: service?.name ?? "",
               employeeName: userEmployee.name ?? "",
@@ -143,8 +117,7 @@ export default async function handler(
           to: [email],
           subject: `${webhookEvent.resource.purchase_units[0].shipping.name.full_name} Votre rendez-vous n'a pas pu être réservé`,
           react: EmailNotBooked({
-            customerName:
-              webhookEvent.resource.purchase_units[0].items[0].name ?? "",
+            customerName: firstname,
             bookingStartTime: startDateTmz,
           }),
         });

@@ -70,6 +70,21 @@ async function actionCreateBooking({
         where: { email: customerInfo.email },
       });
 
+      if (
+        (customer && customer.firstname !== customerInfo.firstname) ||
+        customer?.name !== customerInfo.name ||
+        customer?.phone !== customerInfo.phone
+      ) {
+        customer = await prisma.customer.update({
+          where: { id: customer?.id },
+          data: {
+            name: customerInfo.name ?? "",
+            firstname: customerInfo.firstname ?? "",
+            phone: customerInfo.phone ?? "",
+          },
+        });
+      }
+
       if (!customer) {
         customer = await prisma.customer.create({
           data: {
