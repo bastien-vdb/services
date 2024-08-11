@@ -23,10 +23,10 @@ async function actionCreateBooking({
     const availability = await prisma.availability.findFirst({
       where: {
         startTime: {
-          lte: endTime,
+          lte: startTime,
         },
         endTime: {
-          gte: startTime,
+          gte: endTime,
         },
         userId,
       },

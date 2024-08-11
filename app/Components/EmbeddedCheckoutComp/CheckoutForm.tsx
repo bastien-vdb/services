@@ -6,7 +6,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { PaymentIntent } from "@stripe/stripe-js/types/api";
 import React, { useEffect, useState } from "react";
-import { Booking, PrismaClient } from "@prisma/client";
+import { Availability, Booking, PrismaClient } from "@prisma/client";
 import useServerData from "@/src/hooks/useServerData";
 import { toast } from "@/src/components/ui/use-toast";
 
@@ -91,23 +91,23 @@ export default function CheckoutForm({
     //Je veux faire une dernière vérification avant le paiement (vérifier qu'on a bien toujours un créneau availabity valide)
     //récupère le créneau valide en fonction de la startdate du booking selected
 
-    const availability = await useServerData("availability", {
+    console.log("booking checkout comp", bookingSelected);
+
+    const availability = (await useServerData("availability", {
       userId: employeeId,
       startTime: {
-        lte: bookingSelected.endTime,
+        lte: bookingSelected.startTime,
       },
       endTime: {
-        gte: bookingSelected.startTime,
+        gte: bookingSelected.endTime,
       },
-    });
+    })) as Availability[];
 
-    console.log("availability from checkout stripe", availability);
-
-    if (!availability) {
+    if (availability.length <= 0) {
       setIsLoading(false);
       toast({
         variant: "destructive",
-        description: message,
+        description: "Le créneau n'est plus disponible",
       });
       return setMessage("Le créneau n'est plus disponible");
     }

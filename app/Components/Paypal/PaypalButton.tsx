@@ -8,6 +8,9 @@ import {
 } from "@/src/types/paypal";
 import { PayPalButtons, PayPalScriptProvider } from "@paypal/react-paypal-js";
 import useFormStore from "../SelectService/useFormStore";
+import useServerData from "@/src/hooks/useServerData";
+import { Availability } from "@prisma/client";
+import { toast } from "@/src/components/ui/use-toast";
 
 export default function PayPalButton({
   deposit,
@@ -143,7 +146,24 @@ export default function PayPalButton({
               ],
             });
           }}
-          onApprove={(data, actions) => {
+          onApprove={async (data, actions) => {
+            const availability = (await useServerData("availability", {
+              userId: userSelectedFront?.id,
+              startTime: {
+                lte: bookingSelected.startTime,
+              },
+              endTime: {
+                gte: bookingSelected.endTime,
+              },
+            })) as Availability[];
+
+            if (availability.length <= 0) {
+              toast({
+                variant: "destructive",
+                description: "Le créneau n'est plus disponible",
+              });
+              throw new Error("Le créneau n'est plus disponible");
+            }
             if (!actions.order) throw new Error("Paiement échoué");
             return actions.order?.capture().then(() => setPaymentValided(true));
           }}
