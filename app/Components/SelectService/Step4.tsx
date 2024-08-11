@@ -234,7 +234,7 @@ const Step4 = memo(() => {
           />
         </div>
 
-        {clientSecret && bookingSelected ? (
+        {clientSecret && bookingSelected && userSelectedFront ? (
           <>
             {typePaymentSelected === "STRIPE" ? (
               <EmbeddedCheckoutComp
@@ -245,6 +245,8 @@ const Step4 = memo(() => {
                 firstName={firstName}
                 email={email}
                 phone={phone}
+                bookingSelected={bookingSelected}
+                employeeId={userSelectedFront?.id}
               />
             ) : (
               <PayPalButton

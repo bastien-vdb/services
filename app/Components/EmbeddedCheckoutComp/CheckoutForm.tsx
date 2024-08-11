@@ -5,7 +5,12 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { PaymentIntent } from "@stripe/stripe-js/types/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Booking, PrismaClient } from "@prisma/client";
+import useServerData from "@/src/hooks/useServerData";
+import { toast } from "@/src/components/ui/use-toast";
+
+const prisma = new PrismaClient();
 
 type CheckoutFormProps = {
   clientSecret: string | undefined;
@@ -14,6 +19,8 @@ type CheckoutFormProps = {
   firstName: string;
   email: string;
   phone: string;
+  bookingSelected: Booking;
+  employeeId: string;
 };
 
 export default function CheckoutForm({
@@ -23,6 +30,8 @@ export default function CheckoutForm({
   firstName,
   email,
   phone,
+  bookingSelected,
+  employeeId,
 }: CheckoutFormProps) {
   const stripe = useStripe();
   const elements = useElements();
@@ -66,7 +75,8 @@ export default function CheckoutForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name && !email) return setMessage("Veuillez remplir tous les champs");
+    if (!name || !firstName || !email || !phone)
+      return setMessage("Veuillez remplir tous les champs");
 
     if (!stripe || !elements) {
       // Stripe.js hasn't yet loaded.
@@ -77,6 +87,30 @@ export default function CheckoutForm({
     setIsLoading(true);
 
     // if (!name && !email) return setMessage("Veuillez remplir tous les champs");
+
+    //Je veux faire une dernière vérification avant le paiement (vérifier qu'on a bien toujours un créneau availabity valide)
+    //récupère le créneau valide en fonction de la startdate du booking selected
+
+    const availability = await useServerData("availability", {
+      userId: employeeId,
+      startTime: {
+        lte: bookingSelected.endTime,
+      },
+      endTime: {
+        gte: bookingSelected.startTime,
+      },
+    });
+
+    console.log("availability from checkout stripe", availability);
+
+    if (!availability) {
+      setIsLoading(false);
+      toast({
+        variant: "destructive",
+        description: message,
+      });
+      return setMessage("Le créneau n'est plus disponible");
+    }
 
     const { error } = await stripe.confirmPayment({
       elements,

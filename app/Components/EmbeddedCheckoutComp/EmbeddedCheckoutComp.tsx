@@ -1,6 +1,7 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { Stripe } from "@stripe/stripe-js";
 import CheckoutForm from "./CheckoutForm";
+import { Booking } from "@prisma/client";
 
 const EmbeddedCheckoutComp = ({
   stripePromise,
@@ -10,6 +11,8 @@ const EmbeddedCheckoutComp = ({
   firstName,
   email,
   phone,
+  bookingSelected,
+  employeeId,
 }: {
   stripePromise: Promise<Stripe | null>;
   clientSecret: string | undefined;
@@ -18,6 +21,8 @@ const EmbeddedCheckoutComp = ({
   firstName: string;
   email: string;
   phone: string;
+  bookingSelected: Booking;
+  employeeId: string;
 }) => {
   const options = {
     clientSecret,
@@ -31,6 +36,8 @@ const EmbeddedCheckoutComp = ({
         email={email}
         phone={phone}
         firstName={firstName}
+        bookingSelected={bookingSelected}
+        employeeId={employeeId}
       />
     </Elements>
   );

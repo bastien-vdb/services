@@ -71,9 +71,10 @@ async function actionCreateBooking({
       });
 
       if (
-        (customer && customer.firstname !== customerInfo.firstname) ||
-        customer?.name !== customerInfo.name ||
-        customer?.phone !== customerInfo.phone
+        customer &&
+        (customer.firstname !== customerInfo.firstname ||
+          customer?.name !== customerInfo.name ||
+          customer?.phone !== customerInfo.phone)
       ) {
         customer = await prisma.customer.update({
           where: { id: customer?.id },
