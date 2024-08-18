@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/src/components/ui/select";
-import { EventClickArg } from "@fullcalendar/core";
+import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -21,12 +21,18 @@ import useBookingsStore from "../Bookings/useBookingsStore";
 import useUsersStore from "../Users/useUsersStore";
 import useAvailabilityStore from "./useAvailabilityStore";
 import QuickModal from "@/src/components/Modal/QuickModal";
+import CreateBookingForm from "../Bookings/CreateBookingForm";
+import { set } from "date-fns";
 
 type typeEvent = "AVAILABILITY" | "BOOKING";
 export const isBooking = (x: any): x is Booking => x.status;
 export const isAvailability = (x: any): x is Availability => x.startTime;
 
 const Calendar = () => {
+  const showQuickCtr = useState(false);
+  const [, setShowQuickModal] = showQuickCtr;
+  const [selectInfo, setSelectInfo] = useState<DateSelectArg>();
+  const [showCreateBookingForm, setShowCreateBookingForm] = useState(false);
   const {
     availabilities,
     getAvailabilities,
@@ -131,8 +137,9 @@ const Calendar = () => {
     }
   };
 
-  const handleDateSelect = async (selectInfo) => {
-    // <QuickModal onAction={() => {}}></QuickModal>;
+  const createEventAvailability = async (selectInfo) => {
+    console.log("selectInfo", selectInfo);
+
     let title = "Disponibilité"; // prompt("Enter a new title for this event:");
     let calendarApi = selectInfo.view.calendar;
     calendarApi.unselect(); // clear date selection
@@ -155,9 +162,43 @@ const Calendar = () => {
       ));
   };
 
+  const handleDateSelect = async (selectInfo) => {
+    setSelectInfo(selectInfo);
+    setShowQuickModal(true);
+  };
+
+  const createBooking = (selectInfo) => {
+    setShowCreateBookingForm(true);
+  };
+
   return (
     <>
-      {/* <QuickModal  onAction={()=>{}}/> */}
+      <QuickModal
+        title="Que souhaitez-vous faire ?"
+        actionTxt="Disponibilité"
+        onAction={async () => {
+          await createEventAvailability(selectInfo);
+          setShowQuickModal(false);
+        }}
+        actionOptionalTxt="Booking"
+        onActionOptional={() => createBooking(selectInfo)}
+        showCtr={showQuickCtr}
+      />
+
+      {selectInfo && (
+        <QuickModal
+          title="Créer un booking manuellement"
+          onAction={() => {}}
+          actionTxt="Valider"
+          showCtr={[showCreateBookingForm, setShowCreateBookingForm]}
+          hideActionButton
+        >
+          <CreateBookingForm
+            startTime={selectInfo.startStr}
+            endTime={selectInfo?.endStr}
+          />
+        </QuickModal>
+      )}
 
       {userSelected && connectedSessionUserFull?.role === "OWNER" && (
         <Select
@@ -209,7 +250,7 @@ const Calendar = () => {
           firstDay={1}
           editable
           selectable // Assurez-vous que cette propriété soit définie
-          select={(selectInfo) => handleDateSelect(selectInfo)} // Fonction pour gérer les nouvelles sélections
+          select={handleDateSelect} // Fonction pour gérer les nouvelles sélections
         />
       )}
     </>

@@ -1,3 +1,4 @@
+"use server";
 import { Customer, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -9,6 +10,7 @@ async function actionCreateBooking({
   amountPayed,
   form,
   customerInfo,
+  manual = false,
 }: {
   startTime: Date;
   endTime: Date;
@@ -17,6 +19,7 @@ async function actionCreateBooking({
   amountPayed;
   form: string;
   customerInfo: Partial<Customer>;
+  manual?: boolean;
 }) {
   try {
     // Chercher la première disponibilité qui chevauche la réservation
@@ -32,38 +35,43 @@ async function actionCreateBooking({
       },
     });
 
-    if (!availability) {
+    if (!manual && !availability) {
       throw new Error("No availability found");
     }
 
     // Gérer la création de la réservation et la mise à jour des disponibilités dans une transaction
     return await prisma.$transaction(async (prisma) => {
-      // Si la réservation commence après le début de la disponibilité
-      if (startTime > availability.startTime) {
-        await prisma.availability.create({
-          data: {
-            startTime: availability.startTime,
-            endTime: startTime,
-            userId: availability.userId,
-          },
+      if (!manual) {
+        if (!availability) {
+          throw new Error("No availability found during the second search");
+        }
+        // Si la réservation commence après le début de la disponibilité
+        if (startTime > availability.startTime) {
+          await prisma.availability.create({
+            data: {
+              startTime: availability.startTime,
+              endTime: startTime,
+              userId: availability.userId,
+            },
+          });
+        }
+
+        // Si la réservation finit avant la fin de la disponibilité
+        if (endTime < availability.endTime) {
+          await prisma.availability.create({
+            data: {
+              startTime: endTime,
+              endTime: availability.endTime,
+              userId: availability.userId,
+            },
+          });
+        }
+
+        // Supprimer l'ancienne disponibilité
+        await prisma.availability.delete({
+          where: { id: availability.id },
         });
       }
-
-      // Si la réservation finit avant la fin de la disponibilité
-      if (endTime < availability.endTime) {
-        await prisma.availability.create({
-          data: {
-            startTime: endTime,
-            endTime: availability.endTime,
-            userId: availability.userId,
-          },
-        });
-      }
-
-      // Supprimer l'ancienne disponibilité
-      await prisma.availability.delete({
-        where: { id: availability.id },
-      });
 
       // Rechercher ou créer un client basé sur l'email fourni
       let customer = await prisma.customer.findFirst({
@@ -123,7 +131,7 @@ async function actionCreateBooking({
     });
   } catch (error) {
     console.error(error);
-    throw new Error("Failed to create booking");
+    throw new Error(error);
   }
 }
 

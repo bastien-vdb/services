@@ -7,36 +7,56 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/src/components/ui/alert-dialog";
 
 const QuickModal = ({
   onAction,
   onActionOptional,
-  disabled,
+  title,
+  actionTxt,
+  actionOptionalTxt,
+  showCtr,
   children,
+  hideActionButton = false,
 }: {
   onAction: () => void;
   onActionOptional?: () => void;
-  disabled?: boolean;
-  children: React.ReactNode;
+  title: string;
+  actionTxt: string;
+  actionOptionalTxt?: string;
+  showCtr: [boolean, (show: boolean) => void];
+  children?: React.ReactNode;
+  hideActionButton?: boolean;
 }) => {
+  const [show, setOpen] = showCtr;
+
+  if (!show) return null;
   return (
-    <AlertDialog>
-      <AlertDialogTrigger disabled={disabled}>{children}</AlertDialogTrigger>
-      <AlertDialogContent>
+    <AlertDialog open={show}>
+      <AlertDialogContent className="overflow-y-auto max-h-screen">
         <AlertDialogHeader>
-          <AlertDialogTitle>Que souhaitez-vous ajouter ?</AlertDialogTitle>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription></AlertDialogDescription>
         </AlertDialogHeader>
+        {children}
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={onAction}>
-            Disponibilitées{" "}
-          </AlertDialogAction>
-          <AlertDialogAction onClick={onActionOptional}>
-            Bookings
-          </AlertDialogAction>
+          {!hideActionButton && (
+            <div className="flex gap-2 m-auto mt-2 sm:my-0">
+              {onAction && (
+                <AlertDialogAction onClick={onAction}>
+                  {actionTxt}
+                </AlertDialogAction>
+              )}
+              {onActionOptional && (
+                <AlertDialogAction onClick={onActionOptional}>
+                  {actionOptionalTxt}
+                </AlertDialogAction>
+              )}
+            </div>
+          )}
+          <AlertDialogCancel onClick={() => setOpen(false)}>
+            Annuler
+          </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
