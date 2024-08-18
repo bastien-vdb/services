@@ -29,6 +29,7 @@ function BookingsHistory() {
         au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
         customerName: booking.customer?.name ?? "Non renseigné",
         customerEmail: booking.customer?.email ?? "Non renseigné",
+        customerPhone: booking.customer?.phone ?? "Non renseigné",
         prestation: booking.service?.name,
         form: JSON.parse(booking.form as string),
         prix: booking.amountPayed ? String(booking.amountPayed) + " €" : "NA ",

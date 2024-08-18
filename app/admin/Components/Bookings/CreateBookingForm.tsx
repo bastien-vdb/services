@@ -8,6 +8,8 @@ import useServiceStore from "../Services/useServicesStore";
 import QuickSelectWrapper from "@/src/components/QuickWrapper/QuickSelectWrapper";
 import useUsersStore from "../Users/useUsersStore";
 import actionCreateBooking from "./action-createBooking";
+import { toast } from "@/src/components/ui/use-toast";
+import useBookingsStore from "./useBookingsStore";
 
 // Définition du schéma de validation avec zod
 const BookingFormSchema = z.object({
@@ -42,9 +44,11 @@ const BookingFormSchema = z.object({
 const CreateBookingForm = ({
   startTime,
   endTime,
+  onSubmitted,
 }: {
   startTime: string;
   endTime: string;
+  onSubmitted: () => void;
 }) => {
   const [serviceIdSelectedLive, setServiceIdSelectedLive] = useState<string>();
   const { userSelected, findUser, connectedSessionUserFull } = useUsersStore();
@@ -55,6 +59,7 @@ const CreateBookingForm = ({
     userSelectedFront,
   } = useUsersStore();
   const { changeOptionSelected, getServices, services } = useServiceStore();
+  const { createBooking } = useBookingsStore();
 
   const [defaultValues, setDefaultValues] = useState({
     name: "",
@@ -82,7 +87,7 @@ const CreateBookingForm = ({
 
     if (!userSelected) throw new Error("No user selected");
     if (!serviceIdSelectedLive) throw new Error("No service selected");
-    await actionCreateBooking({
+    await createBooking({
       manual: true,
       startTime: new Date(startTime),
       endTime: new Date(endTime),
@@ -96,9 +101,9 @@ const CreateBookingForm = ({
         email,
         phone,
       },
+    }).then(() => {
+      onSubmitted();
     });
-
-    console.log("Booking created");
   };
 
   console.log("userSelected", userSelected);

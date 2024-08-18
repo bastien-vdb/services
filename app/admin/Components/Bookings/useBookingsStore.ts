@@ -1,15 +1,35 @@
 import { toast } from "@/src/components/ui/use-toast";
-import { Booking, BookingStatus } from "@prisma/client";
+import { Booking, BookingStatus, Customer } from "@prisma/client";
 import { create } from "zustand";
 import actionDeleteBooking from "./action-deleteBooking";
 import actionGetBooking from "./action-getBooking";
 import actionSetBookingUser from "./action-setBookingUser";
+import actionCreateBooking from "./action-createBooking";
 
 type useBookingsStoreType = {
   bookings: Booking[];
   loadingBookings: boolean;
   bookingSelected: Booking | undefined;
   setBookingSelected: (booking: Booking) => void;
+  createBooking: ({
+    startTime,
+    endTime,
+    userId,
+    manual,
+    serviceId,
+    amountPayed,
+    form,
+    customerInfo,
+  }: {
+    startTime: Date;
+    endTime: Date;
+    userId: string;
+    serviceId: string;
+    manual: boolean;
+    amountPayed: number;
+    form: string;
+    customerInfo: Partial<Customer>;
+  }) => Promise<void>;
   changeStatusBooking: ({
     bookingId,
     status,
@@ -25,6 +45,41 @@ const useBookingsStore = create<useBookingsStoreType>((set) => ({
   bookings: [],
   loadingBookings: false,
   bookingSelected: undefined,
+  createBooking: async ({
+    startTime,
+    endTime,
+    userId,
+    serviceId,
+    amountPayed,
+    form,
+    customerInfo,
+    manual,
+  }) => {
+    await actionCreateBooking({
+      manual,
+      startTime,
+      endTime,
+      userId,
+      serviceId,
+      amountPayed,
+      form,
+      customerInfo,
+    })
+      .then((booking) => {
+        set((state) => ({ bookings: [...state.bookings, booking] }));
+        toast({
+          description: "Booking créé",
+        });
+      })
+      .catch((error) => {
+        toast({
+          variant: "default",
+          description: "Erreur lors de la création du booking",
+        });
+        console.error("error: ", error);
+      })
+      .finally(() => set({ loadingBookings: false }));
+  },
   setBookingSelected: (booking) => set({ bookingSelected: booking }),
   changeStatusBooking: async ({ bookingId, status }) => {
     set({ loadingBookings: true });

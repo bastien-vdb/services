@@ -19,6 +19,7 @@ export type BookingsTable = {
   au: string;
   customerName: string;
   customerEmail: string;
+  customerPhone: string;
   supprimer?: JSX.Element;
 };
 
@@ -70,6 +71,20 @@ export const BookingColumns: ColumnDef<BookingsTable>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Email client
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "customerPhone",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tel client
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );

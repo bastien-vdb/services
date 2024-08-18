@@ -44,10 +44,11 @@ const useServiceStore = create<ServiceStoreType>((set) => ({
       price: service.price * 100,
       duration: service.duration,
       userId: service.userId,
-    }).then((service) => {
-      set((state) => ({ services: [...state.services, service] }));
-      set({ loadingService: false });
-    });
+    })
+      .then((service) => {
+        set((state) => ({ services: [...state.services, service] }));
+      })
+      .finally(() => set({ loadingService: false }));
   },
   removeService: async (service) => {
     set({ loadingService: true });

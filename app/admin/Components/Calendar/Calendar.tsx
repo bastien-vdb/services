@@ -167,9 +167,7 @@ const Calendar = () => {
     setShowQuickModal(true);
   };
 
-  const createBooking = (selectInfo) => {
-    setShowCreateBookingForm(true);
-  };
+  console.log("render Calendar");
 
   return (
     <>
@@ -181,7 +179,7 @@ const Calendar = () => {
           setShowQuickModal(false);
         }}
         actionOptionalTxt="Booking"
-        onActionOptional={() => createBooking(selectInfo)}
+        onActionOptional={() => setShowCreateBookingForm(true)}
         showCtr={showQuickCtr}
       />
 
@@ -196,6 +194,10 @@ const Calendar = () => {
           <CreateBookingForm
             startTime={selectInfo.startStr}
             endTime={selectInfo?.endStr}
+            onSubmitted={() => {
+              setShowCreateBookingForm(false);
+              setShowQuickModal(false);
+            }}
           />
         </QuickModal>
       )}
