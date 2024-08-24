@@ -13,6 +13,7 @@ import * as React from "react";
 
 interface EmailConfirmedCollaboratorProps {
   customerName?: string;
+  customerFirstname?: string;
   bookingStartTime: string;
   businessPhysicalAddress: string;
   phone: string;
@@ -24,6 +25,7 @@ const baseUrl = process.env.NEXT_PUBLIC_HOST
 
 export const EmailConfirmedCollaborator = ({
   customerName,
+  customerFirstname,
   bookingStartTime,
   businessPhysicalAddress,
   phone,
@@ -61,7 +63,7 @@ export const EmailConfirmedCollaborator = ({
             alt="FinestLashStudio"
           />
           <Heading style={heading}>
-            🪄 Votre rendez-vous avec {customerName}, le{" "}
+            🪄 Votre rendez-vous avec {customerFirstname} {customerName}, le{" "}
             {bookingStartTime && dateString} à {bookingStartTime && heureString}{" "}
             a bien été confirmé.
           </Heading>

@@ -10,6 +10,7 @@ type actionSendConfirmationEmail = {
   to: string[];
   subject: string;
   customerName: string;
+  customerFirstname: string;
   bookingStartTime: string;
   forCollaborator?: boolean;
   businessPhysicalAddress: string;
@@ -21,6 +22,7 @@ const actionSendConfirmationEmail = async ({
   to,
   subject,
   customerName,
+  customerFirstname,
   bookingStartTime,
   forCollaborator = false,
   businessPhysicalAddress,
@@ -36,12 +38,14 @@ const actionSendConfirmationEmail = async ({
     react: !forCollaborator
       ? EmailConfirmed({
           customerName,
+          customerFirstname,
           bookingStartTime,
           businessPhysicalAddress,
           phone,
         })
       : EmailConfirmedCollaborator({
           customerName,
+          customerFirstname,
           bookingStartTime,
           businessPhysicalAddress,
           phone,

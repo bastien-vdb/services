@@ -43,6 +43,7 @@ function Bookings() {
         du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
         au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
         customerName: booking.customer?.name ?? "Non renseigné",
+        customerFirstname: booking.customer?.firstname ?? "Non renseigné",
         customerEmail: booking.customer?.email ?? "Non renseigné",
         customerPhone: booking.customer?.phone ?? "Non renseigné",
         prestation: booking.service?.name,
@@ -84,6 +85,7 @@ function Bookings() {
                   businessPhysicalAddress: userEmployee.address ?? "",
                   phone: String(userEmployee?.phone),
                   customerName: booking.customer.name,
+                  customerFirstname: booking.customer.firstname ?? "",
                   bookingStartTime: momentTz
                     .utc(booking.startTime)
                     .tz("Europe/Paris")
@@ -115,6 +117,7 @@ function Bookings() {
                   to: [userEmployee.email],
                   subject: `Confirmation de réservation avec ${booking.customer.name}`,
                   customerName: booking.customer.name,
+                  customerFirstname: booking.customer.firstname ?? "",
                   businessPhysicalAddress: userEmployee.address ?? "",
                   phone: String(userEmployee?.phone),
                   bookingStartTime: momentTz

@@ -14,6 +14,7 @@ import * as React from "react";
 
 interface EmailRdvBookedProps {
   customerName?: string;
+  customerFirstname?: string;
   bookingStartTime: string;
   businessPhysicalAddress: string;
   phone: string;
@@ -25,6 +26,7 @@ const baseUrl = process.env.NEXT_PUBLIC_HOST
 
 export const EmailConfirmed = ({
   customerName,
+  customerFirstname,
   bookingStartTime,
   businessPhysicalAddress,
   phone,
@@ -62,9 +64,10 @@ export const EmailConfirmed = ({
             alt="FinestLashStudio"
           />
           <Heading style={heading}>
-            🪄 Bonjour {customerName} et merci pour votre réservation au sein du
-            FinestLash Studio le {bookingStartTime && dateString} à{" "}
-            {bookingStartTime && heureString} !
+            🪄 Bonjour {customerFirstname} {customerName} et merci pour votre
+            réservation au sein du FinestLash Studio le{" "}
+            {bookingStartTime && dateString} à {bookingStartTime && heureString}{" "}
+            !
           </Heading>
           <Section style={body}>
             <Text style={paragraph}>

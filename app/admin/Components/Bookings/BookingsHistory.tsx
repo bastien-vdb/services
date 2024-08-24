@@ -28,6 +28,7 @@ function BookingsHistory() {
         du: moment(booking.startTime).format("DD/MM/YYYY - HH:mm").toString(),
         au: moment(booking.endTime).format("DD/MM/YYYY - HH:mm").toString(),
         customerName: booking.customer?.name ?? "Non renseigné",
+        customerFirstname: booking.customer?.firstname ?? "Non renseigné",
         customerEmail: booking.customer?.email ?? "Non renseigné",
         customerPhone: booking.customer?.phone ?? "Non renseigné",
         prestation: booking.service?.name,
