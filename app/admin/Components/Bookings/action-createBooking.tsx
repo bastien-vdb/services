@@ -98,6 +98,7 @@ async function actionCreateBooking({
         customer = await prisma.customer.create({
           data: {
             name: customerInfo.name ?? "", // Assurez-vous que les champs nécessaires sont fournis
+            firstname: customerInfo.firstname ?? "",
             email: customerInfo.email ?? "",
             phone: customerInfo.phone ?? "",
             address: {
