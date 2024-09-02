@@ -7,7 +7,7 @@ import ShineButton from "@/src/components/syntax-ui/ShineButton";
 import Image from "next/image";
 
 const Steps = ({ userId }: { userId: string }) => {
-  const [infoTemporaireVisible, setInfoTemporaireVisible] = useState(false);
+  const [infoTemporaireVisible, setInfoTemporaireVisible] = useState(true);
   return (
     <main className="flex flex-col p-2">
       <Card>

@@ -112,7 +112,7 @@ function SelectService() {
           >
             <QuickSelectWrapper
               placeHolder={"Par qui ?"}
-              disabledValues={[1]}
+              // disabledValues={[1]}
               name="employeeId"
               label="Choisir son artiste"
               className="w-[250px] sm:w-[800px]"
