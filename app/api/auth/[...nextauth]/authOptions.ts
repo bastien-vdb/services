@@ -68,6 +68,7 @@ export const authOptions: NextAuthOptions = {
             image: user.image || "",
             ownerId: null,
             role: "OWNER", // Rôle par défaut
+            active: true, // Actif par défaut
           },
         });
 

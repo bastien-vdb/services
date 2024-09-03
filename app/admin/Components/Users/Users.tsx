@@ -1,4 +1,6 @@
 "use client";
+import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
+import AlertModal from "@/src/components/Modal/AlertModal";
 import TableMain from "@/src/components/Table/TableMain";
 import { Badge } from "@/src/components/ui/badge";
 import { Button } from "@/src/components/ui/button";
@@ -12,26 +14,35 @@ import {
   FormMessage,
 } from "@/src/components/ui/form";
 import { Input } from "@/src/components/ui/input";
-import { toast } from "@/src/components/ui/use-toast";
+import { Switch } from "@/src/components/ui/switch";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "@prisma/client";
 import { Trash2 } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useSession } from "next-auth/react";
-import AlertModal from "@/src/components/Modal/AlertModal";
-import useUsersStore from "@/app/admin/Components/Users/useUsersStore";
-import { useEffect } from "react";
 
 function Users() {
   const { data: session } = useSession();
   const userSessionId = session?.user.id;
-  const { addUser, getUsersByOwnerId, users, deleteUser } = useUsersStore();
+  const {
+    addUser,
+    getUsersByOwnerId,
+    users,
+    deleteUser,
+    switchActiveUser,
+    loadingUsers,
+  } = useUsersStore();
 
   const formatDataToTableHeader = [
     { className: "w-20", text: "Nom", tooltip: "Nom" },
     { className: "text-right", text: "Prénom", tooltip: "Prénom" },
     { className: "text-right", text: "e-mail", tooltip: "e-mail" },
+    {
+      className: "text-right",
+      text: "actif",
+      tooltip: "actif",
+    },
     {
       className: "",
       text: "",
@@ -55,6 +66,17 @@ function Users() {
       text:
         user.email && user.email.charAt(0).toUpperCase() + user.email.slice(1),
     }, //Pour mettre en majuscule
+    {
+      className: "text-right",
+      text: (
+        <Switch
+          onCheckedChange={() => switchActiveUser(user.id, !user.active)}
+          checked={user.active}
+          disabled={loadingUsers} //TODO ajouter un loader
+          id="airplane-mode"
+        />
+      ),
+    },
     {
       className: "text-right",
       text: (

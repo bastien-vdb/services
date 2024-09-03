@@ -60,6 +60,7 @@ model User {
   employees     User[]         @relation("UserToOwner")
   services      Service[]
   phone         String?
+  active        Boolean
 
   @@map("users")
 }

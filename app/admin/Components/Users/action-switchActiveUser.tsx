@@ -4,16 +4,12 @@ import { prisma } from "@/src/db/prisma";
 import { isOwner } from "@/src/utils/isOwner";
 import { getServerSession } from "next-auth/next";
 
-async function actionCreateUser({
-  name,
-  firstname,
-  email,
-  ownerId,
+async function actionSwitchActiveUser({
+  id,
+  active,
 }: {
-  name: string;
-  firstname: string;
-  email: string;
-  ownerId: string;
+  id: string;
+  active: boolean;
 }) {
   const session = await getServerSession(authOptions);
   if (!session) throw new Error("Session is not defined");
@@ -22,15 +18,12 @@ async function actionCreateUser({
     //Abstraction de vérification du role Owner
     await isOwner(session.user.id);
 
-    return await prisma.user.create({
+    await prisma.user.update({
+      where: {
+        id,
+      },
       data: {
-        name,
-        firstname,
-        email,
-        role: "EMPLOYEE",
-        ownerId, // Assigner l'ID de l'employeur ici
-        image: "/images/newArrivant.jpg",
-        active: true,
+        active,
       },
     });
   } catch (error) {
@@ -39,4 +32,4 @@ async function actionCreateUser({
   }
 }
 
-export default actionCreateUser;
+export default actionSwitchActiveUser;

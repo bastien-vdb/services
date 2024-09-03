@@ -20,7 +20,6 @@ type QuickSelectWrapperProps<T extends { id: string }> = {
   name: string;
   label: string;
   values: T[];
-  disabledValues?: number[];
   placeHolder: string;
   className?: string;
   renderFn: (d: T) => React.ReactElement;
@@ -31,7 +30,6 @@ const QuickSelectWrapper = <T extends { id: string }>({
   name,
   label,
   values,
-  disabledValues,
   placeHolder,
   className,
   renderFn,
@@ -61,11 +59,6 @@ const QuickSelectWrapper = <T extends { id: string }>({
               <SelectGroup>
                 {values?.map((v, i) => (
                   <SelectItem
-                    disabled={
-                      disabledValues?.length
-                        ? disabledValues.includes(i)
-                        : false
-                    }
                     value={v.id}
                     className="w-auto cursor-pointer"
                     style={{

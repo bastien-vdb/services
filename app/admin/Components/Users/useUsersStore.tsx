@@ -4,6 +4,7 @@ import { create } from "zustand";
 import actionCreateUser from "./action-createUser";
 import { toast } from "@/src/components/ui/use-toast";
 import actionDeleteUser from "./action-deleteUser";
+import actionSwitchActiveUser from "./action-switchActiveUser";
 
 type useUsersStoreType = {
   userSelected: User | undefined;
@@ -17,6 +18,8 @@ type useUsersStoreType = {
   getUsersByOwnerId: (userId: string) => Promise<void>;
   addUser: (user: Partial<User>) => Promise<void>;
   deleteUser: (userId: string) => Promise<void>;
+  switchActiveUser: (userId: string, activate: boolean) => Promise<void>;
+  loadingUsers: boolean;
 };
 
 const useUsersStore = create<useUsersStoreType>((set, get) => ({
@@ -24,6 +27,7 @@ const useUsersStore = create<useUsersStoreType>((set, get) => ({
   userSelectedFront: undefined,
   users: [],
   connectedSessionUserFull: undefined,
+  loadingUsers: false,
   setConnectedSessionUserFull: async (userId) => {
     const userFound = await get().findUser(userId);
     set({ connectedSessionUserFull: userFound });
@@ -67,6 +71,7 @@ const useUsersStore = create<useUsersStoreType>((set, get) => ({
         });
       });
   },
+
   deleteUser: async (userId) => {
     await actionDeleteUser(userId)
       .then(() => {
@@ -83,6 +88,30 @@ const useUsersStore = create<useUsersStoreType>((set, get) => ({
           description: error.message,
         });
       });
+  },
+  switchActiveUser: async (userId, activate) => {
+    set({ loadingUsers: true });
+    await actionSwitchActiveUser({
+      id: userId,
+      active: activate,
+    })
+      .then(() => {
+        set((state) => ({
+          users: state.users.map((u) =>
+            u.id === userId ? { ...u, active: activate } : u
+          ),
+        }));
+        toast({
+          description: "Collaborateur modifié",
+        });
+      })
+      .catch((error) => {
+        toast({
+          variant: "destructive",
+          description: error.message,
+        });
+      })
+      .finally(() => set({ loadingUsers: false }));
   },
 }));
 
