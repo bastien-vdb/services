@@ -25,7 +25,7 @@ const stripePromise = loadStripe(
 
 const prixFixDeposit = {
   stripePriceId: "price_1PERuILYOIXZwhPrff0n8CbE",
-  price: 2000,
+  price: 4000,
 }; //TODO mettre dans un fichier settings
 
 type typePayment = "STRIPE" | "PAYPAL";
@@ -144,7 +144,7 @@ const Step4 = memo(() => {
                   value="option-two"
                   id="option-two"
                 />
-                <Label htmlFor="option-two">Dépot: 20€</Label>
+                <Label htmlFor="option-two">Dépot: 40€</Label>
               </div>
             </div>
           </RadioGroup>
