@@ -6,6 +6,7 @@ import {
   Hr,
   Html,
   Img,
+  Link,
   Preview,
   Section,
   Text,
@@ -54,7 +55,7 @@ export const EmailConfirmed = ({
   return (
     <Html>
       <Head />
-      <Preview>Confirmation de rendez-vous</Preview>
+      <Preview>Confirmation de rendez-vous chez Finest Lash Studio</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -67,32 +68,97 @@ export const EmailConfirmed = ({
             🪄 Bonjour {customerFirstname} {customerName} et merci pour votre
             réservation au sein du FinestLash Studio le{" "}
             {bookingStartTime && dateString} à {bookingStartTime && heureString}{" "}
-            !
           </Heading>
           <Section style={body}>
             <Text style={paragraph}>
-              Quelques petites instructions pour préparer au mieux votre
-              rendez-vous :
+              Merci pour votre réservation. Voici quelques instructions pour
+              préparer au mieux votre rendez-vous :
             </Text>
             <Text style={paragraph}>
-              Il faudra venir avec les cils bien propres, sans avoir mis de
-              crème ou d’huile au niveau des yeux. Tout démaquillage sera
-              facturé 5€ de plus.
-            </Text>
-            <Text style={paragraph}>
-              Si vous avez choisi le paiement de l&apos;acompte sur le site, il
-              faudra impérativement régler le solde en ESPÈCES le jour J.
-            </Text>
-            <Text style={paragraph}>
-              Le studio se trouve au {businessPhysicalAddress}.
-            </Text>
-            <Text style={paragraph}>
-              Une fois arrivé(e), vous pourrez m&apos;envoyer un message ou
-              m&apos;appeler au {phone} pour m&apos;informer de votre arrivée.
-              (attention, il ne faut pas sonner !)
-            </Text>
-            <Text style={paragraph}>
-              Les accompagnateurs ne sont pas acceptés.
+              <ul>
+                <li>
+                  <b style={{ textDecoration: "underline" }}>Cils propres : </b>{" "}
+                  <p>
+                    Bien qu’un nettoyage des cils soit inclus dans votre
+                    prestation, la présence de maquillage ou de résidus (comme
+                    des crèmes ou huiles appliquées autour des yeux) peut
+                    prolonger cette étape, réduire le temps consacré à la pose
+                    et potentiellement compromettre le résultat final. Si un
+                    démaquillage est nécessaire, celui-ci sera facturé 10 €
+                    supplémentaires, mais le temps de prestation sera tout de
+                    même réduit.
+                  </p>
+                  <p>
+                    Pour garantir une prestation complète et un résultat
+                    optimal, nous vous recommandons vivement de venir avec des
+                    cils parfaitement démaquillés et sans application de crème
+                    ou d’huile sur le contour des yeux. Merci de votre
+                    compréhension.
+                  </p>
+                </li>
+                <li>
+                  <b style={{ textDecoration: "underline" }}>Paiements : </b>
+                  <p>
+                    Si vous avez réglé un acompte en ligne, le solde devra
+                    impérativement être réglé en espèces le jour J. Aucun autre
+                    moyen de paiement n’est disponible pour le moment.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <b style={{ textDecoration: "underline" }}>Adresse : </b>
+                    <p>
+                      <Link href="https://maps.app.goo.gl/pxqxzXmFJNTvvuX16">
+                        Le studio est situé au 43 rue Popincourt, 75011 Paris.
+                      </Link>
+                    </p>
+                  </p>
+                </li>
+                <li>
+                  <b style={{ textDecoration: "underline" }}>
+                    Accompagnateurs :{" "}
+                  </b>{" "}
+                  <p>
+                    Pour garantir une expérience calme et personnalisée, les
+                    accompagnateurs ne sont pas acceptés.
+                  </p>
+                </li>
+              </ul>
+
+              <div style={{ marginTop: "60px" }}>
+                <b>Politique d’annulation, modification et retard :</b>
+              </div>
+
+              <ul>
+                <li>
+                  <p>
+                    Toute annulation ou modification de rendez-vous doit être
+                    effectuée au moins 48 heures à l’avance. Passé ce délai,
+                    l’acompte versé sera conservé en compensation.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    En cas de retard supérieur à 15 minutes, votre rendez-vous
+                    sera malheureusement annulé afin de ne pas perturber les
+                    autres réservations. Nous vous remercions de votre
+                    compréhension et de votre ponctualité.
+                  </p>
+                </li>
+              </ul>
+
+              <div style={{ marginTop: "60px" }}>
+                <b style={{ textDecoration: "underline" }}>Contact : </b>
+                <p>
+                  Pour toute question, annulation ou modification de votre
+                  rendez-vous, n’hésitez pas à nous contacter via SMS ou
+                  WhatsApp au +33 7 83 63 97 38.
+                </p>
+              </div>
+              <div style={{ marginTop: "60px" }}>
+                Nous sommes impatients de sublimer votre regard et de vous
+                offrir une expérience agréable.
+              </div>
             </Text>
             <Text style={paragraph}>À bientôt !</Text>
           </Section>

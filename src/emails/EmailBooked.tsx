@@ -56,7 +56,7 @@ export const EmailRdvBooked = ({
   return (
     <Html>
       <Head />
-      <Preview>Confirmation de rendez-vous</Preview>
+      <Preview>Votre rendez-vous est en attente de confirmation</Preview>
       <Body style={main}>
         <Container style={container}>
           <Img
@@ -68,16 +68,25 @@ export const EmailRdvBooked = ({
           <Heading style={heading}>
             <Text style={paragraph}>🪄 Cher {customerName},</Text>
             <Text style={paragraph}>
-              Le rendez-vous {serviceName} avec {employeeName} à l&apos;adresse{" "}
-              {businessPhysicalAddress}, prévu pour le{" "}
+              Le rendez-vous pour {serviceName}, avec {employeeName} au
+              {businessPhysicalAddress}, le
               {bookingStartTime && dateString} à{" "}
-              {bookingStartTime && heureString}, est en attente de confirmation.
+              {bookingStartTime && heureString}, est actuellement en attente de
+              confirmation.
             </Text>
           </Heading>
           <Section style={heading}>
             <Text style={paragraph}>
-              Nous vous remercions de nous avoir choisi,
+              Vous recevrez un email de confirmation dès qu’il aura été validé
+              par l’un des membres de notre équipe. Si vous ne recevez pas cet
+              email d’ici la fin de la journée, nous vous invitons à vérifier
+              dans vos courriers indésirables ou spams.
             </Text>
+            <Text style={paragraph}>
+              Nous restons à votre disposition pour toute question.
+            </Text>
+            <Text style={paragraph}>Cordialement,</Text>
+            <Text style={paragraph}>Your Finest Lash Artists,</Text>
           </Section>
           <Hr style={hr} />
           <Img
