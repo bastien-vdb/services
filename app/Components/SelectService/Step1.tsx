@@ -97,7 +97,7 @@ function SelectService() {
 
   return (
     <>
-      <AlertDialogControlled openCtr={openCtr} />;
+      <AlertDialogControlled openCtr={openCtr} />
       <Card>
         <CardContent className="flex justify-center items-center flex-col">
           <QuickFormWrapper
