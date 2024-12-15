@@ -113,7 +113,7 @@ function SelectService() {
             <QuickSelectWrapper
               placeHolder={"Par qui ?"}
               name="employeeId"
-              label="Choisir son artiste"
+              label="1/ Choisir son artiste"
               className="w-[250px] sm:w-[800px]"
               values={users.filter((u) => u.active)}
               renderFn={(e) => <>{e.name} </>}
@@ -121,7 +121,7 @@ function SelectService() {
             <QuickSelectWrapper
               placeHolder={"Que souhaitez vous faire ?"}
               name="service"
-              label="Choisir sa prestation"
+              label="2/ Choisir sa prestation"
               className="w-[250px] sm:w-[800px]"
               values={services?.filter(
                 (s) => s.userId === employeeSelectedLive
@@ -138,7 +138,7 @@ function SelectService() {
             <QuickSelectWrapper
               placeHolder={"Avec dépose ?"}
               name="option"
-              label="Option: Dépose"
+              label="3/ Option: Dépose"
               className="w-[250px] sm:w-[800px]"
               values={[
                 { id: "option-sans-depose", name: "Sans dépose", price: 0 },
