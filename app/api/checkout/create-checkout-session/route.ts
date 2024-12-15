@@ -48,7 +48,7 @@ export async function POST(req: Request, res: NextApiResponse) {
       },
     ],
     payment_intent_data: {
-      application_fee_amount: 250,
+      application_fee_amount: 0, // TODO: change to 250 for the saas fee
       transfer_data: {
         destination: stripeAccount,
       },
